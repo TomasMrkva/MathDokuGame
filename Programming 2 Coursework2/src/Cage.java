@@ -47,7 +47,6 @@ public class Cage {
 		return this.cage;
 	}
 	
-	//s
 	public String getId() {
 		return cageId;
 	}
