@@ -17,8 +17,8 @@ import javafx.stage.Stage;
 public class MathDoku extends Application {
 
 	private static Label label;
-	private static int N=6;
-	private double width = 60;
+	public static int N=6;
+	public static double width = 80;
 	private ArrayList<Cage> cages = new ArrayList<Cage>();
 	
 	public static void main(String[] args) {

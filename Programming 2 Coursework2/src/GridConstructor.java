@@ -65,11 +65,16 @@ public class GridConstructor {
 		return grid;
 	}
 	
-//	public void removeAll() {
-//		for(int i=0; i<grid.getChildren().size()-1; i++) {
-//			grid.getChildren().remove(i);
-//		}
-//	}
+	public void removeAll() {
+		for(int i=0; i<grid.getChildren().size(); i++) {
+			grid.getChildren().remove(i);
+		}
+		for(StackPane s : cellsPos) {
+			for (int i=0; i<s.getChildren().size(); i++) {
+				s.getChildren().remove(i);
+			}
+		}
+	}
 	
 	/**
 	 * Adds the cages to the grid, this method has to be called 2nd before displaying the final grid
@@ -129,31 +134,6 @@ public class GridConstructor {
 		return cells.get(pos);
 	}
 	
-	/**
-	 * Displays the number on the grid, that user inputed
-	 * @param number, takes the string value of the key input
-	 */
-	public void displayNumber(String number) {
-		for(StackPane cellPos : cellsPos) {
-			// finds the cell that user clicked on last
-			if (((MyRectangle)cellPos.getChildren().get(0)).getCellId() == current.getCellId()) {
-				Label label = new Label(number);
-//				System.out.println(cellPos.getChildren().size());
-				label.setMouseTransparent(true);	// the label is not going to register mouse clicks
-				// when the gridpane has more than two children (rectangle and the initial label("")), remove the last number
-				if(cellPos.getChildren().size() > 2) {
-					cellPos.getChildren().remove(cellPos.getChildren().size()-1);
-				}
-				// add the label with the current number to the stackpane of the cell
-				((MyRectangle) cellPos.getChildren().get(0)).setValue(number);
-				System.err.println("Key: " + number+ " Pos: " + ((MyRectangle) cellPos.getChildren().get(0)).getCellId() + 
-						"\tValue: " + ((MyRectangle)cellPos.getChildren().get(0)).getValue()+ "\tCageID: " 
-						+ ((MyRectangle)cellPos.getChildren().get(0)).getCageId());
-				cellPos.getChildren().add(label);
-//				System.out.println(cellPos.getChildren().size());
-			}
-		}
-	}
 	
 	/**
 	 * EventHandler for each of the StackPanes, gets called when each stackpane is being created
@@ -164,10 +144,18 @@ public class GridConstructor {
 		cellStackPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				// When the current is not empty, set current to previous state, transparent and stroke(0.25)
-				if (current != null) {					
-					current.setFill(Color.TRANSPARENT);
+			// When the current is not empty, set current to previous state, transparent and stroke(0.25)
+				if (current != null) {			
+					current.setStroke(Color.BLACK);
 					current.setStrokeWidth(0.25);
+					if(current.getFill() == Color.TRANSPARENT) {
+						if(current.isRowRed() || current.isColRed() || current.isCageRed()) 
+							current.setFill(Color.rgb(255, 0, 0, 0.2));
+						else 
+							current.setFill(Color.TRANSPARENT);
+					} else {
+						current.setFill(Color.rgb(255, 0, 0, 0.2));
+					}
 				}
 				System.out.println("Click: Pos: " + (((MyRectangle)event.getTarget()).getCellId())
 						+ "\tValue: " + ((MyRectangle) event.getTarget()).getValue() + "\tCageID: " 
@@ -177,10 +165,13 @@ public class GridConstructor {
 				// Save the cell as current 
 				current = (MyRectangle) event.getTarget();
 				current.setStrokeType(StrokeType.INSIDE);
-				current.setFill(Color.CORNSILK);
-				current.setStroke(Color.BLACK);
-				current.setStrokeWidth(1);
+//				current.setStroke(Color.rgb(80, 175, 255, 0.4));	//teal
+				current.setStroke(Color.rgb(0, 0, 128, 0.4));
+				current.setStrokeWidth(MathDoku.width);
 				
+//				GameEngine.checkCol(grid, cells, current);
+//				GameEngine.checkRow(grid, cells, current);
+
 				// When user clicks on the grid, the focus is requested for the grid
 				requestFocus();
 //				GameEngine.CheckWin(grid, cells);
@@ -189,6 +180,18 @@ public class GridConstructor {
 			}
 		});
 	}
+	
+//	public void handle(MouseEvent event) {
+//		// When the current is not empty, set current to previous state, transparent and stroke(0.25)
+//		if (current != null) {			
+//			if(current.getFill() == Color.CORNSILK || current.getFill() == Color.TRANSPARENT) {
+//				current.setFill(Color.TRANSPARENT);
+//				current.setStrokeWidth(0.25);						
+//			} else {
+//				current.setFill(Color.rgb(255, 0, 0, 0.2));
+//				current.setStrokeWidth(0.25);
+//			}
+//		}
 	
 	/**
 	 * Makes the grid focus of the screen
@@ -206,13 +209,15 @@ public class GridConstructor {
 			@Override
 			public void handle(KeyEvent event) {
 				try {
-					int possibleNum = MathDoku.getN();
+					int N = MathDoku.getN();
 					if (Character.isDigit(event.getCharacter().toCharArray()[0])) {
 						int enteredNum = Integer.valueOf(event.getCharacter());
-						if(enteredNum <= possibleNum && enteredNum > 0) {
+						if(enteredNum <= N && enteredNum > 0) {
 //							System.out.println(event.getCharacter().toCharArray()[0]);
 							String number = event.getCharacter().toString();
-							displayNumber(number);								
+							
+							displayNumber(number);
+//							GameEngine.checkCol(grid, cells, current);
 						}
 						else System.out.println("User entered a wrong number!");
 					}
@@ -222,17 +227,53 @@ public class GridConstructor {
 						displayNumber(null);
 					} else System.err.println("User entered a wrong key!");
 				}
+				
+//				GameEngine.checkRow(grid, cells, current);
+//				GameEngine.checkCol(grid, cells, current);
+
 //				GameEngine.checkAllCages(cages);
 				if(GameEngine.isFinished(cells)) {
-//					if(GameEngine.checkAllCols(matrix) && GameEngine.checkAllRows(matrix) && GameEngine.checkAllCages(cages)) {
-//						MathDoku.setText("YAYY!!");
-//					}
-					if(GameEngine.checkAllCages(cages)) {
-						MathDoku.setText("Works");
+					Cage[] arr = cages.toArray(new Cage[cages.size()]);
+					if(GameEngine.checkAllCols(matrix) && GameEngine.checkAllRows(matrix) && GameEngine.checkCages(arr)) {
+						MathDoku.setText("YAYY!!");
 					}
+//					if(GameEngine.checkAllCages(cages)) {
+//						MathDoku.setText("Works");
+//					}
 				}
 			}
 		});
 	}
 	
+	/**
+	 * Displays the number on the grid, that user inputed
+	 * @param number, takes the string value of the key input
+	 */
+	public void displayNumber(String number) {
+		for(StackPane cellPos : cellsPos) {
+			// finds the cell that user clicked on last
+			if (((MyRectangle)cellPos.getChildren().get(0)).getCellId() == current.getCellId()) {
+				Label label = new Label(number);
+				label.setMouseTransparent(true);	// the label is not going to register mouse clicks
+				// when the gridpane has more than two children (rectangle and the initial label("")), remove the last number
+				if(cellPos.getChildren().size() > 2) {
+					cellPos.getChildren().remove(cellPos.getChildren().size()-1);
+				}
+				// add the label with the current number to the stackpane of the cell
+				((MyRectangle) cellPos.getChildren().get(0)).setValue(number);
+				cellPos.getChildren().add(label);
+			}
+		}
+		GameEngine.checkCage(cells, current, cages);
+		GameEngine.checkCol(cells, current);
+		GameEngine.checkRow(cells, current);
+	}
+	
 }
+//				System.out.println(cellPos.getChildren().size());
+
+//				System.err.println("Key: " + number+ " Pos: " + ((MyRectangle) cellPos.getChildren().get(0)).getCellId() + 
+//						"\tValue: " + ((MyRectangle)cellPos.getChildren().get(0)).getValue()+ "\tCageID: " 
+//						+ ((MyRectangle)cellPos.getChildren().get(0)).getCageId());
+//				cellPos.getChildren().add(label);
+//				System.out.println(cellPos.getChildren().size());

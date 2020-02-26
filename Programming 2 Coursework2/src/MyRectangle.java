@@ -7,11 +7,16 @@ public class MyRectangle extends Rectangle {
 	private String value;
 	private String col;
 	private String row;
-	
+	private boolean colRed;
+	private boolean rowRed;
+	private boolean cageRed;
 	
 	public MyRectangle(double width, double height) {
 		super(width, height);
 		cellId = 0;
+		colRed = false;
+		rowRed = false;
+		cageRed = false;
 	}
 	
 	public void setCellId(int cellId){
@@ -52,5 +57,29 @@ public class MyRectangle extends Rectangle {
 	
 	public String getRow() {
 		return row;
+	}
+
+	public void setColRed(boolean value) {
+		colRed = value;
+	}
+	
+	public boolean isColRed() {
+		return colRed;
+	}
+	
+	public void setRowRed(boolean value) {
+		rowRed = value;
+	}
+	
+	public boolean isRowRed() {
+		return rowRed;
+	}
+	
+	public void setCageRed(boolean value) {
+		cageRed = value;
+	}
+	
+	public boolean isCageRed() {
+		return cageRed;
 	}
 }
