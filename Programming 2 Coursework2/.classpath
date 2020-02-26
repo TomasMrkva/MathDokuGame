@@ -7,6 +7,5 @@
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="scratch"/>
-	<classpathentry kind="src" path="backup"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

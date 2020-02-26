@@ -2,9 +2,12 @@ import javafx.scene.shape.Rectangle;
 
 public class MyRectangle extends Rectangle {
 	
-	int cellId;
-	String cageId;
-	String value;
+	private int cellId;
+	private String cageId;
+	private String value;
+	private String col;
+	private String row;
+	
 	
 	public MyRectangle(double width, double height) {
 		super(width, height);
@@ -23,7 +26,7 @@ public class MyRectangle extends Rectangle {
 		this.cageId = cageId;
 	}
 	
-	public String getCage() {
+	public String getCageId() {
 		return cageId;
 	}
 	
@@ -33,5 +36,21 @@ public class MyRectangle extends Rectangle {
 	
 	public String getValue() {
 		return value;
+	}
+	
+	public void setCol(String col) {
+		this.col = col;
+	}
+	
+	public String getCol() {
+		return col;
+	}
+	
+	public void setRow(String row) {
+		this.row = row;
+	}
+	
+	public String getRow() {
+		return row;
 	}
 }

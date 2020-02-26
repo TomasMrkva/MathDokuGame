@@ -19,14 +19,15 @@ public class GridConstructor {
 	private ArrayList<MyRectangle> cells = new ArrayList<MyRectangle>();	//List of the cells, used for making cages
 	private ArrayList<Cage> cages = new ArrayList<Cage>();
 	private MyRectangle current;	// The pointer the current cell in the grid
-	
+	private MyRectangle[][] matrix = new MyRectangle[MathDoku.getN()][MathDoku.getN()];
+
 	/**
 	 * Creates the initial grid of stackpanes, but no cages are added
 	 * This method has to be called 1st
 	 * @param N, the number of NxN grid
 	 * @param width, the width of each cell
 	 */
-	public void makeGrid(int N, int width) {
+	public void makeGrid(int N, double width) {
 		int counter = 0;
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
@@ -34,13 +35,19 @@ public class GridConstructor {
 				StackPane cellPos = new StackPane();	// Assign it to a StackPane
 				cellPos.relocate(j * width, i * width);	// Reposition the stackpane to the positon of the cell
 				cell.setCellId(counter++);	// Set the proper id of the rectangle
+				cell.setRow(String.valueOf(i));
+				cell.setCol(String.valueOf(j));
+				matrix[i][j] = cell;
 				cell.setStrokeWidth(0.25);
 				cell.setFill(Color.TRANSPARENT);
 				cell.setStroke(Color.BLACK);
-				cellPos.getChildren().add(cell);	// Add the cell to the stackpane, the same stackpane might contain a label 
+				Label label = new Label(null);
+				label.setMouseTransparent(true);
+				cellPos.getChildren().addAll(cell, label);	// Add the cell to the stackpane, the same stackpane might contain a label 
 				cells.add(cell);
 				cellsPos.add(cellPos);
-				mouseClicked(cellPos);	// Adds an Event handler for each StackPane in the grid
+//				System.out.println(cellPos.getChildren().size());
+				mouseClicked(cellPos);	// Adds an Event handler for each StackPane in the gridLabel label = new Label("");	
 			}
 		}
 	}
@@ -58,6 +65,12 @@ public class GridConstructor {
 		return grid;
 	}
 	
+//	public void removeAll() {
+//		for(int i=0; i<grid.getChildren().size()-1; i++) {
+//			grid.getChildren().remove(i);
+//		}
+//	}
+	
 	/**
 	 * Adds the cages to the grid, this method has to be called 2nd before displaying the final grid
 	 * @param cages the ArrayList of cages, that will be added to the grid
@@ -74,21 +87,15 @@ public class GridConstructor {
 	 * this method has to be called 3rd
 	 */
 	public void makeLabels() {
-		// loops through all the cages and stackpanes of the cell
-		for(int i = 0; i < cages.size()-1; i++) {			
+		// loops through all the cages and stackpanes of the cells 
+		for(int i = 0; i < cages.size(); i++) {			
 			for(StackPane s : cellsPos) {
 				// when the rectangle of the stackpane matches the first rectangle of the cage, make a label for it
-				if(s.getChildren().get(0) == cages.get(i).getCells().get(0)) {
+				if((s.getChildren().get(0) == cages.get(i).getCells().get(0)) &&  (s.getChildren().size() < 3)) {
 					Label label = new Label(" " + cages.get(i).getId());	// makes a label with the operation ID of the cage
 					label.setMouseTransparent(true);	// label wont register clicks
-					s.getChildren().add(label);
+					s.getChildren().set(s.getChildren().size()-1, label);
 					StackPane.setAlignment(label, Pos.TOP_LEFT);	// the label goes to top left
-				// When the rectangles dont match, create a new label, which is an empty label	
-				} else {
-					// Make initial label
-					Label label = new Label("");	
-					label.setMouseTransparent(true);
-					s.getChildren().add(label);
 				}
 			}
 		}
@@ -101,7 +108,7 @@ public class GridConstructor {
 	 * @param strokeWidth
 	 * @param color
 	 */
-	public void makeBorder(int widthOfCell, int numberOfCells, double strokeWidth, Color color) {
+	public void makeBorder(double widthOfCell, int numberOfCells, double strokeWidth, Color color) {
 		Rectangle border = new Rectangle(widthOfCell * numberOfCells, widthOfCell * numberOfCells);
 		border.setStrokeType(StrokeType.OUTSIDE);
 		border.relocate(0, 0);
@@ -131,6 +138,7 @@ public class GridConstructor {
 			// finds the cell that user clicked on last
 			if (((MyRectangle)cellPos.getChildren().get(0)).getCellId() == current.getCellId()) {
 				Label label = new Label(number);
+//				System.out.println(cellPos.getChildren().size());
 				label.setMouseTransparent(true);	// the label is not going to register mouse clicks
 				// when the gridpane has more than two children (rectangle and the initial label("")), remove the last number
 				if(cellPos.getChildren().size() > 2) {
@@ -139,8 +147,10 @@ public class GridConstructor {
 				// add the label with the current number to the stackpane of the cell
 				((MyRectangle) cellPos.getChildren().get(0)).setValue(number);
 				System.err.println("Key: " + number+ " Pos: " + ((MyRectangle) cellPos.getChildren().get(0)).getCellId() + 
-						"\tValue: " + ((MyRectangle)cellPos.getChildren().get(0)).getValue());
+						"\tValue: " + ((MyRectangle)cellPos.getChildren().get(0)).getValue()+ "\tCageID: " 
+						+ ((MyRectangle)cellPos.getChildren().get(0)).getCageId());
 				cellPos.getChildren().add(label);
+//				System.out.println(cellPos.getChildren().size());
 			}
 		}
 	}
@@ -160,7 +170,10 @@ public class GridConstructor {
 					current.setStrokeWidth(0.25);
 				}
 				System.out.println("Click: Pos: " + (((MyRectangle)event.getTarget()).getCellId())
-						+ "\tValue: " + ((MyRectangle) event.getTarget()).getValue());
+						+ "\tValue: " + ((MyRectangle) event.getTarget()).getValue() + "\tCageID: " 
+						+((MyRectangle)event.getTarget()).getCageId() 
+						+ "\tRow: " +((MyRectangle)event.getTarget()).getRow()
+						+"\tCol: " + ((MyRectangle)event.getTarget()).getCol());
 				// Save the cell as current 
 				current = (MyRectangle) event.getTarget();
 				current.setStrokeType(StrokeType.INSIDE);
@@ -170,6 +183,7 @@ public class GridConstructor {
 				
 				// When user clicks on the grid, the focus is requested for the grid
 				requestFocus();
+//				GameEngine.CheckWin(grid, cells);
 				// Calls an eventHandler for the key input
 				keyTyped();
 			}
@@ -207,6 +221,15 @@ public class GridConstructor {
 						System.err.println("User entered a backspace");
 						displayNumber(null);
 					} else System.err.println("User entered a wrong key!");
+				}
+//				GameEngine.checkAllCages(cages);
+				if(GameEngine.isFinished(cells)) {
+//					if(GameEngine.checkAllCols(matrix) && GameEngine.checkAllRows(matrix) && GameEngine.checkAllCages(cages)) {
+//						MathDoku.setText("YAYY!!");
+//					}
+					if(GameEngine.checkAllCages(cages)) {
+						MathDoku.setText("Works");
+					}
 				}
 			}
 		});

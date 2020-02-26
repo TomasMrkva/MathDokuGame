@@ -1,8 +1,10 @@
 import java.util.ArrayList;
 
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -14,12 +16,17 @@ import javafx.stage.Stage;
  */
 public class MathDoku extends Application {
 
+	private static Label label;
 	private static int N=6;
-	private int width = 60;
+	private double width = 60;
 	private ArrayList<Cage> cages = new ArrayList<Cage>();
 	
 	public static void main(String[] args) {
 		launch(args);
+	}
+	
+	public static void setText(String text) {
+		label.setText(text);
 	}
 	
 	public static int getN() {
@@ -29,7 +36,9 @@ public class MathDoku extends Application {
 	@Override
 	public void start(Stage stage) {
 		stage.setTitle("Mathdoku");
+		
 		BorderPane root = new BorderPane();
+		label = new Label("Not yet!");
 		
 		GridConstructor gridConstructor = new GridConstructor();
 		gridConstructor.makeGrid(N, width);
@@ -45,54 +54,16 @@ public class MathDoku extends Application {
 		root.setCenter(gameGrid);
 		root.setLeft(gui.menu());
 		root.setRight(gui.numbers(N));
-		//root.setBottom(value);
+		root.setBottom(label);
+		BorderPane.setAlignment(label, Pos.CENTER);
 		
 		stage.setMinHeight(width * N + 100);
 		stage.setMinWidth(width * N + 120);
 		Scene scene = new Scene(root);
-		
+	  
 		stage.setScene(scene);
 		stage.show();
 	}
-	
-//	public VBox numbers(int N) {
-//		VBox numbers = new VBox(5);
-//		
-//		for(int i=1; i<=N; i++) {
-//			Button button = new Button();
-//			button.setText(String.valueOf(i));
-//			button.setPrefWidth(50);
-//			numbers.getChildren().add(button);
-//		}
-//		numbers.setPadding(new Insets(5));
-//		return numbers;
-//	}
-//	
-//	public VBox menu() {
-//		Button clear = new Button("Clear");
-//		clear.setPrefWidth(50);
-//		Button undo = new Button();
-//		undo.setText("<-");
-//		undo.setPrefWidth(50);
-//		Button redo = new Button();
-//		redo.setText("->");
-//		redo.setPrefWidth(50);
-//		VBox menu = new VBox(5);
-//		menu.setPadding(new Insets(5));
-//		menu.getChildren().addAll(clear, undo, redo);
-//		return menu;
-//	}
-//	
-//	public HBox loadGame() {
-//		Button loadFile = new Button();
-//		loadFile.setText("Load from a file");
-//		Button loadText = new  Button();
-//		loadText.setText("Load from a text");
-//		HBox load = new HBox(5);
-//		load.setPadding(new Insets(5));
-//		load.getChildren().addAll(loadFile,loadText);
-//		return load;
-//	}
 	
 	/**
 	 * Creates a class for each cage and adds it to the ArrayList 

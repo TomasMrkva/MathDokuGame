@@ -71,7 +71,7 @@ public class Gui {
 					grid.displayNumber(number);
 			    }
 			    catch(NumberFormatException e) {
-			        grid.displayNumber("");
+			        grid.displayNumber(null);
 			    }
 				grid.requestFocus();
 			}
