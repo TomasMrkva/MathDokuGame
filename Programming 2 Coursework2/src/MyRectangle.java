@@ -82,4 +82,5 @@ public class MyRectangle extends Rectangle {
 	public boolean isCageRed() {
 		return cageRed;
 	}
+	
 }

@@ -1,17 +1,23 @@
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 public class Gui {
 	
 	public GridConstructor grid;
+	public static boolean mistakes;
 	
 	public Gui(GridConstructor grid) {
 		this.grid = grid;
+		mistakes = false;
 	}
 	
 	public VBox numbers(int N) {
@@ -28,7 +34,7 @@ public class Gui {
 		clear.setPrefWidth(50);
 		numButtonClick(clear);
 		numbers.getChildren().add(clear);
-		numbers.setPadding(new Insets(5));
+		numbers.setPadding(new Insets(10));
 		numbers.setAlignment(Pos.CENTER);
 		return numbers;
 	}
@@ -43,7 +49,7 @@ public class Gui {
 		redo.setText("->");
 		redo.setPrefWidth(50);
 		VBox menu = new VBox(5);
-		menu.setPadding(new Insets(5));
+		menu.setPadding(new Insets(10));
 		menu.getChildren().addAll(clear, undo, redo);
 		menu.setAlignment(Pos.CENTER);
 		return menu;
@@ -54,9 +60,11 @@ public class Gui {
 		loadFile.setText("Load from a file");
 		Button loadText = new  Button();
 		loadText.setText("Load from a text");
-		HBox load = new HBox(5);
-		load.setPadding(new Insets(5));
-		load.getChildren().addAll(loadFile,loadText);
+		CheckBox mistakes = new CheckBox("Show Mistakes");
+		mistakerChooser(mistakes);
+		HBox load = new HBox(20);
+		load.setPadding(new Insets(10));
+		load.getChildren().addAll(loadFile,mistakes,loadText);
 		load.setAlignment(Pos.CENTER);
 		return load;
 	}
@@ -76,5 +84,29 @@ public class Gui {
 				grid.requestFocus();
 			}
 		});
+	}
+	
+	public void mistakerChooser(CheckBox box) {
+		box.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				grid.requestFocus();
+				if(newValue == true) {
+					mistakes = true;
+					GridConstructor.checkAllMistakes();
+				} else {
+//					System.out.println("dont show mistakes anymore");
+					for(MyRectangle cell : GridConstructor.getCells()) {
+						cell.setFill(Color.TRANSPARENT);
+						cell.setRowRed(false);
+						cell.setColRed(false);
+						cell.setCageRed(false);
+					}
+					mistakes = false;
+				}
+			}
+		});
+		
 	}
 }

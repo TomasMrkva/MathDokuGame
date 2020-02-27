@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -38,7 +39,8 @@ public class MathDoku extends Application {
 		stage.setTitle("Mathdoku");
 		
 		BorderPane root = new BorderPane();
-		label = new Label("Not yet!");
+		label = new Label("Grid has not been completed!");
+		label.setPadding(new Insets(10));
 		
 		GridConstructor gridConstructor = new GridConstructor();
 		gridConstructor.makeGrid(N, width);

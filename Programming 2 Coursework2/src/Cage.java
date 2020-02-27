@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
@@ -47,7 +46,6 @@ public class Cage {
 				this.cage = Shape.union(cage, cells.get(i+1));
 			}
 		}
-//		System.out.println("Size " + cells.size());
 		cage.setStrokeWidth(3);
 		cage.setStroke(Color.BLACK);
 		cage.setFill(Color.TRANSPARENT);

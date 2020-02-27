@@ -16,10 +16,10 @@ public class GridConstructor {
 	private Group grid = new Group();	//The whole grid is a Group of stackpanes
 	//List of StackPanes which contain the cells MyRectangle class and labels
 	private ArrayList<StackPane> cellsPos = new ArrayList<StackPane>();
-	private ArrayList<MyRectangle> cells = new ArrayList<MyRectangle>();	//List of the cells, used for making cages
-	private ArrayList<Cage> cages = new ArrayList<Cage>();
-	private MyRectangle current;	// The pointer the current cell in the grid
-	private MyRectangle[][] matrix = new MyRectangle[MathDoku.getN()][MathDoku.getN()];
+	private static ArrayList<MyRectangle> cells = new ArrayList<MyRectangle>();	//List of the cells, used for making cages
+	private static ArrayList<Cage> cages = new ArrayList<Cage>();
+	private static MyRectangle current;	// The pointer the current cell in the grid
+	private static MyRectangle[][] matrix = new MyRectangle[MathDoku.getN()][MathDoku.getN()];
 
 	/**
 	 * Creates the initial grid of stackpanes, but no cages are added
@@ -134,6 +134,10 @@ public class GridConstructor {
 		return cells.get(pos);
 	}
 	
+	public static ArrayList<MyRectangle> getCells(){
+		return cells;
+	}
+	
 	
 	/**
 	 * EventHandler for each of the StackPanes, gets called when each stackpane is being created
@@ -148,20 +152,22 @@ public class GridConstructor {
 				if (current != null) {			
 					current.setStroke(Color.BLACK);
 					current.setStrokeWidth(0.25);
-					if(current.getFill() == Color.TRANSPARENT) {
-						if(current.isRowRed() || current.isColRed() || current.isCageRed()) 
-							current.setFill(Color.rgb(255, 0, 0, 0.2));
-						else 
-							current.setFill(Color.TRANSPARENT);
-					} else {
-						current.setFill(Color.rgb(255, 0, 0, 0.2));
-					}
+//					if(current.getFill() == Color.TRANSPARENT) {
+//						if(current.isRowRed() || current.isColRed() || current.isCageRed()) 
+//							current.setFill(Color.rgb(255, 0, 0, 0.2));
+//					} else {
+//						current.setFill(Color.rgb(255, 0, 0, 0.2));
+//					}
 				}
 				System.out.println("Click: Pos: " + (((MyRectangle)event.getTarget()).getCellId())
 						+ "\tValue: " + ((MyRectangle) event.getTarget()).getValue() + "\tCageID: " 
 						+((MyRectangle)event.getTarget()).getCageId() 
 						+ "\tRow: " +((MyRectangle)event.getTarget()).getRow()
-						+"\tCol: " + ((MyRectangle)event.getTarget()).getCol());
+						+"\tCol: " + ((MyRectangle)event.getTarget()).getCol()
+						+"\tCage : "+((MyRectangle)event.getTarget()).isCageRed()
+						+"\tCol: " + ((MyRectangle) event.getTarget()).isRowRed()
+						+"\tRow: " + ((MyRectangle) event.getTarget()).isColRed());
+						
 				// Save the cell as current 
 				current = (MyRectangle) event.getTarget();
 				current.setStrokeType(StrokeType.INSIDE);
@@ -174,24 +180,11 @@ public class GridConstructor {
 
 				// When user clicks on the grid, the focus is requested for the grid
 				requestFocus();
-//				GameEngine.CheckWin(grid, cells);
 				// Calls an eventHandler for the key input
 				keyTyped();
 			}
 		});
 	}
-	
-//	public void handle(MouseEvent event) {
-//		// When the current is not empty, set current to previous state, transparent and stroke(0.25)
-//		if (current != null) {			
-//			if(current.getFill() == Color.CORNSILK || current.getFill() == Color.TRANSPARENT) {
-//				current.setFill(Color.TRANSPARENT);
-//				current.setStrokeWidth(0.25);						
-//			} else {
-//				current.setFill(Color.rgb(255, 0, 0, 0.2));
-//				current.setStrokeWidth(0.25);
-//			}
-//		}
 	
 	/**
 	 * Makes the grid focus of the screen
@@ -234,7 +227,7 @@ public class GridConstructor {
 //				GameEngine.checkAllCages(cages);
 				if(GameEngine.isFinished(cells)) {
 					Cage[] arr = cages.toArray(new Cage[cages.size()]);
-					if(GameEngine.checkAllCols(matrix) && GameEngine.checkAllRows(matrix) && GameEngine.checkCages(arr)) {
+					if(GameEngine.checkAllCols(matrix) && GameEngine.checkAllRows(matrix) && GameEngine.checkAllCages(arr)) {
 						MathDoku.setText("YAYY!!");
 					}
 //					if(GameEngine.checkAllCages(cages)) {
@@ -243,6 +236,12 @@ public class GridConstructor {
 				}
 			}
 		});
+	}
+	
+	public static void checkAllMistakes() {
+		GameEngine.colorCols(matrix, GridConstructor.cells);
+		GameEngine.colorRows(matrix, GridConstructor.cells);
+		GameEngine.colorCages(cells, cages);
 	}
 	
 	/**
@@ -264,16 +263,15 @@ public class GridConstructor {
 				cellPos.getChildren().add(label);
 			}
 		}
-		GameEngine.checkCage(cells, current, cages);
-		GameEngine.checkCol(cells, current);
-		GameEngine.checkRow(cells, current);
+		if(Gui.mistakes == true) {
+			GameEngine.checkCage(cells, current, cages);
+			GameEngine.checkRow(cells, current);
+			GameEngine.checkCol(cells, current);
+			
+			GameEngine.colorCols(matrix, GridConstructor.cells);
+			GameEngine.colorRows(matrix, GridConstructor.cells);
+			GameEngine.colorCages(cells, cages);
+		}
 	}
 	
 }
-//				System.out.println(cellPos.getChildren().size());
-
-//				System.err.println("Key: " + number+ " Pos: " + ((MyRectangle) cellPos.getChildren().get(0)).getCellId() + 
-//						"\tValue: " + ((MyRectangle)cellPos.getChildren().get(0)).getValue()+ "\tCageID: " 
-//						+ ((MyRectangle)cellPos.getChildren().get(0)).getCageId());
-//				cellPos.getChildren().add(label);
-//				System.out.println(cellPos.getChildren().size());
