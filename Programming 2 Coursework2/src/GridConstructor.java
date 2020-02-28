@@ -25,7 +25,7 @@ public class GridConstructor {
 	 * Creates the initial grid of stackpanes, but no cages are added
 	 * This method has to be called 1st
 	 * @param N, the number of NxN grid
-	 * @param width, the width of each cell 
+	 * @param width, the width of each cell
 	 */
 	public void makeGrid(int N, double width) {
 		int counter = 0;
