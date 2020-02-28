@@ -25,7 +25,7 @@ public class GridConstructor {
 	 * Creates the initial grid of stackpanes, but no cages are added
 	 * This method has to be called 1st
 	 * @param N, the number of NxN grid
-	 * @param width, the width of each cell
+	 * @param width, the width of each cell 
 	 */
 	public void makeGrid(int N, double width) {
 		int counter = 0;
@@ -83,7 +83,7 @@ public class GridConstructor {
 	public void addCages(ArrayList<Cage> cages) {
 		for(Cage c : cages) {
 			grid.getChildren().add(c.getCage());
-			this.cages.add(c);
+			GridConstructor.cages.add(c);
 		}
 	}
 	
@@ -152,13 +152,8 @@ public class GridConstructor {
 				if (current != null) {			
 					current.setStroke(Color.BLACK);
 					current.setStrokeWidth(0.25);
-//					if(current.getFill() == Color.TRANSPARENT) {
-//						if(current.isRowRed() || current.isColRed() || current.isCageRed()) 
-//							current.setFill(Color.rgb(255, 0, 0, 0.2));
-//					} else {
-//						current.setFill(Color.rgb(255, 0, 0, 0.2));
-//					}
 				}
+				
 				System.out.println("Click: Pos: " + (((MyRectangle)event.getTarget()).getCellId())
 						+ "\tValue: " + ((MyRectangle) event.getTarget()).getValue() + "\tCageID: " 
 						+((MyRectangle)event.getTarget()).getCageId() 

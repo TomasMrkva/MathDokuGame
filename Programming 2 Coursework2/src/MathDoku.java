@@ -60,7 +60,7 @@ public class MathDoku extends Application {
 		BorderPane.setAlignment(label, Pos.CENTER);
 		
 		stage.setMinHeight(width * N + 100);
-		stage.setMinWidth(width * N + 120);
+		stage.setMinWidth(width * N + 140);
 		Scene scene = new Scene(root);
 	  
 		stage.setScene(scene);
