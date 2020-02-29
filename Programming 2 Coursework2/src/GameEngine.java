@@ -80,9 +80,6 @@ public class GameEngine {
 			for (int col = 0; col < matrix.length; col++) {
 				String num = matrix[row][col].getValue();
 				if (set.contains(num)) {
-					MathDoku.setText("Wrong");
-					System.out.println("wrong value is: " + num + " r: " + matrix[row][col].getRow() + " c: "
-							+ matrix[row][col].getCol());
 					for (int i = 0; i < matrix.length; i++) {
 						MyRectangle cell = matrix[row][i];
 						cell.setFill(Color.rgb(255, 0, 0, 0.1));

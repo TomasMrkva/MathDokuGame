@@ -10,13 +10,12 @@ public class MyRectangle extends Rectangle {
 	private boolean colRed;
 	private boolean rowRed;
 	private boolean cageRed;
+	private String oldValue;
+	
+	public MyRectangle() {}
 	
 	public MyRectangle(double width, double height) {
 		super(width, height);
-		cellId = 0;
-		colRed = false;
-		rowRed = false;
-		cageRed = false;
 	}
 	
 	public void setCellId(int cellId){
@@ -41,6 +40,14 @@ public class MyRectangle extends Rectangle {
 	
 	public String getValue() {
 		return value;
+	}
+	
+	public void setOldValue(String value) {
+		oldValue = value;
+	}
+	
+	public String getOldValue() {
+		return oldValue;
 	}
 	
 	public void setCol(String col) {

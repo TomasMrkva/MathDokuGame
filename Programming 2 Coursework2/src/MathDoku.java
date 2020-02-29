@@ -17,10 +17,10 @@ import javafx.stage.Stage;
  */
 public class MathDoku extends Application {
 
-	private static Label label;
-	public static int N=6;
-	public static double width = 80;
 	private ArrayList<Cage> cages = new ArrayList<Cage>();
+	private static int N=6;
+	private static Label label;
+	private static double width = 80;
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -34,6 +34,10 @@ public class MathDoku extends Application {
 		return N;
 	}
 	
+	public static double getWidth() {
+		return width;
+	}
+	
 	@Override
 	public void start(Stage stage) {
 		stage.setTitle("Mathdoku");
@@ -42,22 +46,23 @@ public class MathDoku extends Application {
 		label = new Label("Grid has not been completed!");
 		label.setPadding(new Insets(10));
 		
-		GridConstructor gridConstructor = new GridConstructor();
-		gridConstructor.makeGrid(N, width);
-		MakeCages(gridConstructor);
-		gridConstructor.addCages(cages);
-		gridConstructor.makeLabels();
-		gridConstructor.makeBorder(width, N, 2, Color.TOMATO);
+		GridConstructor grid = new GridConstructor(N, width);
+//		gridConstructor.makeGrid(N, width);
+		MakeCages(grid);
+		grid.addCages(cages);
+		grid.makeLabels();
+		grid.makeBorder(width, N, 2, Color.TOMATO);
 		
-		Group gameGrid = gridConstructor.getGrid();
+		Group gameGrid = grid.getGrid();
 		
-		Gui gui = new Gui(gridConstructor);
+		Gui gui = new Gui(grid);
+		
 		root.setTop(gui.loadGame());
-		root.setCenter(gameGrid);
 		root.setLeft(gui.menu());
 		root.setRight(gui.numbers(N));
 		root.setBottom(label);
 		BorderPane.setAlignment(label, Pos.CENTER);
+		root.setCenter(gameGrid);
 		
 		stage.setMinHeight(width * N + 100);
 		stage.setMinWidth(width * N + 140);
