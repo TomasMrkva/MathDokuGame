@@ -2,8 +2,8 @@ import java.util.Stack;
 
 public class StackOperations {
 	
-	public static Stack<MyRectangle> stackUndo = new Stack<MyRectangle>();
-	public static Stack<MyRectangle> stackRedo = new Stack<MyRectangle>();
+	protected static Stack<MyRectangle> stackUndo = new Stack<MyRectangle>();
+	protected static Stack<MyRectangle> stackRedo = new Stack<MyRectangle>();
 	
 	public static void push(MyRectangle cell) {
 		StackOperations.stackUndo.push(cell);
