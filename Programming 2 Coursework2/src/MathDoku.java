@@ -19,17 +19,17 @@ public class MathDoku extends Application {
 
 	private ArrayList<Cage> cages = new ArrayList<Cage>();
 	private static int N=6;
-	private static Label label;
+//	private static Label label;
 	private static double width = 80;
 	
 	public static void main(String[] args) {
 		launch(args);
 	}
 	
-	public static void setText(String text) {
-		label.setText(text);
-	}
-	
+//	public static void setText(String text) {
+//		label.setText(text);
+//	}
+//	
 	public static int getN() {
 		return N;
 	}
@@ -43,8 +43,9 @@ public class MathDoku extends Application {
 		stage.setTitle("Mathdoku");
 		
 		BorderPane root = new BorderPane();
-		label = new Label("Grid has not been completed!");
-		label.setPadding(new Insets(10));
+//		label = new Label("Grid has not been completed!");
+//		label.setPadding(new Insets(10));
+		
 		
 		GridConstructor grid = new GridConstructor(N, width);
 //		gridConstructor.makeGrid(N, width);
@@ -60,11 +61,11 @@ public class MathDoku extends Application {
 		root.setTop(gui.loadGame());
 		root.setLeft(gui.menu());
 		root.setRight(gui.numbers(N));
-		root.setBottom(label);
-		BorderPane.setAlignment(label, Pos.CENTER);
+		root.setBottom(gui.bottomSide());
+//		BorderPane.setAlignment(label, Pos.CENTER);
 		root.setCenter(gameGrid);
 		
-		stage.setMinHeight(width * N + 100);
+		stage.setMinHeight(width * N + 120);
 		stage.setMinWidth(width * N + 140);
 		Scene scene = new Scene(root);
 	  

@@ -10,6 +10,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
+import javafx.scene.text.Font;
 
 public class GridConstructor {
 
@@ -21,6 +22,7 @@ public class GridConstructor {
 	
 	private static ArrayList<MyRectangle> cells = new ArrayList<MyRectangle>();	//List of the cells, used for making cages
 	private static MyRectangle[][] matrix = new MyRectangle[MathDoku.getN()][MathDoku.getN()];
+	public static Font font = new Font("Arial", 12);
 
 	/**
 	 * Creates the initial grid of stackpanes, but no cages are added
@@ -43,6 +45,7 @@ public class GridConstructor {
 				
 				Label label = new Label(null);
 				label.setMouseTransparent(true);
+				label.setFont(font);
 				cellPos.getChildren().addAll(cell, label);	// Add the cell to the stackpane, the same stackpane might contain a label 
 				
 				matrix[i][j] = cell;
@@ -76,6 +79,7 @@ public class GridConstructor {
 				if((s.getChildren().get(0) == cages.get(i).getCells().get(0)) &&  (s.getChildren().size() < 3)) {
 					Label label = new Label(" " + cages.get(i).getId());	// makes a label with the operation ID of the cage
 					label.setMouseTransparent(true);	// label wont register clicks
+					label.setFont(font);
 					s.getChildren().set(s.getChildren().size()-1, label);
 					StackPane.setAlignment(label, Pos.TOP_LEFT);	// the label goes to top left
 				}
@@ -142,15 +146,15 @@ public class GridConstructor {
 					current.setStroke(Color.BLACK);
 					current.setStrokeWidth(0.25);
 				}
-				System.out.println("Click: Pos: " + (((MyRectangle)event.getTarget()).getCellId())
+				System.out.println("Click Pos: " + (((MyRectangle)event.getTarget()).getCellId())
 						+ "\tValue: " + ((MyRectangle) event.getTarget()).getValue() 
-						+ "\tOldValue: " + ((MyRectangle) event.getTarget()).getOldValue() 
+						+ "\tOld Value: " + ((MyRectangle) event.getTarget()).getOldValue() 
 						+ "\tCageID: " +((MyRectangle)event.getTarget()).getCageId() 
 						+ "\tRow: " +((MyRectangle)event.getTarget()).getRow()
 						+"\tCol: " + ((MyRectangle)event.getTarget()).getCol()
-						+"\tCage : "+((MyRectangle)event.getTarget()).isCageRed()
-						+"\tCol: " + ((MyRectangle) event.getTarget()).isRowRed()
-						+"\tRow: " + ((MyRectangle) event.getTarget()).isColRed());
+						+"\tCageID: "+((MyRectangle)event.getTarget()).isCageRed()
+						+"\tRow red: " + ((MyRectangle) event.getTarget()).isRowRed()
+						+"\tCol red: " + ((MyRectangle) event.getTarget()).isColRed());
 						
 				// Save the cell as current 
 				current = (MyRectangle) event.getTarget();
@@ -200,7 +204,7 @@ public class GridConstructor {
 				if(GameEngine.isFinished(cells)) {
 					Cage[] arr = cages.toArray(new Cage[cages.size()]);
 					if(GameEngine.checkAllCols(matrix) && GameEngine.checkAllRows(matrix) && GameEngine.checkAllCages(arr)) {
-						MathDoku.setText("YAYY!!");
+						Gui.setText("YAYY!!");
 					}
 				}
 			}
@@ -228,6 +232,7 @@ public class GridConstructor {
 				
 				Label label = new Label(number);
 				label.setMouseTransparent(true);	// the label is not going to register mouse clicks
+				label.setFont(font);
 				// when the gridpane has more than two children (rectangle and the initial label("")), remove the last number
 				if(cellPos.getChildren().size() > 2) {
 					cellPos.getChildren().remove(cellPos.getChildren().size()-1);
@@ -271,6 +276,7 @@ public class GridConstructor {
 				current.setStroke(Color.rgb(0, 0, 128, 0.4));
 				current.setStrokeWidth(40);
 				Label label = new Label(updatedValue);
+				label.setFont(font);
 				label.setMouseTransparent(true);
 				if(cellPos.getChildren().size() > 2) {
 					cellPos.getChildren().remove(cellPos.getChildren().size()-1);
@@ -311,7 +317,17 @@ public class GridConstructor {
 				}
 			}
 		}
-		MathDoku.setText("Grid has not been completed!");
+		Gui.setText("Grid has not been completed!");
+	}
+	
+	public void setFont(Font font) {
+		this.font = font;
+		for(StackPane cellPos : cellsPos) {
+			for(int i=1; i<cellPos.getChildren().size(); i++) {
+				Label label = (Label) cellPos.getChildren().get(i);
+				label.setFont(font);
+			}
+		}
 	}
 	
 }

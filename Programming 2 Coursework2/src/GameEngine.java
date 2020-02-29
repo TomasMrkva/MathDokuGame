@@ -170,11 +170,11 @@ public class GameEngine {
 	public static boolean isFinished(ArrayList<MyRectangle> cells) {
 		for (MyRectangle r : cells) {
 			if (r.getValue() == null) {
-				MathDoku.setText("Grid has not been completed!");
+				Gui.setText("Grid has not been completed!");
 				return false;
 			}
 		}
-		MathDoku.setText("Grid is full but not correct!");
+		Gui.setText("Grid is full but not correct!");
 		return true;
 	}
 
@@ -258,18 +258,19 @@ public class GameEngine {
 				break;
 
 			case '÷':
-				Integer[] valuesDiv = new Integer[cage.getCells().size()];
+				Double[] valuesDiv = new Double[cage.getCells().size()];
 
 				for (int i = 0; i < cage.getCells().size(); i++) {
-					valuesDiv[i] = Integer.valueOf(cage.getCells().get(i).getValue());
+					valuesDiv[i] = Double.valueOf(cage.getCells().get(i).getValue());
 				}
 				Arrays.sort(valuesDiv, Collections.reverseOrder());
-				int amountDiv = valuesDiv[0];
+				double amountDiv = valuesDiv[0];
 
 				for (int i = 1; i < valuesDiv.length; i++) {
 					amountDiv = amountDiv / valuesDiv[i];
 				}
-				if (amountDiv != cage.getResult())
+
+				if (amountDiv != cage.getResult() || amountDiv % 1 != 0)
 					return false;
 				break;
 
