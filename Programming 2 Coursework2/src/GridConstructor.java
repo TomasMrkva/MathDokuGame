@@ -19,9 +19,10 @@ public class GridConstructor {
 	private ArrayList<StackPane> cellsPos = new ArrayList<StackPane>();
 	private  ArrayList<Cage> cages = new ArrayList<Cage>();
 	private MyRectangle current;	// The pointer the current cell in the grid
+	private ArrayList<MyRectangle> cells = new ArrayList<MyRectangle>();	//List of the cells, used for making cages
+	private MyRectangle[][] matrix;
+	private int N;
 	
-	private static ArrayList<MyRectangle> cells = new ArrayList<MyRectangle>();	//List of the cells, used for making cages
-	private static MyRectangle[][] matrix = new MyRectangle[MathDoku.getN()][MathDoku.getN()];
 	public static Font font = new Font("Arial", 12);
 
 	/**
@@ -30,6 +31,9 @@ public class GridConstructor {
 	 * @param width, the width of each cell
 	 */
 	public GridConstructor(int N, double width) {
+		this.N = N;
+		matrix = new MyRectangle[N][N];
+		
 		int counter = 0;
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
@@ -128,7 +132,7 @@ public class GridConstructor {
 		return cells.get(pos);
 	}
 	
-	public static ArrayList<MyRectangle> getCells(){
+	public ArrayList<MyRectangle> getCells(){
 		return cells;
 	}
 	
@@ -186,7 +190,6 @@ public class GridConstructor {
 		grid.setOnKeyTyped(new EventHandler<KeyEvent>() {
 			public void handle(KeyEvent event) {
 				try {
-					int N = MathDoku.getN();
 					if (Character.isDigit(event.getCharacter().toCharArray()[0])) {
 						int enteredNum = Integer.valueOf(event.getCharacter());
 						if(enteredNum <= N && enteredNum > 0) {
@@ -204,7 +207,7 @@ public class GridConstructor {
 				if(GameEngine.isFinished(cells)) {
 					Cage[] arr = cages.toArray(new Cage[cages.size()]);
 					if(GameEngine.checkAllCols(matrix) && GameEngine.checkAllRows(matrix) && GameEngine.checkAllCages(arr)) {
-						Gui.setText("YAYY!!");
+						Gui.setText("Congratulations, you solved the game !!!");
 					}
 				}
 			}
@@ -321,7 +324,7 @@ public class GridConstructor {
 	}
 	
 	public void setFont(Font font) {
-		this.font = font;
+		GridConstructor.font = font;
 		for(StackPane cellPos : cellsPos) {
 			for(int i=1; i<cellPos.getChildren().size(); i++) {
 				Label label = (Label) cellPos.getChildren().get(i);

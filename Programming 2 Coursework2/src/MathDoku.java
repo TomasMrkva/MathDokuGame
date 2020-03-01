@@ -1,12 +1,15 @@
 import java.util.ArrayList;
 
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.NumberBinding;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -18,20 +21,22 @@ import javafx.stage.Stage;
 public class MathDoku extends Application {
 
 	private ArrayList<Cage> cages = new ArrayList<Cage>();
-	private static int N=6;
+	private int N=6;
 //	private static Label label;
-	private static double width = 80;
+	public static double width = 80;
+	public static Stage pStage;
+	public static Scene pScene;
 	
 	public static void main(String[] args) {
 		launch(args);
 	}
 	
-//	public static void setText(String text) {
-//		label.setText(text);
-//	}
-//	
-	public static int getN() {
-		return N;
+	public static Scene getScene() {
+		return pScene;
+	}
+	
+	public static Stage getStage() {
+		return pStage;
 	}
 	
 	public static double getWidth() {
@@ -40,12 +45,12 @@ public class MathDoku extends Application {
 	
 	@Override
 	public void start(Stage stage) {
-		stage.setTitle("Mathdoku");
+		pStage = stage;
 		
+		stage.setTitle("Mathdoku");
 		BorderPane root = new BorderPane();
 //		label = new Label("Grid has not been completed!");
 //		label.setPadding(new Insets(10));
-		
 		
 		GridConstructor grid = new GridConstructor(N, width);
 //		gridConstructor.makeGrid(N, width);
@@ -58,17 +63,31 @@ public class MathDoku extends Application {
 		
 		Gui gui = new Gui(grid);
 		
-		root.setTop(gui.loadGame());
-		root.setLeft(gui.menu());
-		root.setRight(gui.numbers(N));
-		root.setBottom(gui.bottomSide());
+        StackPane pane = new StackPane();
+        pane.getChildren().add(gameGrid);
+        pane.setPickOnBounds(false);
+        
+        root.setCenter(pane);
+        root.setTop(gui.loadGame());
+        root.setLeft(gui.menu());
+        root.setRight(gui.numbers(N));
+        root.setBottom(gui.bottomSide());
+        
 //		BorderPane.setAlignment(label, Pos.CENTER);
-		root.setCenter(gameGrid);
+		NumberBinding maxScale = Bindings.min(pane.widthProperty().divide((N*0.83)*100),
+				pane.heightProperty().divide((N*0.83)*100));
+		pane.scaleXProperty().bind(maxScale);
+		pane.scaleYProperty().bind(maxScale);
+		
+//		pane.setStyle("-fx-border-color: blue");
+//		pane.setMouseTransparent(true);
+		
 		
 		stage.setMinHeight(width * N + 120);
 		stage.setMinWidth(width * N + 140);
+		
 		Scene scene = new Scene(root);
-	  
+		pScene = scene;
 		stage.setScene(scene);
 		stage.show();
 	}

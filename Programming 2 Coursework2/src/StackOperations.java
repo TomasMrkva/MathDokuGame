@@ -24,4 +24,9 @@ public class StackOperations {
 		return StackOperations.stackRedo.pop();
 	}
 	
+	public static void clear() {
+		stackRedo.clear();
+		stackUndo.clear();
+	}
+	
 }
