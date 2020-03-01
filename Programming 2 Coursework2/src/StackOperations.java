@@ -27,6 +27,8 @@ public class StackOperations {
 	public static void clear() {
 		stackRedo.clear();
 		stackUndo.clear();
+		Gui.undo.setDisable(true);
+		Gui.redo.setDisable(true);
 	}
 	
 }

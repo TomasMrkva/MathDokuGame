@@ -48,10 +48,6 @@ public class Gui {
 		this.grid = grid;
 	}
 	
-//	public static void setGrid(GridConstructor grid) {
-//		Gui.grid = grid;
-//	}
-	
 	public static void setText(String text) {
 		label.setText(text);
 	}
@@ -86,10 +82,6 @@ public class Gui {
 	}
 	
 	public VBox menu() {
-//		Button font = new Button("Font");
-//		font.setPrefWidth(50);
-//		fontMaker(font);
-		
 		Button clear = new Button("Clear");
 		clearClick(clear);
 		clear.setPrefWidth(50);
@@ -184,59 +176,77 @@ public class Gui {
 			ArrayList<Cage> cages = new ArrayList<Cage>();
 			ArrayList<String[]> lines = new ArrayList<String[]>();
 			
+			/**
+			 * Creates a new popup gui
+			 */
 			@Override
 			public void handle(ActionEvent event) {
-				System.out.println("hello");
+//				System.out.println("hello");
 				BorderPane pane = new BorderPane();
 				pane.setPadding(new Insets(10));
+				
 				TextArea area = new TextArea();
 				Button choose = new Button("Choose File");
 				choose.setPrefWidth(85);
+				Button cancel = new Button("Cancel");
+				cancel.setPrefWidth(85);
 				Button submit = new Button("Submit");
 				submit.setPrefWidth(85);
-				HBox buttons = new HBox(80);
+				
+				Label label = new Label("Specify your mathdoku here:");
+				label.setPadding(new Insets(0, 0, 10, 0));
+				
+				HBox buttons = new HBox(10);
 				buttons.setPadding(new Insets(10, 0, 10, 0));
 				buttons.setAlignment(Pos.CENTER);
-				buttons.getChildren().addAll(choose, submit);
+				buttons.getChildren().addAll(choose, submit, cancel);
 				
+				pane.setTop(label);
 				pane.setCenter(area);
 				pane.setBottom(buttons);
-
-                Scene secondScene = new Scene(pane, 300, 400);
-                
+				BorderPane.setAlignment(label, Pos.BOTTOM_CENTER);
+				
+                Scene secondScene = new Scene(pane, 300, 350);
                 Stage newWindow = new Stage();
                 newWindow.setTitle("Load a new game");
                 newWindow.setScene(secondScene);
                 newWindow.initModality(Modality.APPLICATION_MODAL);
+                newWindow.setMinHeight(270);
+                newWindow.setMinWidth(250);
+                
                 newWindow.show();
                 
+                /**
+                 * Submit button handling
+                 */
 				submit.setOnAction(new EventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {
+						
 						int N = (int) Math.sqrt(cells);
+						
 						if(maxvalue != cells) {
 							System.err.println("wrong format of the text");
 						}
 						else {
-							((BorderPane) MathDoku.getScene().getRoot()).setCenter(null);
+							System.out.println(area.getText());
 							grid = new GridConstructor(N, MathDoku.getWidth());
-							
 							ArrayList<MyRectangle> cells = new ArrayList<MyRectangle>();
-						
 							for(String[] line : lines) {
 								for(int i=1; i < line.length; i++) {
 						    		 cells.add(grid.getCell(Integer.valueOf(line[i])));
 								}
 								MyRectangle[] cellsArray = cells.toArray(new MyRectangle[cells.size()]);
 								cells.clear();
-								System.out.println(line[0] + cells.size());
+//								System.out.println(line[0] + cells.size());
 //								System.out.println(cells.size());
 								cages.add(new Cage(line[0], cellsArray));
 							}
-							
 							grid.addCages(cages);
 							grid.makeLabels();
 							grid.makeBorder(MathDoku.width, N, 2, Color.TOMATO);
+							
+							((BorderPane) MathDoku.getScene().getRoot()).setCenter(null);
 							
 							Group gameGrid = grid.getGrid();							
 					        StackPane pane = new StackPane();
@@ -254,34 +264,30 @@ public class Gui {
 							
 							StackOperations.clear();
 							Gui.setText("Grid has not been completed!");
-							
 						}
 						newWindow.close();
 					}
 				});
 				
+				/**
+				 * Choose from a text file handling
+				 */
 				choose.setOnAction(new EventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {
 						
 						int numberOfCells = 0;
 						FileChooser fileChooser = new FileChooser();
-						
-						area.setDisable(true);
 						fileChooser.setTitle("Open File to Load");
-						ExtensionFilter txtFilter = new ExtensionFilter("Text files",
-								"*.txt");
+						ExtensionFilter txtFilter = new ExtensionFilter("Text files","*.txt");
 						fileChooser.getExtensionFilters().add(txtFilter);
 
 						File file = fileChooser.showOpenDialog(newWindow);
-
 						if (file != null && file.exists() && file.canRead()) {
 							try {
-								BufferedReader buffered = new BufferedReader(
-										new FileReader(file));
+								BufferedReader buffered = new BufferedReader(new FileReader(file));
 								String line;
 								while ((line = buffered.readLine()) != null) {
-									
 									area.appendText(line + "\n");
 									String[] parts = line.split("[ ,]");
 									lines.add(parts);
@@ -292,10 +298,9 @@ public class Gui {
 										numberOfCells++;
 									}
 									cells = numberOfCells;
-									System.out.println(maxvalue + " " + numberOfCells);
-//									cages.add(new Cage(parts[0], grid.getCell(Integer.valueOf(parts[1])), 
-//											grid.getCell(Integer.valueOf(parts[1]))));
+//									System.out.println(maxvalue + " " + numberOfCells);
 								}
+								area.setEditable(false);
 								buffered.close();
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -305,7 +310,7 @@ public class Gui {
 					}
 					
 				});
- 
+				cancel.setOnAction(e -> newWindow.close());
  			}
 		});
 	}
@@ -405,13 +410,11 @@ public class Gui {
 	
 	public void fontMaker(Slider slider) {
 		slider.valueProperty().addListener(new ChangeListener<Number>() {
-
+			
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				Font font = new Font("Arial", newValue.intValue());
 				grid.setFont(font);
-				System.out.println("font changed");
-
 			}
 
 		});

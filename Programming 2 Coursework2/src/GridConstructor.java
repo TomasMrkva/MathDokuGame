@@ -326,7 +326,7 @@ public class GridConstructor {
 	public void setFont(Font font) {
 		GridConstructor.font = font;
 		for(StackPane cellPos : cellsPos) {
-			for(int i=1; i<cellPos.getChildren().size(); i++) {
+			for(int i = 1; i < cellPos.getChildren().size(); i++) {
 				Label label = (Label) cellPos.getChildren().get(i);
 				label.setFont(font);
 			}
