@@ -11,11 +11,14 @@ public class MyRectangle extends Rectangle {
 	private boolean rowRed;
 	private boolean cageRed;
 	private String oldValue;
+	private int solution;
+	private Cage cage;
 	
 	public MyRectangle() {}
 	
 	public MyRectangle(double width, double height) {
 		super(width, height);
+		solution = 0;
 	}
 	
 	public void setCellId(int cellId){
@@ -90,4 +93,19 @@ public class MyRectangle extends Rectangle {
 		return cageRed;
 	}
 	
+	public void setSolution(int solution) {
+		this.solution = solution;
+	}
+	
+	public int getSolution() {
+		return solution;
+	}
+	
+	public void setCage(Cage cage) {
+		this.cage = cage;
+	}
+	
+	public Cage getCage() {
+		return cage;
+	}
 }

@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
 public class GameEngine {
@@ -119,7 +120,7 @@ public class GameEngine {
 	public static void colorCages(ArrayList<MyRectangle> cells, ArrayList<Cage> cages) {
 		boolean notFullCage = false;
 		ArrayList<Cage> fullCages = new ArrayList<Cage>();
-
+		
 		for (Cage cage : cages) {
 			for (MyRectangle cell : cage.getCells()) {
 				if (cell.getValue() == null) {
@@ -273,6 +274,13 @@ public class GameEngine {
 				if (amountDiv != cage.getResult() || amountDiv % 1 != 0)
 					return false;
 				break;
+				
+			case ' ':
+				String val = cage.getCells().get(0).getValue();
+				if(Integer.valueOf(val) != cage.getResult()) {
+					return false;
+				}
+				break;
 
 			default:
 				throw new IllegalArgumentException("Unexpected value: " + cage.getOPSymbol());
@@ -280,5 +288,149 @@ public class GameEngine {
 		}
 		return true;
 	}
+	
+	public static boolean checkCage(Cage cage) {
+		int total;
+			switch (cage.getOPSymbol()) {
+			case '+':
+				total = 0;
+				for (MyRectangle cell : cage.getCells()) {
+					total = total + cell.getSolution();
+				}
+				if (total != cage.getResult())
+					return false;
+				break;
 
+			case '-':
+				Integer[] valuesSub = new Integer[cage.getCells().size()];
+
+				for (int i = 0; i < cage.getCells().size(); i++) {
+					valuesSub[i] = cage.getCells().get(i).getSolution();
+				}
+
+				Arrays.sort(valuesSub, Collections.reverseOrder());
+				int amountSub = valuesSub[0];
+
+				for (int i = 1; i < valuesSub.length; i++) {
+					amountSub = amountSub - valuesSub[i];
+				}
+				if (amountSub != cage.getResult())
+					return false;
+				break;
+
+			case 'x':
+				total = 1;
+				for (MyRectangle cell : cage.getCells()) {
+					total = total * cell.getSolution();
+				}
+				if (total != cage.getResult())
+					return false;
+				break;
+
+			case '÷':
+				Double[] valuesDiv = new Double[cage.getCells().size()];
+
+				for (int i = 0; i < cage.getCells().size(); i++) {
+					valuesDiv[i] = Double.valueOf(cage.getCells().get(i).getSolution());
+				}
+				Arrays.sort(valuesDiv, Collections.reverseOrder());
+				double amountDiv = valuesDiv[0];
+
+				for (int i = 1; i < valuesDiv.length; i++) {
+					amountDiv = amountDiv / valuesDiv[i];
+				}
+
+				if (amountDiv != cage.getResult() || amountDiv % 1 != 0)
+					return false;
+				break;
+				
+			case ' ':
+				int val = cage.getCells().get(0).getSolution();
+				if(val != cage.getResult()) {
+					return false;
+				}
+				break;
+
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + cage.getOPSymbol());
+			}
+		return true;
+	}
+	
+	public static boolean isRowCorrect(ArrayList<MyRectangle> cells, MyRectangle current) {
+		String row = current.getRow();
+		Set<Integer> set = new HashSet<Integer>();
+		
+		for (MyRectangle cell : cells) {
+			if (cell.getRow().equals(row)) {
+				if (cell.getSolution() != 0) {
+					if (set.add(cell.getSolution()) == false) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
+	public static boolean isColCorrect(ArrayList<MyRectangle> cells, MyRectangle current) {
+		String col = current.getCol();
+		Set<Integer> set = new HashSet<Integer>();
+
+		for (MyRectangle cell : cells) {
+			if (cell.getCol().equals(col)) {
+				if (cell.getSolution() != 0) {
+					if (set.add(cell.getSolution()) == false) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
+	
+	public static void solve(ArrayList<MyRectangle> cells, int noCells) {
+		int position = 0;
+		double limit = Math.sqrt(noCells);
+		boolean backtrack = false;
+		while(position != cells.size()) {
+			System.out.println(position);
+			MyRectangle curr = cells.get(position);
+			if(curr.getSolution() == (int) limit) {
+				backtrack = true;
+			}
+			else {
+				curr.setSolution(curr.getSolution()+1);
+			}
+			while(curr.getSolution() <= limit) {
+				if(backtrack == true) break;
+				else if( GameEngine.isRowCorrect(cells, curr) && GameEngine.isColCorrect(cells, curr) ) {
+					if(!curr.getCage().isFull()) {
+						position++;
+						backtrack = false;
+						break;
+					} else {
+						if( GameEngine.checkCage(curr.getCage()) == true ) {
+							position++;
+							backtrack = false;
+							break;
+						}
+					}
+				}
+				if(curr.getSolution() == limit) {
+					backtrack = true;
+					break;
+				}
+				else
+					curr.setSolution(curr.getSolution()+1);
+			}
+			if(backtrack) {
+				curr.setSolution(0);
+				position--;	
+			}
+			backtrack = false;
+		}
+	}
+	
 }

@@ -21,7 +21,13 @@ public class Cage {
 		this.cageId = result;
 		
 		String opCode = result.replaceAll("[0-9]", "");
-		this.opCode = opCode.charAt(0);
+		if(opCode.isEmpty() && (opCode.charAt(0) != '+' || opCode.charAt(0) != '-' || opCode.charAt(0) != 'x' || opCode.charAt(0) != '÷' )) {
+			System.err.println(opCode);
+			this.opCode = ' ';
+		}
+		else{
+			this.opCode = opCode.charAt(0);
+		}
 		
 		String number = result.replaceAll("\\D+", "");
 		this.result = Integer.valueOf(number);
@@ -39,12 +45,21 @@ public class Cage {
 			cell.setCageId(cageId);
 			cells.add(cell);
 		}
-		for(int i=0; i < this.cells.size()-1; i++) {
-			if(i == 0) 
-				this.cage = Shape.union(cells.get(i), cells.get(i+1));
-			else {
-				this.cage = Shape.union(cage, cells.get(i+1));
+		if(r.length > 1) {
+			for(int i=0; i < this.cells.size()-1; i++) {
+				if(i == 0) 
+					this.cage = Shape.union(cells.get(i), cells.get(i+1));
+				else {
+					this.cage = Shape.union(cage, cells.get(i+1));
+				}
 			}
+			for(MyRectangle cell : r) {
+				cell.setCage(this);
+			}
+		}
+		else if(r.length == 1){
+			this.cage = Shape.union(cells.get(0), cells.get(0));
+			r[0].setCage(this);
 		}
 		cage.setStrokeWidth(3);
 		cage.setStroke(Color.BLACK);
@@ -72,5 +87,13 @@ public class Cage {
 		return result;
 	}
 	
+	public boolean isFull() {
+		for(MyRectangle r : cells) {
+			if(r.getSolution() == 0) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 }

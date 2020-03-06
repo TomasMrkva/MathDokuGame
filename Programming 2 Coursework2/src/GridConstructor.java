@@ -158,7 +158,9 @@ public class GridConstructor {
 						+"\tCol: " + ((MyRectangle)event.getTarget()).getCol()
 						+"\tCageID: "+((MyRectangle)event.getTarget()).isCageRed()
 						+"\tRow red: " + ((MyRectangle) event.getTarget()).isRowRed()
-						+"\tCol red: " + ((MyRectangle) event.getTarget()).isColRed());
+						+"\tCol red: " + ((MyRectangle) event.getTarget()).isColRed()
+						+"\tCage: " + ((MyRectangle) event.getTarget()).getCage().getId()
+						+"\tSolValue: "+ ((MyRectangle) event.getTarget()).getSolution());
 						
 				// Save the cell as current 
 				current = (MyRectangle) event.getTarget();
@@ -205,13 +207,25 @@ public class GridConstructor {
 					} else System.err.println("User entered a wrong key!");
 				}
 				if(GameEngine.isFinished(cells)) {
-					Cage[] arr = cages.toArray(new Cage[cages.size()]);
-					if(GameEngine.checkAllCols(matrix) && GameEngine.checkAllRows(matrix) && GameEngine.checkAllCages(arr)) {
+//					Cage[] arr = cages.toArray(new Cage[cages.size()]);
+//					if(GameEngine.checkAllCols(matrix) && GameEngine.checkAllRows(matrix) && GameEngine.checkAllCages(arr)) {
+//						Gui.setText("Congratulations, you solved the game !!!");
+//					}
+					if(checkWin() == true) {
 						Gui.setText("Congratulations, you solved the game !!!");
 					}
 				}
 			}
 		});
+	}
+	
+	public boolean checkWin() {
+		Cage[] arr = cages.toArray(new Cage[cages.size()]);
+		if(GameEngine.checkAllCols(matrix) && GameEngine.checkAllRows(matrix) && GameEngine.checkAllCages(arr)) {
+			Gui.setText("Congratulations, you solved the game !!!");
+			return true;
+		}
+		else return false;
 	}
 	
 	/**
@@ -248,8 +262,29 @@ public class GridConstructor {
 				
 				if(Gui.mistakes == true) {
 					checkCurrentMistakes(current);
-					checkAllMistakes();
+					colorMistakes();
 				}
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * Method used for displaying solutions
+	 * @param 
+	 */
+	public void displaySolved(MyRectangle r) {
+		for(StackPane s : cellsPos) {
+			if(((MyRectangle) s.getChildren().get(0)).getCellId() == r.getCellId()) {
+				String number = String.valueOf(r.getSolution());
+				Label label = new Label(number);
+				label.setMouseTransparent(true);
+				label.setFont(font);
+				if(s.getChildren().size() > 2) {
+					s.getChildren().remove(s.getChildren().size()-1);
+				}
+				s.getChildren().add(label);
+				r.setValue(number);
 				break;
 			}
 		}
@@ -288,14 +323,14 @@ public class GridConstructor {
 				GameEngine.isFinished(cells);
 				if(Gui.mistakes == true) {
 					checkCurrentMistakes(current);
-					checkAllMistakes();
+					colorMistakes();
 				}
 				break;
 			}
 		}
 	}
 	
-	public void checkAllMistakes() {
+	public void colorMistakes() {
 		GameEngine.colorCols(matrix, cells);
 		GameEngine.colorRows(matrix, cells);
 		GameEngine.colorCages(cells, cages);

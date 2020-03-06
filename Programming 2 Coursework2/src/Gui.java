@@ -75,6 +75,9 @@ public class Gui {
 	
 	public VBox menu() {
 		Button clear = new Button("Clear");
+		Button solve = new Button("Solve");
+		solveClick(solve);
+		solve.setPrefWidth(50);
 		clearClick(clear);
 		clear.setPrefWidth(50);
 		undo = new Button();
@@ -91,7 +94,7 @@ public class Gui {
 		
 		VBox menu = new VBox(5);
 		menu.setPadding(new Insets(10));
-		menu.getChildren().addAll(clear, undo, redo);
+		menu.getChildren().addAll(solve,clear, undo, redo);
 		menu.setAlignment(Pos.CENTER);
 		
 		menu.setPadding(new Insets(MathDoku.getWidth()*2.5, 10, MathDoku.getWidth()*2.5, 10));
@@ -178,7 +181,7 @@ public class Gui {
 				grid.requestFocus();
 				if(newValue == true) {
 					mistakes = true;
-					grid.checkAllMistakes();
+					grid.colorMistakes();
 				} else {
 					for(MyRectangle cell : grid.getCells()) {
 						cell.setFill(Color.TRANSPARENT);
@@ -253,10 +256,29 @@ public class Gui {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				Font font = new Font("Arial", newValue.intValue());
-				System.out.println("works");
+//				System.out.println("works");
 				grid.setFont(font);
 			}
 
+		});
+	}
+	
+	public void solveClick(Button solveButton) {
+		solveButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				for(MyRectangle cell : grid.getCells()) {
+					cell.setSolution(0);
+				}
+				GameEngine.solve(grid.getCells(), grid.getCells().size());
+				
+				for(MyRectangle r : grid.getCells()) {
+					grid.displaySolved(r);
+				}
+				if(grid.checkWin() == true) {
+					Gui.setText("Congratulations, you solved the game !!!");
+				}
+			}
 		});
 	}
 	
