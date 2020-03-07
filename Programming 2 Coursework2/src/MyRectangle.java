@@ -1,6 +1,6 @@
 import javafx.scene.shape.Rectangle;
 
-public class MyRectangle extends Rectangle {
+public class MyRectangle extends Rectangle implements Comparable<MyRectangle>{
 	
 	private int cellId;
 	private String cageId;
@@ -107,6 +107,13 @@ public class MyRectangle extends Rectangle {
 	
 	public int getSolution() {
 		return solution;
+	}
+
+	@Override
+	public int compareTo(MyRectangle r) {
+		if(this.cellId > r.getCellId()) return 1;
+		else if(this.cellId == r.getCellId()) return 0;
+		return -1;
 	}
 	
 }
