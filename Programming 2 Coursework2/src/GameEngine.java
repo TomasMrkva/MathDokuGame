@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
 public class GameEngine {
@@ -49,29 +48,12 @@ public class GameEngine {
 			unHighlight(columnCells, "col");
 	}
 
-	public static void checkCage(ArrayList<MyRectangle> cells, MyRectangle current, ArrayList<Cage> cages) {
-		boolean notFullCage = false;
-		Cage currentCage = null;
-		ArrayList<MyRectangle> cageCells = new ArrayList<MyRectangle>();
-		for (Cage cage : cages) {
-			for (MyRectangle cell : cage.getCells()) {
-				if(current == cell) {
-					currentCage = cage;
-					break;
-				}
-			}
+	public static void checkCage(MyRectangle current) {
+		if (!current.getCage().isFull()) {
+			unHighlight(current.getCage().getCells(),"cage");
 		}
-		for(MyRectangle cell : currentCage.getCells()) {
-			cageCells.add(cell);
-			if(cell.getValue() == null) {
-				notFullCage = true;
-			}
-		}
-		if (notFullCage == true) {
-			unHighlight(cageCells,"cage");
-		}
-		else if(GameEngine.checkAllCages(currentCage) == true) {
-			unHighlight(cageCells,"cage");
+		else if(GameEngine.checkAllCages(false, current.getCage()) == true) {
+			unHighlight(current.getCage().getCells(),"cage");
 		}
 	}
 	
@@ -134,7 +116,7 @@ public class GameEngine {
 		}
 
 		for (Cage cage : fullCages) {
-			if (GameEngine.checkAllCages(cage) == false) {
+			if (GameEngine.checkAllCages(false, cage) == false) {
 				for (MyRectangle cell : cage.getCells()) {
 					cell.setFill(Color.rgb(255, 0, 0, 0.4));
 					cell.setCageRed(true);
@@ -146,7 +128,6 @@ public class GameEngine {
 
 	public static void unHighlight(ArrayList<MyRectangle> cells, String value) {
 		for (MyRectangle cell : cells) {
-//			System.out.println("Col: "+cell.isColRed()+" Row: "+cell.isRowRed()+"Cage: "+cell.isCageRed());
 			if (value.equals("row")) {
 				cell.setRowRed(false);
 				if (!cell.isColRed() && !cell.isCageRed()) {
@@ -217,16 +198,17 @@ public class GameEngine {
 		return true;
 	}
 
-
-	public static boolean checkAllCages(Cage... cages) {
+	public static boolean checkAllCages(boolean solutionsMode, Cage... cages) {
 		int total;
 		for (Cage cage : cages) {
-
 			switch (cage.getOPSymbol()) {
 			case '+':
 				total = 0;
 				for (MyRectangle cell : cage.getCells()) {
-					total = total + Integer.valueOf(cell.getValue());
+					if(solutionsMode)
+						total = total + cell.getSolution();
+					else
+						total = total + Integer.valueOf(cell.getValue());
 				}
 				if (total != cage.getResult())
 					return false;
@@ -234,11 +216,12 @@ public class GameEngine {
 
 			case '-':
 				Integer[] valuesSub = new Integer[cage.getCells().size()];
-
 				for (int i = 0; i < cage.getCells().size(); i++) {
-					valuesSub[i] = Integer.valueOf(cage.getCells().get(i).getValue());
+					if (solutionsMode) 
+						valuesSub[i] = cage.getCells().get(i).getSolution();
+					else 
+						valuesSub[i] = Integer.valueOf(cage.getCells().get(i).getValue());
 				}
-
 				Arrays.sort(valuesSub, Collections.reverseOrder());
 				int amountSub = valuesSub[0];
 
@@ -252,7 +235,10 @@ public class GameEngine {
 			case 'x':
 				total = 1;
 				for (MyRectangle cell : cage.getCells()) {
-					total = total * Integer.valueOf(cell.getValue());
+					if(solutionsMode)
+						total = total * cell.getSolution();
+					else
+						total = total * Integer.valueOf(cell.getValue());
 				}
 				if (total != cage.getResult())
 					return false;
@@ -260,9 +246,11 @@ public class GameEngine {
 
 			case '÷':
 				Double[] valuesDiv = new Double[cage.getCells().size()];
-
 				for (int i = 0; i < cage.getCells().size(); i++) {
-					valuesDiv[i] = Double.valueOf(cage.getCells().get(i).getValue());
+					if(solutionsMode)
+						valuesDiv[i] = Double.valueOf(cage.getCells().get(i).getSolution());
+					else
+						valuesDiv[i] = Double.valueOf(cage.getCells().get(i).getValue());
 				}
 				Arrays.sort(valuesDiv, Collections.reverseOrder());
 				double amountDiv = valuesDiv[0];
@@ -270,7 +258,6 @@ public class GameEngine {
 				for (int i = 1; i < valuesDiv.length; i++) {
 					amountDiv = amountDiv / valuesDiv[i];
 				}
-
 				if (amountDiv != cage.getResult() || amountDiv % 1 != 0)
 					return false;
 				break;
@@ -286,74 +273,6 @@ public class GameEngine {
 				throw new IllegalArgumentException("Unexpected value: " + cage.getOPSymbol());
 			}
 		}
-		return true;
-	}
-	
-	public static boolean checkCage(Cage cage) {
-		int total;
-			switch (cage.getOPSymbol()) {
-			case '+':
-				total = 0;
-				for (MyRectangle cell : cage.getCells()) {
-					total = total + cell.getSolution();
-				}
-				if (total != cage.getResult())
-					return false;
-				break;
-
-			case '-':
-				Integer[] valuesSub = new Integer[cage.getCells().size()];
-
-				for (int i = 0; i < cage.getCells().size(); i++) {
-					valuesSub[i] = cage.getCells().get(i).getSolution();
-				}
-
-				Arrays.sort(valuesSub, Collections.reverseOrder());
-				int amountSub = valuesSub[0];
-
-				for (int i = 1; i < valuesSub.length; i++) {
-					amountSub = amountSub - valuesSub[i];
-				}
-				if (amountSub != cage.getResult())
-					return false;
-				break;
-
-			case 'x':
-				total = 1;
-				for (MyRectangle cell : cage.getCells()) {
-					total = total * cell.getSolution();
-				}
-				if (total != cage.getResult())
-					return false;
-				break;
-
-			case '÷':
-				Double[] valuesDiv = new Double[cage.getCells().size()];
-
-				for (int i = 0; i < cage.getCells().size(); i++) {
-					valuesDiv[i] = Double.valueOf(cage.getCells().get(i).getSolution());
-				}
-				Arrays.sort(valuesDiv, Collections.reverseOrder());
-				double amountDiv = valuesDiv[0];
-
-				for (int i = 1; i < valuesDiv.length; i++) {
-					amountDiv = amountDiv / valuesDiv[i];
-				}
-
-				if (amountDiv != cage.getResult() || amountDiv % 1 != 0)
-					return false;
-				break;
-				
-			case ' ':
-				int val = cage.getCells().get(0).getSolution();
-				if(val != cage.getResult()) {
-					return false;
-				}
-				break;
-
-			default:
-				throw new IllegalArgumentException("Unexpected value: " + cage.getOPSymbol());
-			}
 		return true;
 	}
 	
@@ -389,13 +308,12 @@ public class GameEngine {
 		return true;
 	}
 	
-	
 	public static void solve(ArrayList<MyRectangle> cells, int noCells) {
 		int position = 0;
 		double limit = Math.sqrt(noCells);
 		boolean backtrack = false;
 		while(position != cells.size()) {
-			System.out.println(position);
+//			System.out.println(position);
 			MyRectangle curr = cells.get(position);
 			if(curr.getSolution() == (int) limit) {
 				backtrack = true;
@@ -406,12 +324,12 @@ public class GameEngine {
 			while(curr.getSolution() <= limit) {
 				if(backtrack == true) break;
 				else if( GameEngine.isRowCorrect(cells, curr) && GameEngine.isColCorrect(cells, curr) ) {
-					if(!curr.getCage().isFull()) {
+					if(!curr.getCage().isFullSol()) {
 						position++;
 						backtrack = false;
 						break;
 					} else {
-						if( GameEngine.checkCage(curr.getCage()) == true ) {
+						if( GameEngine.checkAllCages(true, curr.getCage()) == true ) {
 							position++;
 							backtrack = false;
 							break;

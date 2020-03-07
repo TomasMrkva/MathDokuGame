@@ -23,7 +23,7 @@ public class GridConstructor {
 	private MyRectangle[][] matrix;
 	private int N;
 	
-	public static Font font = new Font("Arial", 12);
+	public static Font font = new Font("Arial", 16);
 
 	/**
 	 * Creates the initial grid of stackpanes, but no cages are added
@@ -221,11 +221,12 @@ public class GridConstructor {
 	
 	public boolean checkWin() {
 		Cage[] arr = cages.toArray(new Cage[cages.size()]);
-		if(GameEngine.checkAllCols(matrix) && GameEngine.checkAllRows(matrix) && GameEngine.checkAllCages(arr)) {
+		if(GameEngine.checkAllCols(matrix) && GameEngine.checkAllRows(matrix) && GameEngine.checkAllCages(false, arr)) {
 			Gui.setText("Congratulations, you solved the game !!!");
 			return true;
 		}
-		else return false;
+		else 
+			return false;
 	}
 	
 	/**
@@ -262,7 +263,7 @@ public class GridConstructor {
 				
 				if(Gui.mistakes == true) {
 					checkCurrentMistakes(current);
-					colorMistakes();
+					colorAllMistakes();
 				}
 				break;
 			}
@@ -299,15 +300,12 @@ public class GridConstructor {
 		}
 		for(StackPane cellPos : cellsPos) {
 			if (((MyRectangle)cellPos.getChildren().get(0)).getCellId() == cell.getCellId()) {
-				
 				current = ((MyRectangle) cellPos.getChildren().get(0));
 				if(undo == true) {
 					updatedValue = cell.getOldValue();
-//					System.out.println(updatedValue);
 				}
 				else {
 					updatedValue = cell.getValue();
-//					System.out.println(updatedValue);
 				}
 				current.setValue(updatedValue);	
 				current.setStrokeType(StrokeType.INSIDE);
@@ -323,21 +321,21 @@ public class GridConstructor {
 				GameEngine.isFinished(cells);
 				if(Gui.mistakes == true) {
 					checkCurrentMistakes(current);
-					colorMistakes();
+					colorAllMistakes();
 				}
 				break;
 			}
 		}
 	}
 	
-	public void colorMistakes() {
+	public void colorAllMistakes() {
 		GameEngine.colorCols(matrix, cells);
 		GameEngine.colorRows(matrix, cells);
 		GameEngine.colorCages(cells, cages);
 	}
 	
 	public void checkCurrentMistakes(MyRectangle current) {
-		GameEngine.checkCage(cells, current, cages);
+		GameEngine.checkCage(current);
 		GameEngine.checkRow(cells, current);
 		GameEngine.checkCol(cells, current);
 	}
@@ -350,6 +348,8 @@ public class GridConstructor {
 			MyRectangle index = ((MyRectangle) cellPos.getChildren().get(0));
 			if(index.getValue() != null) {
 				((MyRectangle) cellPos.getChildren().get(0)).setValue(null);
+				((MyRectangle) cellPos.getChildren().get(0)).setOldValue(null);
+				((MyRectangle) cellPos.getChildren().get(0)).setSolution(0);
 				if(Gui.mistakes == true) {
 					checkCurrentMistakes(index);				
 				}

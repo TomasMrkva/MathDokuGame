@@ -65,6 +65,14 @@ public class MyRectangle extends Rectangle {
 		this.row = row;
 	}
 	
+	public void setCage(Cage cage) {
+		this.cage = cage;
+	}
+	
+	public Cage getCage() {
+		return cage;
+	}
+	
 	public String getRow() {
 		return row;
 	}
@@ -101,11 +109,4 @@ public class MyRectangle extends Rectangle {
 		return solution;
 	}
 	
-	public void setCage(Cage cage) {
-		this.cage = cage;
-	}
-	
-	public Cage getCage() {
-		return cage;
-	}
 }

@@ -66,7 +66,7 @@ public class Gui {
 		del.setPrefWidth(50);
 		numButtonClick(del);
 		numbers.getChildren().add(del);
-		numbers.setPadding(new Insets(MathDoku.getWidth()*1.5, 10, MathDoku.getWidth()*1.5, 10));
+		numbers.setPadding(new Insets(MathDoku.getWidth()*1, 10, MathDoku.getWidth()*1, 10));
 		numbers.setAlignment(Pos.CENTER);
 		VBox.setVgrow(del, Priority.ALWAYS);
 		del.setMaxHeight(Double.MAX_VALUE);
@@ -97,12 +97,14 @@ public class Gui {
 		menu.getChildren().addAll(solve,clear, undo, redo);
 		menu.setAlignment(Pos.CENTER);
 		
-		menu.setPadding(new Insets(MathDoku.getWidth()*2.5, 10, MathDoku.getWidth()*2.5, 10));
+		menu.setPadding(new Insets(MathDoku.getWidth()*2, 10, MathDoku.getWidth()*2, 10));
 		menu.setAlignment(Pos.CENTER);
+		VBox.setVgrow(solve, Priority.ALWAYS);
 		VBox.setVgrow(clear, Priority.ALWAYS);
 		VBox.setVgrow(undo, Priority.ALWAYS);
 		VBox.setVgrow(redo, Priority.ALWAYS);
 		
+		solve.setMaxHeight(Double.MAX_VALUE);
 		clear.setMaxHeight(Double.MAX_VALUE);
 		undo.setMaxHeight(Double.MAX_VALUE);
 		redo.setMaxHeight(Double.MAX_VALUE);
@@ -181,7 +183,7 @@ public class Gui {
 				grid.requestFocus();
 				if(newValue == true) {
 					mistakes = true;
-					grid.colorMistakes();
+					grid.colorAllMistakes();
 				} else {
 					for(MyRectangle cell : grid.getCells()) {
 						cell.setFill(Color.TRANSPARENT);

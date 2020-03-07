@@ -5,7 +5,7 @@ import javafx.scene.shape.Shape;
 
 public class Cage {
 	
-	private ArrayList<MyRectangle> cells = new ArrayList<MyRectangle>();
+	private ArrayList<MyRectangle> cells;
 	private Shape cage;
 	private String cageId;
 	private char opCode;
@@ -19,19 +19,13 @@ public class Cage {
 	public Cage(String result, MyRectangle... r) {
 		cells = new ArrayList<MyRectangle>();
 		this.cageId = result;
-		
 		String opCode = result.replaceAll("[0-9]", "");
-		if(opCode.isEmpty() && (opCode.charAt(0) != '+' || opCode.charAt(0) != '-' || opCode.charAt(0) != 'x' || opCode.charAt(0) != '÷' )) {
-			System.err.println(opCode);
+		if(opCode.isEmpty() && (opCode.charAt(0) != '+' || opCode.charAt(0) != '-' || opCode.charAt(0) != 'x' || opCode.charAt(0) != '÷' ))
 			this.opCode = ' ';
-		}
-		else{
+		 else
 			this.opCode = opCode.charAt(0);
-		}
-		
 		String number = result.replaceAll("\\D+", "");
 		this.result = Integer.valueOf(number);
-		
 		// Calls the method, to make a cell of the inputed cells
 		this.add(r);
 	}
@@ -87,9 +81,18 @@ public class Cage {
 		return result;
 	}
 	
-	public boolean isFull() {
+	public boolean isFullSol() {
 		for(MyRectangle r : cells) {
 			if(r.getSolution() == 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean isFull() {
+		for(MyRectangle r : cells) {
+			if(r.getValue() == null) {
 				return false;
 			}
 		}
