@@ -50,7 +50,7 @@ public class GridConstructor {
 				Label label = new Label(null);
 				label.setMouseTransparent(true);
 				label.setFont(font);
-				cellPos.getChildren().addAll(cell, label);	// Add the cell to the stackpane, the same stackpane might contain a label 
+				cellPos.getChildren().addAll(cell, label);	//Adds the cell to the stackpane, the same stackpane might contain a label 
 				matrix[i][j] = cell;
 				cells.add(cell);
 				cellsPos.add(cellPos);
