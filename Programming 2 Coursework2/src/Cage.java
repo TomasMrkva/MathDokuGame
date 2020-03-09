@@ -22,7 +22,6 @@ public class Cage {
 		String opCode = result.replaceAll("[0-9]", "");
 		if(opCode.isEmpty()) {
 			this.opCode = ' ';
-			System.out.println("works");
 		}
 		 else
 			this.opCode = opCode.charAt(0);

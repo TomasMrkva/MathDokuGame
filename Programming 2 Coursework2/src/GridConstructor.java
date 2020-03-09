@@ -9,6 +9,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
@@ -146,6 +147,7 @@ public class GridConstructor {
 		cellStackPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
+//				System.out.println(event.get
 			// When the current is not empty, set current to previous state, transparent and stroke(0.25)
 				if (current != null) {
 					current.setStroke(Color.BLACK);
@@ -230,8 +232,10 @@ public class GridConstructor {
 	public void displayNumber(String number) {
 		Gui.undo.setDisable(false);
 		Gui.redo.setDisable(true);
-		Gui.hint.setDisable(false);
-		Gui.solve.setDisable(true);
+		if(GameEngine.isSolvabale()) {
+			Gui.hint.setDisable(false);
+			Gui.solve.setDisable(false);			
+		}
 		for(StackPane cellPos : cellsPos) {
 			// finds the cell that user clicked on last
 			if (((MyRectangle)cellPos.getChildren().get(0)).getCellId() == current.getCellId()) {
@@ -276,7 +280,7 @@ public class GridConstructor {
 		for(StackPane s : cellsPos) {
 			if(((MyRectangle) s.getChildren().get(0)).getCellId() == r.getCellId()) {
 				MyRectangle cell = ((MyRectangle) s.getChildren().get(0));
-				StackOperations.stackRedo.clear();
+//				StackOperations.stackRedo.clear();
 				String number = String.valueOf(cell.getSolution());
 				Label label = new Label(number);
 				String value = null;
@@ -285,6 +289,7 @@ public class GridConstructor {
 				label.setStyle("-fx-text-fill: green");
 				Gui.hint.setDisable(true);
 				Gui.solve.setDisable(true);
+				Paint color = cell.getFill();
 				if(s.getChildren().size() > 2) {
 					value = ((Label) s.getChildren().get(s.getChildren().size()-1)).getText();
 					s.getChildren().remove(s.getChildren().size()-1);
@@ -296,7 +301,7 @@ public class GridConstructor {
 				pause.setOnFinished(event -> {
 					label.setText(originalValue);
 					label.setStyle("-fx-text-fsill: black");
-					cell.setFill(Color.TRANSPARENT);
+					cell.setFill(color);
 					Gui.hint.setDisable(false);
 					Gui.solve.setDisable(false);
 				}); 
@@ -318,7 +323,9 @@ public class GridConstructor {
 				current = ((MyRectangle) cellPos.getChildren().get(0));
 				if(undo == true) {
 					updatedValue = cell.getOldValue();
-					Gui.hint.setDisable(false);
+					if(GameEngine.isSolvabale()) {
+						Gui.hint.setDisable(false);						
+					}
 				}
 				else {
 					updatedValue = cell.getValue();

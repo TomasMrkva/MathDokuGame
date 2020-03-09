@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.Optional;
 import java.util.Random;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -31,7 +30,6 @@ public class Gui {
 	protected static Button hint;
 	protected static Button solve;
 	private static Label label = new Label("Grid has not been completed!");
-
 	
 	public Gui(GridConstructor grid) {
 		Gui.grid = grid;
@@ -48,7 +46,6 @@ public class Gui {
 	public static GridConstructor getGrid() {
 		return grid;
 	}
-	
 	
 	public VBox numbers(int N) {
 		VBox numbers = new VBox(5);
@@ -118,8 +115,20 @@ public class Gui {
 		return menu;
 	}
 	
+	public VBox initialSetup() {
+		Button newGame = new Button("New Game");
+		newGame.setPrefSize(100, 40);
+		Button preset = new Button("Play");
+		preset.setPrefSize(100, 40);
+		preset.setOnAction(e -> MathDoku.PresetGrid());
+		newGame.setOnAction(new FileLoaderHandler());
+		VBox vbox = new VBox(10);
+		vbox.getChildren().addAll(newGame, preset);
+		vbox.setAlignment(Pos.CENTER);
+		return vbox;
+	}
+	
 	public HBox loadGame() {
-		
 		Slider slider = new Slider(12, 20, 16);
 		slider.setShowTickMarks(true);
 		slider.setShowTickLabels(true);
@@ -128,26 +137,19 @@ public class Gui {
 		slider.setPadding(new Insets(5, 10, 5, 10));
 		slider.setPrefWidth(100);
 		fontMaker(slider);
-		
 		Button loadFile = new Button();
 		loadFile.setText("Load a new game");
-
 		CheckBox mistakes = new CheckBox("Show Mistakes");
 		mistakerChooser(mistakes);
-
 		loadFile.setOnAction(new FileLoaderHandler());
 		HBox load = new HBox(20);
 		load.setPadding(new Insets(5, 10, 5, 10));
 		load.getChildren().addAll(loadFile, mistakes, slider);
 		load.setAlignment(Pos.CENTER);
 		HBox.setHgrow(loadFile, Priority.ALWAYS);
-
 		HBox.setHgrow(slider, Priority.ALWAYS);
-		
 		slider.setMaxWidth(400);
 		loadFile.setMaxWidth(300);
-	 
-
 		return load;
 	}
 	
@@ -217,8 +219,10 @@ public class Gui {
 					StackOperations.stackRedo.clear();
 					redo.setDisable(true);
 					undo.setDisable(true);
-					hint.setDisable(false);
-					solve.setDisable(false);
+					if(GameEngine.isSolvabale()) {
+						hint.setDisable(false);
+						solve.setDisable(false);
+					}
 				}
 				grid.requestFocus();
 			}
@@ -285,15 +289,14 @@ public class Gui {
 					for(MyRectangle r : grid.getCells()) {
 						grid.displaySolved(r);
 					}
-					grid.checkWin();
 				}
+				grid.requestFocus();
 			}
 		});
 	}
 	
 	public void hintClick(Button hintButton) {
 		hintButton.setOnAction(new EventHandler<ActionEvent>() {
-
 			@Override
 			public void handle(ActionEvent event) {
 				ArrayList<MyRectangle> wrongCells = new ArrayList<MyRectangle>();
@@ -306,6 +309,7 @@ public class Gui {
 					MyRectangle r = wrongCells.get(new Random().nextInt(wrongCells.size()));	
 					grid.displaySolved(r);
 				}
+				grid.requestFocus();
 //				if(wrongCells.size() == 1) {
 //					System.err.println("Grid is completed");
 //					hint.setDisable(true);

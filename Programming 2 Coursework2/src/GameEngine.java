@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 
 public class GameEngine {
 	
+	
 	public static void checkRow(ArrayList<MyRectangle> cells, MyRectangle current) {
 		String row = current.getRow();
 		ArrayList<MyRectangle> rowCells = new ArrayList<MyRectangle>();
@@ -316,6 +317,12 @@ public class GameEngine {
 		return true;
 	}
 	
+	private static boolean isSolvable = false;
+	
+	public static boolean isSolvabale() {
+		return isSolvable;
+	}
+	
 	public static boolean solve(ArrayList<MyRectangle> cells, int noCells) {
 		int position = 0;
 		double limit = Math.sqrt(noCells);
@@ -324,6 +331,7 @@ public class GameEngine {
 //			System.out.println(position);
 			if(position < 0) {
 				System.err.println("Unsolvable");
+				isSolvable = false;
 				return false;
 			}
 			MyRectangle curr = cells.get(position);
@@ -361,6 +369,8 @@ public class GameEngine {
 			}
 			backtrack = false;
 		}
+		System.err.println("Solvable");
+		isSolvable = true;
 		return true;
 	}
 	

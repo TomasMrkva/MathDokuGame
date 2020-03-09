@@ -82,7 +82,8 @@ public class FileLoaderHandler implements EventHandler<ActionEvent> {
 		
 		cancel.setOnAction(e -> {
 			newWindow.close();
-			Gui.getGrid().requestFocus();
+			if(Gui.getGrid()!=null) 
+				Gui.getGrid().requestFocus();
 		});
 	}
 	
@@ -141,10 +142,19 @@ public class FileLoaderHandler implements EventHandler<ActionEvent> {
 			// Splits the text in the TextArea into separate arrays, each array is 
 			// one line
 			for (String line : area.getText().split("\\n")) {
-//				System.out.println(line);
 				String[] parts = line.split("[ ,]");
 				lines.add(parts);
 				//
+				if(!parts[0].matches("[0-9]+[+-x÷]$") && !parts[0].matches("[0-9]+$")) {
+					wrongFormat = true;
+					wrongPart = line;
+					break;
+				}
+				if(line.charAt(line.length()-1) == ',') {
+					wrongFormat = true;
+					wrongPart = line;
+					break;
+				}
 				for (int i=1; i < parts.length; i++) {
 					try {
 						currValue = (Integer.valueOf(parts[i]));
@@ -168,7 +178,12 @@ public class FileLoaderHandler implements EventHandler<ActionEvent> {
 						wrongPart = line.toString();
 						break;
 					}
-					if(parts.length == 2 && (!parts[0].matches("[0-9]*$"))) {
+					if((parts[0].matches("^[0-9]*$")) && parts.length > 2) {
+						wrongFormat = true;
+						wrongPart = line.toString();
+						break;
+					}
+					if(parts.length == 2 && (!parts[0].matches("^[0-9]*$"))) {
 						wrongFormat = true;
 						wrongPart = line.toString();
 						break;
@@ -176,19 +191,20 @@ public class FileLoaderHandler implements EventHandler<ActionEvent> {
 					numberOfCells++;
 				}
 			}
+			int N = (int) Math.sqrt(numberOfCells);
 			// When number of cells mismatch the max value, or there are no cells, or cells are duplicate
 			// the grid wont be created and an error message will appear
 			if(wrongPosition) displayErrorMessage("Cell positions must start from 1! "+ wrongPart);
 			else if(wrongNumber) displayErrorMessage("Wrong number fromat! " + wrongPart);
-			else if(numberOfCells == 0) displayErrorMessage("No cells!" + wrongPart);
 			else if(duplicateCell) displayErrorMessage("Duplicate cells! " + wrongPart);
 			else if(wrongFormat) displayErrorMessage("Wrong format! "+ wrongPart);
 			else if((maxvalue != numberOfCells)) displayErrorMessage("Not enough cells!");
+			else if(numberOfCells == 0) displayErrorMessage("No cells! " + wrongPart);
+			else if((int)Math.pow(N, 2) != numberOfCells) displayErrorMessage("Not a squared grid! Number of cells: " +numberOfCells);
 			
 			else {
 				ArrayList<Cage> cages = new ArrayList<Cage>();	//List of all cages for the grid
 				boolean correctCage = false;
-				int N = (int) Math.sqrt(numberOfCells);
 				grid = new GridConstructor(N, MathDoku.getWidth());
 				ArrayList<MyRectangle> cells = new ArrayList<MyRectangle>();	//Used for saving cells in a line
 				
@@ -207,7 +223,7 @@ public class FileLoaderHandler implements EventHandler<ActionEvent> {
 //					for(MyRectangle cell : cellsArray) {
 //						System.err.println(cell.getCellId());
 //					}
-					System.out.println("******* " + line[0] + "********");
+					System.out.println("******* " + line[0] + " ********");
 					correctCage = isCageCorrect(cellsArray, N);	//Checks whether the cells in a line are neighbors
 					if(correctCage) {
 						//If yes: add cages to the grid
@@ -228,26 +244,43 @@ public class FileLoaderHandler implements EventHandler<ActionEvent> {
 		}
 		
 		public void createGrid(ArrayList<Cage> cages, int N) {
+			
 			((BorderPane) MathDoku.getScene().getRoot()).setCenter(null);
+			((BorderPane) MathDoku.getScene().getRoot()).setTop(null);
+			((BorderPane) MathDoku.getScene().getRoot()).setBottom(null);
+			((BorderPane) MathDoku.getScene().getRoot()).setLeft(null);
+			((BorderPane) MathDoku.getScene().getRoot()).setRight(null);
+			
 			Gui.setGrid(null);
 			grid.addCages(cages);
 			grid.makeLabels();
 			grid.makeBorder(MathDoku.width, N, 2, Color.TOMATO);
+			Gui gui = new Gui(grid);
 			Group gameGrid = grid.getGrid();							
 	        StackPane pane = new StackPane();
 	        pane.getChildren().add(gameGrid);
 	        pane.setPickOnBounds(false);
+			pane.setStyle("-fx-border-color: blue");
+	        
 			((BorderPane) MathDoku.getScene().getRoot()).setCenter(pane);
-			NumberBinding maxScale = Bindings.min(pane.widthProperty().divide((N*0.83)*100),
-					pane.heightProperty().divide((N*0.83)*100));
+			((BorderPane) MathDoku.getScene().getRoot()).setTop(gui.loadGame());
+			((BorderPane) MathDoku.getScene().getRoot()).setLeft(gui.menu());
+			((BorderPane) MathDoku.getScene().getRoot()).setRight(gui.numbers(N));
+			((BorderPane) MathDoku.getScene().getRoot()).setBottom(gui.bottomSide());
+
+			NumberBinding maxScale = Bindings.min(pane.widthProperty().divide((N*0.83)*100), pane.heightProperty().divide((N*0.83)*100));
 			pane.scaleXProperty().bind(maxScale);
 			pane.scaleYProperty().bind(maxScale);
-			MathDoku.getStage().setMinHeight(MathDoku.width * N + 120);
-			MathDoku.getStage().setMinWidth(MathDoku.width * N + 140);
-			Gui.setGrid(grid);
+			MathDoku.getStage().setMinHeight(MathDoku.width * 6 + 120);
+			MathDoku.getStage().setMinWidth(MathDoku.width * 6 + 140);
+			MathDoku.getStage().centerOnScreen();
+//			Gui.setGrid(grid);
 			StackOperations.clear();
 			Gui.setText("Grid has not been completed!");
-			GameEngine.solve(grid.getCells(), grid.getCells().size());
+			if(!GameEngine.solve(grid.getCells(), grid.getCells().size())) {
+				Gui.solve.setDisable(true);
+				Gui.hint.setDisable(true);
+			}
 			grid.requestFocus();
 			newWindow.close();
 		}
@@ -262,10 +295,8 @@ public class FileLoaderHandler implements EventHandler<ActionEvent> {
 			}
 			Optional<ButtonType> result = alert.showAndWait();
 			if (result.isPresent() && result.get() == ButtonType.OK) {
-//				area.clear();
 				area.setEditable(true);
 			}
-//			Gui.getGrid().requestFocus();
 		}
 		
 		/**
