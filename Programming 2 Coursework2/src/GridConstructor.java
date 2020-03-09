@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 
+import javafx.animation.PauseTransition;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -11,6 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
 
 public class GridConstructor {
 
@@ -205,9 +207,6 @@ public class GridConstructor {
 						displayNumber(null);
 					} else System.err.println("User entered a wrong key!");
 				}
-				if(GameEngine.isFinished(cells)) {
-					checkWin();
-				}
 			}
 		});
 	}
@@ -216,6 +215,8 @@ public class GridConstructor {
 		Cage[] arr = cages.toArray(new Cage[cages.size()]);
 		if(GameEngine.checkAllCols(matrix) && GameEngine.checkAllRows(matrix) && GameEngine.checkAllCages(false, arr)) {
 			Gui.setText("Congratulations, you solved the game !!!");
+			Gui.hint.setDisable(true);
+			Gui.solve.setDisable(true);
 			return true;
 		}
 		else 
@@ -229,6 +230,8 @@ public class GridConstructor {
 	public void displayNumber(String number) {
 		Gui.undo.setDisable(false);
 		Gui.redo.setDisable(true);
+		Gui.hint.setDisable(false);
+		Gui.solve.setDisable(true);
 		for(StackPane cellPos : cellsPos) {
 			// finds the cell that user clicked on last
 			if (((MyRectangle)cellPos.getChildren().get(0)).getCellId() == current.getCellId()) {
@@ -253,10 +256,12 @@ public class GridConstructor {
 				// add the label with the current number to the stackpane of the cell
 				((MyRectangle) cellPos.getChildren().get(0)).setValue(number);
 				cellPos.getChildren().add(label);
-				
 				if(Gui.mistakes == true) {
 					checkCurrentMistakes(current);
 					colorAllMistakes();
+				}
+				if(GameEngine.isFinished(cells)) {
+					checkWin();
 				}
 				break;
 			}
@@ -268,40 +273,34 @@ public class GridConstructor {
 	 * @param 
 	 */
 	public void displaySolved(MyRectangle r) {
-		Gui.undo.setDisable(false);
-		Gui.redo.setDisable(true);
-		if (current != null) {
-			current.setStroke(Color.BLACK);
-			current.setStrokeWidth(0.25);
-		}
 		for(StackPane s : cellsPos) {
 			if(((MyRectangle) s.getChildren().get(0)).getCellId() == r.getCellId()) {
-				current = ((MyRectangle) s.getChildren().get(0));
+				MyRectangle cell = ((MyRectangle) s.getChildren().get(0));
 				StackOperations.stackRedo.clear();
-				String number = String.valueOf(r.getSolution());
-				
-				MyRectangle previous = new MyRectangle();
-				previous.setValue(number);
-				previous.setOldValue(((MyRectangle) s.getChildren().get(0)).getValue());
-				previous.setCellId(((MyRectangle) s.getChildren().get(0)).getCellId());
-				StackOperations.push(previous);
-				
+				String number = String.valueOf(cell.getSolution());
 				Label label = new Label(number);
+				String value = null;
 				label.setMouseTransparent(true);
 				label.setFont(font);
 				label.setStyle("-fx-text-fill: green");
+				Gui.hint.setDisable(true);
+				Gui.solve.setDisable(true);
 				if(s.getChildren().size() > 2) {
+					value = ((Label) s.getChildren().get(s.getChildren().size()-1)).getText();
 					s.getChildren().remove(s.getChildren().size()-1);
 				}
+				final String originalValue = value;
 				s.getChildren().add(label);
-				current.setValue(number);
-				current.setStrokeType(StrokeType.INSIDE);
-				current.setStroke(Color.rgb(0, 255, 0, 0.4));
-				current.setStrokeWidth(40);
-				if(Gui.mistakes == true) {
-					checkCurrentMistakes(current);
-					colorAllMistakes();
-				}
+				cell.setFill(Color.rgb(0, 255, 0, 0.3));
+				PauseTransition pause = new PauseTransition(Duration.seconds(1));
+				pause.setOnFinished(event -> {
+					label.setText(originalValue);
+					label.setStyle("-fx-text-fsill: black");
+					cell.setFill(Color.TRANSPARENT);
+					Gui.hint.setDisable(false);
+					Gui.solve.setDisable(false);
+				}); 
+				pause.play();
 				break;
 			}
 		}
@@ -319,6 +318,7 @@ public class GridConstructor {
 				current = ((MyRectangle) cellPos.getChildren().get(0));
 				if(undo == true) {
 					updatedValue = cell.getOldValue();
+					Gui.hint.setDisable(false);
 				}
 				else {
 					updatedValue = cell.getValue();

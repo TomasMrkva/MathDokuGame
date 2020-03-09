@@ -29,6 +29,7 @@ public class Gui {
 	protected static Button redo;
 	protected static Button undo;
 	protected static Button hint;
+	protected static Button solve;
 	private static Label label = new Label("Grid has not been completed!");
 
 	
@@ -78,7 +79,7 @@ public class Gui {
 	
 	public VBox menu() {
 		Button clear = new Button("Clear");
-		Button solve = new Button("Solve");
+		solve = new Button("Solve");
 		hint = new Button("Hint");
 		hint.setPrefWidth(50);
 		hintClick(hint);
@@ -217,6 +218,7 @@ public class Gui {
 					redo.setDisable(true);
 					undo.setDisable(true);
 					hint.setDisable(false);
+					solve.setDisable(false);
 				}
 				grid.requestFocus();
 			}
@@ -300,10 +302,17 @@ public class Gui {
 						wrongCells.add(cell);
 					}
 				}
-				MyRectangle hint = wrongCells.get(new Random().nextInt(wrongCells.size()));	
+				if(!wrongCells.isEmpty()) {
+					MyRectangle r = wrongCells.get(new Random().nextInt(wrongCells.size()));	
+					grid.displaySolved(r);
+				}
+//				if(wrongCells.size() == 1) {
+//					System.err.println("Grid is completed");
+//					hint.setDisable(true);
+//					System.err.println("final hint");
+//				}
 //				grid.current = hint;
-				grid.displaySolved(hint);
-				if(wrongCells.size() == 1) grid.checkWin();
+//				if(wrongCells.size() == 1) grid.checkWin();
 			}
 		});
 	}
