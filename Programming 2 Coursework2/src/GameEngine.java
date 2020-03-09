@@ -263,9 +263,17 @@ public class GameEngine {
 				break;
 				
 			case ' ':
-				String val = cage.getCells().get(0).getValue();
-				if(Integer.valueOf(val) != cage.getResult()) {
-					return false;
+				if(solutionsMode) {
+					int val = cage.getCells().get(0).getSolution();
+					if(val != cage.getResult()) {
+						return false;
+					}
+				}
+				else {
+					String val = cage.getCells().get(0).getValue();
+					if(Integer.valueOf(val) != cage.getResult()) {
+						return false;
+					}
 				}
 				break;
 
@@ -308,12 +316,16 @@ public class GameEngine {
 		return true;
 	}
 	
-	public static void solve(ArrayList<MyRectangle> cells, int noCells) {
+	public static boolean solve(ArrayList<MyRectangle> cells, int noCells) {
 		int position = 0;
 		double limit = Math.sqrt(noCells);
 		boolean backtrack = false;
 		while(position != cells.size()) {
 //			System.out.println(position);
+			if(position < 0) {
+				System.err.println("Unsolvable");
+				return false;
+			}
 			MyRectangle curr = cells.get(position);
 			if(curr.getSolution() == (int) limit) {
 				backtrack = true;
@@ -349,6 +361,7 @@ public class GameEngine {
 			}
 			backtrack = false;
 		}
+		return true;
 	}
 	
 }

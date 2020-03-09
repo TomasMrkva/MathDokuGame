@@ -59,6 +59,7 @@ public class MathDoku extends Application {
 		Group gameGrid = grid.getGrid();
 		
 		Gui gui = new Gui(grid);
+		GameEngine.solve(grid.getCells(), grid.getCells().size());
 		
         StackPane pane = new StackPane();
         pane.getChildren().add(gameGrid);

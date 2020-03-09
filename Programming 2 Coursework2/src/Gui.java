@@ -1,5 +1,7 @@
+import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.Optional;
+import java.util.Random;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -26,6 +28,7 @@ public class Gui {
 	protected static boolean mistakes;
 	protected static Button redo;
 	protected static Button undo;
+	protected static Button hint;
 	private static Label label = new Label("Grid has not been completed!");
 
 	
@@ -76,6 +79,9 @@ public class Gui {
 	public VBox menu() {
 		Button clear = new Button("Clear");
 		Button solve = new Button("Solve");
+		hint = new Button("Hint");
+		hint.setPrefWidth(50);
+		hintClick(hint);
 		solveClick(solve);
 		solve.setPrefWidth(50);
 		clearClick(clear);
@@ -94,7 +100,7 @@ public class Gui {
 		
 		VBox menu = new VBox(5);
 		menu.setPadding(new Insets(10));
-		menu.getChildren().addAll(solve,clear, undo, redo);
+		menu.getChildren().addAll(hint, solve, clear, undo, redo);
 		menu.setAlignment(Pos.CENTER);
 		
 		menu.setPadding(new Insets(MathDoku.getWidth()*2, 10, MathDoku.getWidth()*2, 10));
@@ -210,6 +216,7 @@ public class Gui {
 					StackOperations.stackRedo.clear();
 					redo.setDisable(true);
 					undo.setDisable(true);
+					hint.setDisable(false);
 				}
 				grid.requestFocus();
 			}
@@ -272,14 +279,31 @@ public class Gui {
 				for(MyRectangle cell : grid.getCells()) {
 					cell.setSolution(0);
 				}
-				GameEngine.solve(grid.getCells(), grid.getCells().size());
-				
-				for(MyRectangle r : grid.getCells()) {
-					grid.displaySolved(r);
+				if(GameEngine.solve(grid.getCells(), grid.getCells().size())) {
+					for(MyRectangle r : grid.getCells()) {
+						grid.displaySolved(r);
+					}
+					grid.checkWin();
 				}
-				if(grid.checkWin() == true) {
-					Gui.setText("Congratulations, you solved the game !!!");
+			}
+		});
+	}
+	
+	public void hintClick(Button hintButton) {
+		hintButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				ArrayList<MyRectangle> wrongCells = new ArrayList<MyRectangle>();
+				for(MyRectangle cell : grid.getCells()) {
+					if(cell.getValue() == null || Integer.valueOf(cell.getValue()) != cell.getSolution()) {
+						wrongCells.add(cell);
+					}
 				}
+				MyRectangle hint = wrongCells.get(new Random().nextInt(wrongCells.size()));	
+//				grid.current = hint;
+				grid.displaySolved(hint);
+				if(wrongCells.size() == 1) grid.checkWin();
 			}
 		});
 	}

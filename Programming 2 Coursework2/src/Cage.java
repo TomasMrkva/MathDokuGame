@@ -20,8 +20,10 @@ public class Cage {
 		cells = new ArrayList<MyRectangle>();
 		this.cageId = result;
 		String opCode = result.replaceAll("[0-9]", "");
-		if(opCode.isEmpty() && (opCode.charAt(0) != '+' || opCode.charAt(0) != '-' || opCode.charAt(0) != 'x' || opCode.charAt(0) != '÷' ))
+		if(opCode.isEmpty()) {
 			this.opCode = ' ';
+			System.out.println("works");
+		}
 		 else
 			this.opCode = opCode.charAt(0);
 		String number = result.replaceAll("\\D+", "");

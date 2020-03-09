@@ -18,7 +18,7 @@ public class GridConstructor {
 	//List of StackPanes which contain the cells MyRectangle class and labels
 	private ArrayList<StackPane> cellsPos = new ArrayList<StackPane>();
 	private  ArrayList<Cage> cages = new ArrayList<Cage>();
-	private MyRectangle current;	// The pointer the current cell in the grid
+	public MyRectangle current;	// The pointer the current cell in the grid
 	private ArrayList<MyRectangle> cells = new ArrayList<MyRectangle>();	//List of the cells, used for making cages
 	private MyRectangle[][] matrix;
 	private int N;
@@ -206,13 +206,7 @@ public class GridConstructor {
 					} else System.err.println("User entered a wrong key!");
 				}
 				if(GameEngine.isFinished(cells)) {
-//					Cage[] arr = cages.toArray(new Cage[cages.size()]);
-//					if(GameEngine.checkAllCols(matrix) && GameEngine.checkAllRows(matrix) && GameEngine.checkAllCages(arr)) {
-//						Gui.setText("Congratulations, you solved the game !!!");
-//					}
-					if(checkWin() == true) {
-						Gui.setText("Congratulations, you solved the game !!!");
-					}
+					checkWin();
 				}
 			}
 		});
@@ -274,17 +268,40 @@ public class GridConstructor {
 	 * @param 
 	 */
 	public void displaySolved(MyRectangle r) {
+		Gui.undo.setDisable(false);
+		Gui.redo.setDisable(true);
+		if (current != null) {
+			current.setStroke(Color.BLACK);
+			current.setStrokeWidth(0.25);
+		}
 		for(StackPane s : cellsPos) {
 			if(((MyRectangle) s.getChildren().get(0)).getCellId() == r.getCellId()) {
+				current = ((MyRectangle) s.getChildren().get(0));
+				StackOperations.stackRedo.clear();
 				String number = String.valueOf(r.getSolution());
+				
+				MyRectangle previous = new MyRectangle();
+				previous.setValue(number);
+				previous.setOldValue(((MyRectangle) s.getChildren().get(0)).getValue());
+				previous.setCellId(((MyRectangle) s.getChildren().get(0)).getCellId());
+				StackOperations.push(previous);
+				
 				Label label = new Label(number);
 				label.setMouseTransparent(true);
 				label.setFont(font);
+				label.setStyle("-fx-text-fill: green");
 				if(s.getChildren().size() > 2) {
 					s.getChildren().remove(s.getChildren().size()-1);
 				}
 				s.getChildren().add(label);
-				r.setValue(number);
+				current.setValue(number);
+				current.setStrokeType(StrokeType.INSIDE);
+				current.setStroke(Color.rgb(0, 255, 0, 0.4));
+				current.setStrokeWidth(40);
+				if(Gui.mistakes == true) {
+					checkCurrentMistakes(current);
+					colorAllMistakes();
+				}
 				break;
 			}
 		}
@@ -348,7 +365,7 @@ public class GridConstructor {
 			if(index.getValue() != null) {
 				((MyRectangle) cellPos.getChildren().get(0)).setValue(null);
 				((MyRectangle) cellPos.getChildren().get(0)).setOldValue(null);
-				((MyRectangle) cellPos.getChildren().get(0)).setSolution(0);
+//				((MyRectangle) cellPos.getChildren().get(0)).setSolution(0);
 				if(Gui.mistakes == true) {
 					checkCurrentMistakes(index);				
 				}
