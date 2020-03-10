@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 
@@ -31,7 +32,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
 
-public class FileLoaderHandler implements EventHandler<ActionEvent> {
+public class FileLoaderHandler implements EventHandler<MouseEvent> {
 	
 	private GridConstructor grid;
 	private Stage newWindow;
@@ -41,7 +42,7 @@ public class FileLoaderHandler implements EventHandler<ActionEvent> {
 	 * Creates a new popup gui
 	 */
 	@Override
-	public void handle(ActionEvent event) {
+	public void handle(MouseEvent event) {
 		
 		newWindow = new Stage();
 		area = new TextArea();
@@ -145,7 +146,7 @@ public class FileLoaderHandler implements EventHandler<ActionEvent> {
 				String[] parts = line.split("[ ,]");
 				lines.add(parts);
 				//
-				if(!parts[0].matches("[0-9]+[+-x÷]$") && !parts[0].matches("[0-9]+$")) {
+				if(!parts[0].matches("[0-9]+[+\\-x÷]$") && !parts[0].matches("[0-9]+$")) {
 					wrongFormat = true;
 					wrongPart = line;
 					break;
@@ -260,19 +261,24 @@ public class FileLoaderHandler implements EventHandler<ActionEvent> {
 	        StackPane pane = new StackPane();
 	        pane.getChildren().add(gameGrid);
 	        pane.setPickOnBounds(false);
-			pane.setStyle("-fx-border-color: blue");
+//			pane.setStyle("-fx-border-color: blue");
 	        
-			((BorderPane) MathDoku.getScene().getRoot()).setCenter(pane);
 			((BorderPane) MathDoku.getScene().getRoot()).setTop(gui.loadGame());
 			((BorderPane) MathDoku.getScene().getRoot()).setLeft(gui.menu());
 			((BorderPane) MathDoku.getScene().getRoot()).setRight(gui.numbers(N));
 			((BorderPane) MathDoku.getScene().getRoot()).setBottom(gui.bottomSide());
+			((BorderPane) MathDoku.getScene().getRoot()).setCenter(pane);
 
 			NumberBinding maxScale = Bindings.min(pane.widthProperty().divide((N*0.83)*100), pane.heightProperty().divide((N*0.83)*100));
 			pane.scaleXProperty().bind(maxScale);
 			pane.scaleYProperty().bind(maxScale);
-			MathDoku.getStage().setMinHeight(MathDoku.width * 6 + 120);
-			MathDoku.getStage().setMinWidth(MathDoku.width * 6 + 140);
+			if(N > 5) {
+				MathDoku.getStage().setMinHeight(MathDoku.width * N + 120);
+				MathDoku.getStage().setMinWidth(MathDoku.width * N + 140);				
+			} else {
+				MathDoku.getStage().setMinHeight(MathDoku.width * 6 + 120);
+				MathDoku.getStage().setMinWidth(MathDoku.width * 6 + 140);				
+			}
 			MathDoku.getStage().centerOnScreen();
 //			Gui.setGrid(grid);
 			StackOperations.clear();

@@ -279,7 +279,8 @@ public class GameEngine {
 				break;
 
 			default:
-				throw new IllegalArgumentException("Unexpected value: " + cage.getOPSymbol());
+				return false;
+//				throw new IllegalArgumentException("Unexpected value: " + cage.getOPSymbol());
 			}
 		}
 		return true;

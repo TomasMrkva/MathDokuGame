@@ -107,7 +107,9 @@ public class Gui {
 		VBox.setVgrow(clear, Priority.ALWAYS);
 		VBox.setVgrow(undo, Priority.ALWAYS);
 		VBox.setVgrow(redo, Priority.ALWAYS);
-		
+		VBox.setVgrow(hint, Priority.ALWAYS);
+
+		hint.setMaxHeight(Double.MAX_VALUE);
 		solve.setMaxHeight(Double.MAX_VALUE);
 		clear.setMaxHeight(Double.MAX_VALUE);
 		undo.setMaxHeight(Double.MAX_VALUE);
@@ -121,7 +123,7 @@ public class Gui {
 		Button preset = new Button("Play");
 		preset.setPrefSize(100, 40);
 		preset.setOnAction(e -> MathDoku.PresetGrid());
-		newGame.setOnAction(new FileLoaderHandler());
+		newGame.setOnMouseClicked(new FileLoaderHandler());
 		VBox vbox = new VBox(10);
 		vbox.getChildren().addAll(newGame, preset);
 		vbox.setAlignment(Pos.CENTER);
@@ -141,7 +143,7 @@ public class Gui {
 		loadFile.setText("Load a new game");
 		CheckBox mistakes = new CheckBox("Show Mistakes");
 		mistakerChooser(mistakes);
-		loadFile.setOnAction(new FileLoaderHandler());
+		loadFile.setOnMouseClicked(new FileLoaderHandler());
 		HBox load = new HBox(20);
 		load.setPadding(new Insets(5, 10, 5, 10));
 		load.getChildren().addAll(loadFile, mistakes, slider);
@@ -310,13 +312,6 @@ public class Gui {
 					grid.displaySolved(r);
 				}
 				grid.requestFocus();
-//				if(wrongCells.size() == 1) {
-//					System.err.println("Grid is completed");
-//					hint.setDisable(true);
-//					System.err.println("final hint");
-//				}
-//				grid.current = hint;
-//				if(wrongCells.size() == 1) grid.checkWin();
 			}
 		});
 	}

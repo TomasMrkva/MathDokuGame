@@ -1,22 +1,14 @@
-import java.awt.Button;
 import java.util.ArrayList;
 
-import javafx.animation.Animation;
-import javafx.animation.Transition;
-import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 /**
  * Mathdoku game main class
@@ -58,6 +50,7 @@ public class MathDoku extends Application {
 		pStage = stage;
 		
 		stage.setTitle("Mathdoku");
+		StackPane root2 = new StackPane();
 		BorderPane root = new BorderPane();
 		
 		
@@ -130,7 +123,6 @@ public class MathDoku extends Application {
 		grid.makeLabels();
 		grid.makeBorder(width, N, 2, Color.TOMATO);
 		Group gameGrid = grid.getGrid();
-		gameGrid.setMouseTransparent(true);
 		
 		gui = new Gui(grid);
 		GameEngine.solve(grid.getCells(), grid.getCells().size());
@@ -142,29 +134,12 @@ public class MathDoku extends Application {
         NumberBinding maxScale = Bindings.min(pane.widthProperty().divide((N*0.83)*100), pane.heightProperty().divide((N*0.83)*100));
         pane.scaleXProperty().bind(maxScale);
         pane.scaleYProperty().bind(maxScale);
-        
-        Circle cir = new Circle();
-        cir.setFill(Color.AQUAMARINE);
-        cir.setRadius(30);
-        cir.relocate(0, 0);
-        StackPane.setAlignment(cir, Pos.TOP_LEFT);
-//        cir.relo
-        TranslateTransition transition = new TranslateTransition();
-        transition.setDuration(Duration.seconds(3));
-        transition.setToX(100);
-        transition.setToY(100);
-        transition.setAutoReverse(true);
-        transition.setCycleCount(Animation.INDEFINITE);
-        transition.setNode(cir);
-        transition.play();
-        pane.getChildren().add(cir);
 
         ((BorderPane) getScene().getRoot()).setTop(gui.loadGame());
         ((BorderPane) getScene().getRoot()).setLeft(gui.menu());
         ((BorderPane) getScene().getRoot()).setRight(gui.numbers(N));
         ((BorderPane) getScene().getRoot()).setBottom(gui.bottomSide());
         ((BorderPane) getScene().getRoot()).setCenter(pane);
-
         
         MathDoku.getStage().setMinHeight(MathDoku.width * N + 120);
 		MathDoku.getStage().setMinWidth(MathDoku.width * N + 140);
