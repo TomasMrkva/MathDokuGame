@@ -29,7 +29,7 @@ public class WinAnimation {
 	public static void playAnimation(Pane pane) {
 		
 		PauseTransition pauseMain = new PauseTransition(Duration.seconds(0.5));
-		pauseMain.setOnFinished(event1 -> {
+		pauseMain.setOnFinished(mainEvent -> {
 	        Circle small = new Circle(70);
 	        Circle big = new Circle(150);
 	        
@@ -40,7 +40,7 @@ public class WinAnimation {
 	        cir2.setFill(Color.TRANSPARENT);
 	               
 	        PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
-			pause.setOnFinished(event -> {
+			pause.setOnFinished(fillEvent -> {
 				cir2.setFill(Color.rgb(91, 132, 177));
 			}); 
 			pause.play();
@@ -134,21 +134,21 @@ public class WinAnimation {
 		    }
 		});
 		PauseTransition pauseButton = new PauseTransition(Duration.seconds(13.5));
-		pauseButton.setOnFinished(e1 -> {
-			Label endGame = new Label("End Game");
+		pauseButton.setOnFinished(e -> {
+			Label endGame = new Label(" Exit ");
 			endGame.setFont(new Font(25));
-			Label tryAgain = new Label("Try Again");
+			Label tryAgain = new Label(" Try Again ");
 			tryAgain.setFont(new Font(25));
-			Label loadGame = new Label("Load a New Game");
+			Label loadGame = new Label(" Load a New Game ");
 			loadGame.setFont(new Font(25));
-			Stream.of(endGame, tryAgain, loadGame).forEach(t -> t.setOnMouseEntered(event -> selectedText.set(t)));
+			Stream.of(loadGame, tryAgain, endGame).forEach(t -> t.setOnMouseEntered(event -> selectedText.set(t)));
 			selectedText.set(tryAgain);
 			
-			endGame.setOnMouseClicked(e -> {
+			endGame.setOnMouseClicked(event -> {
 				MathDoku.getStage().close();
 				System.exit(0);
 			});
-			tryAgain.setOnMouseClicked(e -> {
+			tryAgain.setOnMouseClicked(event -> {
 //				System.out.println("hi");
 				for(int i=pane.getChildren().size()-1; i > 0 ; i--) {
 					pane.getChildren().remove(i);
@@ -168,7 +168,7 @@ public class WinAnimation {
 			loadGame.setOnMouseClicked(new FileLoaderHandler());
 
 			VBox vbox = (VBox) pane.getChildren().get(pane.getChildren().size()-1);
-			vbox.getChildren().addAll(endGame, tryAgain, loadGame);
+			vbox.getChildren().addAll(loadGame, tryAgain, endGame);
 		});
 		pauseButton.play();
 	}

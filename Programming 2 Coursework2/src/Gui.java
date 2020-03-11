@@ -86,13 +86,15 @@ public class Gui {
 		undo = new Button();
 		undo.setText("<-");
 		undo.setPrefWidth(50);
-		undoClick(undo);
+//		undoClick(undo);
+		undo.setOnAction(e -> Gui.undoAction());
 		undo.setDisable(true);
 		
 		redo = new Button();
 		redo.setText("->");
 		redo.setPrefWidth(50);
-		redoClick(redo);
+//		redoClick(redo);
+		redo.setOnAction(e -> Gui.redoAction());
 		redo.setDisable(true);
 		
 		VBox menu = new VBox(5);
@@ -117,14 +119,19 @@ public class Gui {
 	}
 	
 	public VBox initialSetup() {
+
 		Button newGame = new Button("New Game");
+//		newGame.getStyleClass().add("BUTTON_DSI");
 		newGame.setPrefSize(100, 40);
 		Button preset = new Button("Play");
 		preset.setPrefSize(100, 40);
 		preset.setOnAction(e -> MathDoku.PresetGrid());
 		newGame.setOnMouseClicked(new FileLoaderHandler());
+		Button randomGame = new Button("Random Game");
+		randomGame.setPrefSize(100, 40);
 		VBox vbox = new VBox(10);
-		vbox.getChildren().addAll(newGame, preset);
+		randomGame.setOnAction(e -> GameGenerator.createGrid(6));
+		vbox.getChildren().addAll(newGame, preset, randomGame);
 		vbox.setAlignment(Pos.CENTER);
 		preset.setDefaultButton(true);
 		return vbox;
@@ -231,40 +238,66 @@ public class Gui {
 		});
 	}
 	
-	public void undoClick(Button undoButton) {
-		undoButton.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				MyRectangle previous = StackOperations.undo();
-				grid.updateNumber(previous, true);
-				try {
-					StackOperations.stackUndo.peek();
-					redo.setDisable(false);
-				} catch (EmptyStackException e) {
-					System.err.println("Undo stack is empty");
-					undo.setDisable(true);
-				}
-				grid.requestFocus();
-			}
-		});
+//	public void undoClick(Button undoButton) {
+//		undoButton.setOnAction(new EventHandler<ActionEvent>() {
+//			@Override
+//			public void handle(ActionEvent event) {
+//				MyRectangle previous = StackOperations.undo();
+//				grid.updateNumber(previous, true);
+//				try {
+//					StackOperations.stackUndo.peek();
+//					redo.setDisable(false);
+//				} catch (EmptyStackException e) {
+//					System.err.println("Undo stack is empty");
+//					undo.setDisable(true);
+//				}
+//				grid.requestFocus();
+//			}
+//		});
+//	}
+//	
+//	public void redoClick(Button redoButton) {
+//		redoButton.setOnAction(new EventHandler<ActionEvent>() {
+//			@Override
+//			public void handle(ActionEvent event) {
+//				MyRectangle next = StackOperations.redo();
+//				grid.updateNumber(next, false);
+//				try {
+//					StackOperations.stackRedo.peek();
+//					undo.setDisable(false);
+//				} catch (EmptyStackException e) {
+//					System.err.println("Redo stack is empty");
+//					redo.setDisable(true);
+//				}
+//				grid.requestFocus();
+//			}
+//		});
+//	}
+	
+	public static void redoAction() {
+		MyRectangle next = StackOperations.redo();
+		grid.updateNumber(next, false);
+		try {
+			StackOperations.stackRedo.peek();
+			undo.setDisable(false);
+		} catch (EmptyStackException e) {
+			System.err.println("Redo stack is empty");
+			redo.setDisable(true);
+		}
+		grid.requestFocus();
 	}
 	
-	public void redoClick(Button redoButton) {
-		redoButton.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				MyRectangle next = StackOperations.redo();
-				grid.updateNumber(next, false);
-				try {
-					StackOperations.stackRedo.peek();
-					undo.setDisable(false);
-				} catch (EmptyStackException e) {
-					System.err.println("Redo stack is empty");
-					redo.setDisable(true);
-				}
-				grid.requestFocus();
-			}
-		});
+	public static void undoAction() {
+		MyRectangle previous = StackOperations.undo();
+		grid.updateNumber(previous, true);
+		try {
+			StackOperations.stackUndo.peek();
+			redo.setDisable(false);
+		} catch (EmptyStackException e) {
+			System.err.println("Undo stack is empty");
+			undo.setDisable(true);
+		}
+		grid.requestFocus();
 	}
 	
 	public void fontMaker(Slider slider) {
@@ -275,6 +308,7 @@ public class Gui {
 				Font font = new Font("Arial", newValue.intValue());
 //				System.out.println("works");
 				grid.setFont(font);
+				grid.requestFocus();
 			}
 
 		});

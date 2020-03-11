@@ -61,6 +61,7 @@ public class MathDoku extends Application {
 //		root.setStyle("-fx-border-color: blue");
 		root.getChildren().add(game);
 		Scene scene = new Scene(root);
+//		scene.getStylesheets().add("styles.css");
 		pScene = scene;
 		pRoot = root;
 		stage.setScene(scene);

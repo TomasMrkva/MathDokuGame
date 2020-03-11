@@ -1,10 +1,14 @@
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 
 import javafx.animation.PauseTransition;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -180,6 +184,46 @@ public class GridConstructor {
 		});
 	}
 	
+	public void moveWithKeys(String move) {
+		if (current != null) {
+			current.setStroke(Color.BLACK);
+			current.setStrokeWidth(0.25);
+		}
+		switch (move) {
+		case "up":
+			if(current.getCellId() < N) {
+				if(current.getCellId() == 0) current = cells.get(cells.size()-1);
+				else current = cells.get((N*N-1)-(N-current.getCellId()));
+			} else 
+				current = cells.get(current.getCellId()-N);
+			break;
+			
+		case "left":
+			if(current.getCellId() > 0)
+				current = cells.get(current.getCellId()-1);
+			else
+				current = cells.get((N*N)-1);
+			break;
+		case "down":
+			if(current.getCellId() < ((N*N)-N))
+				current = cells.get(current.getCellId()+N);
+			else {
+				if (current.getCellId() == (N*N)-1 ) current = cells.get(0);
+				else current = cells.get(N+1-( (N*N)-current.getCellId() ));
+			} break;
+		case "right":
+			if(current.getCellId() < (N*N-1))
+				current = cells.get(current.getCellId()+1);
+			else
+				current = cells.get(0);
+			break;
+		}
+		current.setStrokeType(StrokeType.INSIDE);
+		current.setStroke(Color.rgb(0, 0, 128, 0.4));
+		current.setStrokeWidth(MathDoku.getWidth());
+		requestFocus();
+	}
+	
 	/**
 	 * Makes the grid focus of the screen
 	 */
@@ -192,22 +236,68 @@ public class GridConstructor {
 	 * Takes only digits
 	 */
 	public void keyTyped() {
+		
+		final KeyCombination redo = new KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN);
+		final KeyCombination undo = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHORTCUT_DOWN);
+		
+		grid.setOnKeyPressed(e -> {
+			if(undo.match(e)) {
+				System.out.println("undo");
+				try {
+					Gui.undoAction();
+				} catch (EmptyStackException emptyStack) {
+					System.err.println("Undo stack is empty");
+				}
+			} else if(redo.match(e)) {
+				System.out.println("redo");
+				try {
+					Gui.redoAction();
+				} catch (EmptyStackException emptyStack) {
+					System.err.println("Redo stack is empty");
+				}
+			}
+		});
+		
 		grid.setOnKeyTyped(new EventHandler<KeyEvent>() {
 			public void handle(KeyEvent event) {
 				try {
-					if (Character.isDigit(event.getCharacter().toCharArray()[0])) {
+					if(Character.isDigit(event.getCharacter().toCharArray()[0])) {
 						int enteredNum = Integer.valueOf(event.getCharacter());
 						if(enteredNum <= N && enteredNum > 0) {
 							String number = event.getCharacter().toString();
 							displayNumber(number);
 						}
-						else System.out.println("User entered a wrong number!");
+					} else {
+						switch (event.getCharacter()) {
+						case "w": 
+						case "i":
+//							System.out.println("up");
+							moveWithKeys("up");
+							break;
+						case "a":
+						case "j":
+//							System.out.println("left");
+							moveWithKeys("left");
+							break;
+						case "s":
+						case "k":
+//							System.out.println("down");
+							moveWithKeys("down");
+							break;
+						case "d":
+						case "l":
+//							System.out.println("right");
+							moveWithKeys("right");
+							break;
+//						default:
+//							System.out.println(event.getCharacter());
+						}
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {
 					if(event.getCharacter().equals("")) {
 						System.err.println("User entered a backspace");
 						displayNumber(null);
-					} else System.err.println("User entered a wrong key!");
+					}
 				}
 			}
 		});
