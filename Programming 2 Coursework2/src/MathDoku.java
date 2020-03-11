@@ -19,19 +19,19 @@ public class MathDoku extends Application {
 
 	private static ArrayList<Cage> cages = new ArrayList<Cage>();
 	private static int N=6;
-//	private static Label label;
 	public static double width = 80;
 	public static Stage pStage;
 	public static Scene pScene;
 	public static Gui gui;
+	public static StackPane pRoot;
 	
 	public static void main(String[] args) {
 		launch(args);
 	}
 	
-	public static Scene getScene() {
-		return pScene;
-	}
+//	public static Scene getScene() {
+//		return pScene;
+//	}
 	
 	public static Stage getStage() {
 		return pStage;
@@ -50,41 +50,19 @@ public class MathDoku extends Application {
 		pStage = stage;
 		
 		stage.setTitle("Mathdoku");
-		StackPane root2 = new StackPane();
-		BorderPane root = new BorderPane();
-		
-		
-//		GridConstructor grid = new GridConstructor(N, width);
-//		MakeCages(grid);
-//		grid.addCages(cages);
-//		grid.makeLabels();
-//		grid.makeBorder(width, N, 2, Color.TOMATO);
-//		Group gameGrid = grid.getGrid();
-//		gui = new Gui(grid);
-//		GameEngine.solve(grid.getCells(), grid.getCells().size());
-//		
-//        StackPane pane = new StackPane();
-//        pane.getChildren().add(gameGrid);
-//        pane.setPickOnBounds(false);
-//        
-//        NumberBinding maxScale = Bindings.min(pane.widthProperty().divide((N*0.83)*100), pane.heightProperty().divide((N*0.83)*100));
-//        pane.scaleXProperty().bind(maxScale);
-//        pane.scaleYProperty().bind(maxScale);
-//        
-//        root.setCenter(pane);
-//        root.setTop(gui.loadGame());
-//        root.setLeft(gui.menu());
-//        root.setRight(gui.numbers(N));
-//        root.setBottom(gui.bottomSide());
+		StackPane root = new StackPane();
+		BorderPane game = new BorderPane();
 		
 		Gui gui = new Gui(null);
-        root.setCenter(gui.initialSetup());
+        game.setCenter(gui.initialSetup());
 		stage.setMinHeight(300);
 		stage.setMinWidth(300);
 
-//		pane.setStyle("-fx-border-color: blue");
+//		root.setStyle("-fx-border-color: blue");
+		root.getChildren().add(game);
 		Scene scene = new Scene(root);
 		pScene = scene;
+		pRoot = root;
 		stage.setScene(scene);
 		stage.centerOnScreen();
 		stage.show();
@@ -135,11 +113,11 @@ public class MathDoku extends Application {
         pane.scaleXProperty().bind(maxScale);
         pane.scaleYProperty().bind(maxScale);
 
-        ((BorderPane) getScene().getRoot()).setTop(gui.loadGame());
-        ((BorderPane) getScene().getRoot()).setLeft(gui.menu());
-        ((BorderPane) getScene().getRoot()).setRight(gui.numbers(N));
-        ((BorderPane) getScene().getRoot()).setBottom(gui.bottomSide());
-        ((BorderPane) getScene().getRoot()).setCenter(pane);
+        ((BorderPane) pRoot.getChildren().get(0)).setTop(gui.loadGame());
+        ((BorderPane) pRoot.getChildren().get(0)).setLeft(gui.menu());
+        ((BorderPane) pRoot.getChildren().get(0)).setRight(gui.numbers(N));
+        ((BorderPane) pRoot.getChildren().get(0)).setBottom(gui.bottomSide());
+        ((BorderPane) pRoot.getChildren().get(0)).setCenter(pane);
         
         MathDoku.getStage().setMinHeight(MathDoku.width * N + 120);
 		MathDoku.getStage().setMinWidth(MathDoku.width * N + 140);

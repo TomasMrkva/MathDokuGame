@@ -58,7 +58,6 @@ public class Gui {
 			numButtonClick(button);
 			HBox hBox = new HBox();
 			hBox.getChildren().add(button);
-			
 			numbers.getChildren().add(button);
 			VBox.setVgrow(button, Priority.ALWAYS);
 			button.setMaxHeight(Double.MAX_VALUE);
@@ -127,6 +126,7 @@ public class Gui {
 		VBox vbox = new VBox(10);
 		vbox.getChildren().addAll(newGame, preset);
 		vbox.setAlignment(Pos.CENTER);
+		preset.setDefaultButton(true);
 		return vbox;
 	}
 	

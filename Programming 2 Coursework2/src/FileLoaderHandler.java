@@ -245,12 +245,12 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 		}
 		
 		public void createGrid(ArrayList<Cage> cages, int N) {
-			
-			((BorderPane) MathDoku.getScene().getRoot()).setCenter(null);
-			((BorderPane) MathDoku.getScene().getRoot()).setTop(null);
-			((BorderPane) MathDoku.getScene().getRoot()).setBottom(null);
-			((BorderPane) MathDoku.getScene().getRoot()).setLeft(null);
-			((BorderPane) MathDoku.getScene().getRoot()).setRight(null);
+						
+			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setCenter(null);
+			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setTop(null);
+			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setBottom(null);
+			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setLeft(null);
+			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setRight(null);
 			
 			Gui.setGrid(null);
 			grid.addCages(cages);
@@ -263,11 +263,11 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 	        pane.setPickOnBounds(false);
 //			pane.setStyle("-fx-border-color: blue");
 	        
-			((BorderPane) MathDoku.getScene().getRoot()).setTop(gui.loadGame());
-			((BorderPane) MathDoku.getScene().getRoot()).setLeft(gui.menu());
-			((BorderPane) MathDoku.getScene().getRoot()).setRight(gui.numbers(N));
-			((BorderPane) MathDoku.getScene().getRoot()).setBottom(gui.bottomSide());
-			((BorderPane) MathDoku.getScene().getRoot()).setCenter(pane);
+			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setTop(gui.loadGame());
+			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setBottom(gui.bottomSide());
+			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setLeft(gui.menu());
+			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setRight(gui.numbers(N));
+			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setCenter(pane);
 
 			NumberBinding maxScale = Bindings.min(pane.widthProperty().divide((N*0.83)*100), pane.heightProperty().divide((N*0.83)*100));
 			pane.scaleXProperty().bind(maxScale);

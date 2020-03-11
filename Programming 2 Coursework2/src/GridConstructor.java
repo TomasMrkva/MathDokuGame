@@ -7,8 +7,6 @@ import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -268,7 +266,8 @@ public class GridConstructor {
 				}
 				if(GameEngine.isFinished(cells)) {
 					if(checkWin() == true) {
-						WinAnimation.playAnimation((Pane)((BorderPane) MathDoku.getScene().getRoot()).getCenter());						
+//						WinAnimation.playAnimation((Pane)((BorderPane) MathDoku.getScene().getRoot()).getCenter());	
+						WinAnimation.playAnimation(MathDoku.pRoot);
 					}
 				}
 				break;

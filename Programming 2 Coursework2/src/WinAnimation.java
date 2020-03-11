@@ -1,4 +1,3 @@
-
 import java.util.stream.Stream;
 
 import javafx.animation.Animation;
@@ -10,19 +9,11 @@ import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -36,9 +27,6 @@ public class WinAnimation {
 	static Text selectText;
 
 	public static void playAnimation(Pane pane) {
-//		NumberBinding maxScale = Bindings.min(pane.widthProperty().divide((6*0.83)*100), pane.heightProperty().divide((6*0.83)*100));
-//		pane.scaleXProperty().bind(maxScale);
-//		pane.scaleYProperty().bind(maxScale);
 		
 		PauseTransition pauseMain = new PauseTransition(Duration.seconds(0.5));
 		pauseMain.setOnFinished(event1 -> {
@@ -86,11 +74,11 @@ public class WinAnimation {
 	        
 		    ScaleTransition scale  = new ScaleTransition(Duration.seconds(4), cir2);
 		    scale.setDelay(Duration.seconds(3.75));
-//		    scale.setCycleCount(3);
-//		    scale.setAutoReverse(true);
-		    scale.setCycleCount(1);
-		    scale.setToX(20);
-		    scale.setToY(20);
+		    scale.setCycleCount(3);
+		    scale.setAutoReverse(true);
+//		    scale.setCycleCount(1);
+		    scale.setToX(50);
+		    scale.setToY(50);
 		    scale.play();
 		    
 		    FillTransition fill = new FillTransition(Duration.seconds(3), cir2, Color.rgb(91, 132, 177), Color.rgb(252, 118, 106));
@@ -108,7 +96,7 @@ public class WinAnimation {
 		    pauseText.play();
 		    
 	        FadeTransition fade = new FadeTransition();
-	        fade.setDuration(Duration.seconds(1));
+	        fade.setDuration(Duration.seconds(3));
 	        fade.setAutoReverse(true);
 	        fade.setCycleCount(Animation.INDEFINITE);
 	        fade.setNode(text);
@@ -120,8 +108,8 @@ public class WinAnimation {
 	        RotateTransition rotate = new RotateTransition();
 	        rotate.setAxis(Rotate.Z_AXIS);
 	        rotate.setByAngle(360);  
-	        rotate.setCycleCount(10);  
-	        rotate.setDuration(Duration.seconds(1));  
+	        rotate.setCycleCount(5);  
+	        rotate.setDuration(Duration.seconds(2));  
 //	        rotate.setAutoReverse(true);  
 	        rotate.setNode(text);
 	        rotate.play();
@@ -145,7 +133,7 @@ public class WinAnimation {
 		        newSelectedText.setStyle("-fx-background-color: lightgrey");
 		    }
 		});
-		PauseTransition pauseButton = new PauseTransition(Duration.seconds(5));
+		PauseTransition pauseButton = new PauseTransition(Duration.seconds(13.5));
 		pauseButton.setOnFinished(e1 -> {
 			Label endGame = new Label("End Game");
 			endGame.setFont(new Font(25));
@@ -161,7 +149,7 @@ public class WinAnimation {
 				System.exit(0);
 			});
 			tryAgain.setOnMouseClicked(e -> {
-				System.out.println("hi");
+//				System.out.println("hi");
 				for(int i=pane.getChildren().size()-1; i > 0 ; i--) {
 					pane.getChildren().remove(i);
 				}
