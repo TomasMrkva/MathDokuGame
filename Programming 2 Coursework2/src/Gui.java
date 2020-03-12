@@ -4,22 +4,29 @@ import java.util.Optional;
 import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class Gui {
 	
@@ -30,6 +37,8 @@ public class Gui {
 	protected static Button hint;
 	protected static Button solve;
 	protected static Label label = new Label("Grid has not been completed!");
+	private static int N=0;
+	private static int difficulty=0;
 	
 	public Gui(GridConstructor grid) {
 		Gui.grid = grid;
@@ -119,7 +128,6 @@ public class Gui {
 	}
 	
 	public VBox initialSetup() {
-
 		Label label = new Label("Welcome to MathDoku");
 		label.setFont(new Font("Helvetica", 20));
 		label.setPadding(new Insets(0, 0, 15, 0));
@@ -133,11 +141,67 @@ public class Gui {
 		Button randomGame = new Button("Random Game");
 		randomGame.setPrefSize(100, 30);
 		VBox vbox = new VBox(10);
-		randomGame.setOnAction(e -> GameGenerator.createGrid(6));
+		randomGame.setOnAction(e -> Gui.randomGameMenu());
 		vbox.getChildren().addAll(label,newGame, preset, randomGame);
 		vbox.setAlignment(Pos.CENTER);
 		preset.setDefaultButton(true);
 		return vbox;
+	}
+	
+	public static void randomGameMenu() {
+		Button b = new Button("Cancel");
+		Button submit = new Button("Submit");
+		Stage newWindow = new Stage();
+		Label label = new Label("Customize your game");
+		label.setFont(new Font("Helvetica", 20));
+		
+		newWindow.setTitle("Random game");
+		newWindow.setMinHeight(150);
+		newWindow.setMinWidth(400);
+		newWindow.initModality(Modality.APPLICATION_MODAL);
+		
+		VBox vBox = new VBox(20);
+		HBox hBox = new HBox(10);
+		hBox.setAlignment(Pos.CENTER);
+		vBox.setAlignment(Pos.CENTER);
+		
+		ComboBox<String> cBox = new ComboBox<String>();
+		cBox.getItems().addAll("2x2", "3x3", "4x4", "5x5", "6x6", "7x7", "8x8");
+		cBox.setValue("2x2");
+		
+		ComboBox<String> dBox = new ComboBox<String>();
+		dBox.getItems().addAll("Easy", "Medium", "Hard");
+		dBox.setValue("Easy");
+		
+		submit.setOnAction(e -> {
+			switch (cBox.getValue()) {
+				case "2x2": N=2; break;
+				case "3x3": N=3; break;
+				case "4x4": N=4; break;
+				case "5x5": N=5; break;
+				case "6x6": N=6; break;
+				case "7x7": N=7; break;
+				case "8x8": N=8; break;
+			}
+			switch (dBox.getValue()) {
+				case "Easy": Gui.difficulty = 1; break;
+				case "Medium": Gui.difficulty = 2; break;
+				case "Hard": Gui.difficulty = 3; break;
+			}
+			System.out.println("Size:" + N);
+			System.out.println("Difficulty" + Gui.difficulty);
+			newWindow.close();
+			GameGenerator.createGrid(N, difficulty);
+//			GameGenerator.fillGrid();
+		});
+		
+		b.setOnAction(e -> newWindow.close());
+		
+		hBox.getChildren().addAll(cBox, dBox, b, submit);
+		vBox.getChildren().addAll(label, hBox); 
+		Scene scene = new Scene(vBox);
+		newWindow.setScene(scene);
+		newWindow.show();
 	}
 	
 	public HBox loadGame() {
@@ -240,42 +304,6 @@ public class Gui {
 			}
 		});
 	}
-	
-//	public void undoClick(Button undoButton) {
-//		undoButton.setOnAction(new EventHandler<ActionEvent>() {
-//			@Override
-//			public void handle(ActionEvent event) {
-//				MyRectangle previous = StackOperations.undo();
-//				grid.updateNumber(previous, true);
-//				try {
-//					StackOperations.stackUndo.peek();
-//					redo.setDisable(false);
-//				} catch (EmptyStackException e) {
-//					System.err.println("Undo stack is empty");
-//					undo.setDisable(true);
-//				}
-//				grid.requestFocus();
-//			}
-//		});
-//	}
-//	
-//	public void redoClick(Button redoButton) {
-//		redoButton.setOnAction(new EventHandler<ActionEvent>() {
-//			@Override
-//			public void handle(ActionEvent event) {
-//				MyRectangle next = StackOperations.redo();
-//				grid.updateNumber(next, false);
-//				try {
-//					StackOperations.stackRedo.peek();
-//					undo.setDisable(false);
-//				} catch (EmptyStackException e) {
-//					System.err.println("Redo stack is empty");
-//					redo.setDisable(true);
-//				}
-//				grid.requestFocus();
-//			}
-//		});
-//	}
 	
 	public static void redoAction() {
 		MyRectangle next = StackOperations.redo();

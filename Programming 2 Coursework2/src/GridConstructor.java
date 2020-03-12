@@ -26,7 +26,7 @@ public class GridConstructor {
 	private ArrayList<StackPane> cellsPos = new ArrayList<StackPane>();
 	private  ArrayList<Cage> cages = new ArrayList<Cage>();
 	public MyRectangle current;	// The pointer the current cell in the grid
-	private ArrayList<MyRectangle> cells = new ArrayList<MyRectangle>();	//List of the cells, used for making cages
+	ArrayList<MyRectangle> cells = new ArrayList<MyRectangle>();	//List of the cells, used for making cages
 	private MyRectangle[][] matrix;
 	private int N;
 	
@@ -75,6 +75,7 @@ public class GridConstructor {
 			grid.getChildren().add(c.getCage());
 			this.cages.add(c);
 		}
+//		System.err.println(this.cages.size());
 	}
 	
 	/**
@@ -85,14 +86,17 @@ public class GridConstructor {
 		// loops through all the cages and stackpanes of the cells 
 		for(int i = 0; i < cages.size(); i++) {			
 			for(StackPane s : cellsPos) {
+				System.out.println(s.getChildren().size());
 				// when the rectangle of the stackpane matches the first rectangle of the cage, make a label for it
 				if((s.getChildren().get(0) == cages.get(i).getCells().get(0)) &&  (s.getChildren().size() < 3)) {
+					System.err.println("works");
 					Label label = new Label(" " + cages.get(i).getId());	// makes a label with the operation ID of the cage
 					label.setMouseTransparent(true);	// label wont register clicks
 					label.setFont(font);
 					s.getChildren().set(s.getChildren().size()-1, label);
 					StackPane.setAlignment(label, Pos.TOP_LEFT);	// the label goes to top left
 				}
+
 			}
 		}
 	}
@@ -192,10 +196,9 @@ public class GridConstructor {
 	public void printInfo() {
 		System.out.println("Click Pos: " + current.getCellId() + "\tValue: " + current.getValue() 
 		+ "\tOld Value: " + current.getOldValue() + "\tCageID: " + current.getCageId() 
-		+ "\tRow: " + current.getRow() +"\tCol: " + current.getCol() + "\tRow red: " + current.isRowRed()
-		+"\tCol red: " + current.isColRed() + "\tSolValue: "+ current.getSolution());
-//				+"\tCageID: "+((MyRectangle)event.getTarget()).isCageRed()
-//				+"\tCage: " + ((MyRectangle) event.getTarget()).getCage().getId()
+		+ "\tRow: " + current.getRow() +"\tCol: " + current.getCol() + "\tCageID: " + current.getCageId()
+		+"\tCage red: " + current .isCageRed() + "    Row red: " + current.isRowRed()
+		+"   Col red: " + current.isColRed() + "\tSolValue: "+ current.getSolution());
 	}
 	
 	public void moveWithKeys(String move) {

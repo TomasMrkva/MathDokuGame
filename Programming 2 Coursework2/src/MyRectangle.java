@@ -13,6 +13,7 @@ public class MyRectangle extends Rectangle implements Comparable<MyRectangle>{
 	private String oldValue;
 	private int solution;
 	private Cage cage;
+	private boolean occupied;
 	
 	public MyRectangle() {}
 	
@@ -107,6 +108,14 @@ public class MyRectangle extends Rectangle implements Comparable<MyRectangle>{
 	
 	public int getSolution() {
 		return solution;
+	}
+	
+	public void setOccupied(boolean occupied) {
+		this.occupied = occupied;
+	}
+	
+	public boolean isOccupied() {
+		return occupied;
 	}
 
 	@Override

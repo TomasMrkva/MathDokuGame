@@ -37,6 +37,7 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 	private GridConstructor grid;
 	private Stage newWindow;
 	private TextArea area;
+	public static boolean started = false;
 
 	/**
 	 * Creates a new popup gui
@@ -44,12 +45,19 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 	@Override
 	public void handle(MouseEvent event) {
 		
+		started = true;
 		newWindow = new Stage();
 		area = new TextArea();
 		
 		BorderPane pane = new BorderPane();
 		pane.setPadding(new Insets(10));
 		
+		Button random = new Button("Random");
+		random.setPrefWidth(85);
+		random.setOnAction(e -> {
+			newWindow.close();
+			Gui.randomGameMenu();
+		});
 		Button choose = new Button("Choose File");
 		choose.setPrefWidth(85);
 		choose.addEventHandler(ActionEvent.ANY, new chooseFileHandler());
@@ -66,19 +74,19 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 		HBox buttons = new HBox(10);
 		buttons.setPadding(new Insets(10, 0, 10, 0));
 		buttons.setAlignment(Pos.CENTER);
-		buttons.getChildren().addAll(choose, submit, cancel);
+		buttons.getChildren().addAll(choose, random, submit, cancel);
 		
 		pane.setTop(label);
 		pane.setCenter(area);
 		pane.setBottom(buttons);
 		BorderPane.setAlignment(label, Pos.BOTTOM_CENTER);
 		
-        Scene secondScene = new Scene(pane, 300, 350);
+        Scene secondScene = new Scene(pane, 385, 370);
         newWindow.setTitle("Load a new game");
         newWindow.setScene(secondScene);
         newWindow.initModality(Modality.APPLICATION_MODAL);
         newWindow.setMinHeight(270);
-        newWindow.setMinWidth(250);
+        newWindow.setMinWidth(300);
         newWindow.show();
 		
 		cancel.setOnAction(e -> {
