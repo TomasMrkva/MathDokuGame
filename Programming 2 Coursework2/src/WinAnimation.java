@@ -24,10 +24,11 @@ import javafx.util.Duration;
 
 public class WinAnimation {
 
-	static Text selectText;
+//	static Text selectText;
+	public static boolean isWin;
 
 	public static void playAnimation(Pane pane) {
-		
+		Gui.getGrid().unregiSterKeys();
 		PauseTransition pauseMain = new PauseTransition(Duration.seconds(0.5));
 		pauseMain.setOnFinished(mainEvent -> {
 	        Circle small = new Circle(70);
@@ -163,10 +164,11 @@ public class WinAnimation {
 					Gui.hint.setDisable(false);
 					Gui.solve.setDisable(false);
 				}
+				grid.keyTyped();
 				grid.requestFocus();
 			});
 			loadGame.setOnMouseClicked(new FileLoaderHandler());
-
+			
 			VBox vbox = (VBox) pane.getChildren().get(pane.getChildren().size()-1);
 			vbox.getChildren().addAll(loadGame, tryAgain, endGame);
 		});

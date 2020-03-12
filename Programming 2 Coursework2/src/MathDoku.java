@@ -22,7 +22,7 @@ public class MathDoku extends Application {
 	public static double width = 80;
 	public static Stage pStage;
 	public static Scene pScene;
-	public static Gui gui;
+//	public static Gui gui;
 	public static StackPane pRoot;
 	
 	public static void main(String[] args) {
@@ -41,9 +41,9 @@ public class MathDoku extends Application {
 		return width;
 	}
 	
-	public static Gui getGui() {
-		return gui;
-	}
+//	public static Gui getGui() {
+//		return gui;
+//	}
 	
 	@Override
 	public void start(Stage stage) {
@@ -103,7 +103,7 @@ public class MathDoku extends Application {
 		grid.makeBorder(width, N, 2, Color.TOMATO);
 		Group gameGrid = grid.getGrid();
 		
-		gui = new Gui(grid);
+		Gui gui = new Gui(grid);
 		GameEngine.solve(grid.getCells(), grid.getCells().size());
 		
         StackPane pane = new StackPane();
@@ -123,6 +123,7 @@ public class MathDoku extends Application {
         MathDoku.getStage().setMinHeight(MathDoku.width * N + 120);
 		MathDoku.getStage().setMinWidth(MathDoku.width * N + 140);
 		MathDoku.getStage().centerOnScreen();
+		grid.requestFocus();
 	}
 	
 }

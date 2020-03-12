@@ -29,7 +29,7 @@ public class Gui {
 	protected static Button undo;
 	protected static Button hint;
 	protected static Button solve;
-	private static Label label = new Label("Grid has not been completed!");
+	protected static Label label = new Label("Grid has not been completed!");
 	
 	public Gui(GridConstructor grid) {
 		Gui.grid = grid;
@@ -120,18 +120,21 @@ public class Gui {
 	
 	public VBox initialSetup() {
 
+		Label label = new Label("Welcome to MathDoku");
+		label.setFont(new Font("Helvetica", 20));
+		label.setPadding(new Insets(0, 0, 15, 0));
 		Button newGame = new Button("New Game");
 //		newGame.getStyleClass().add("BUTTON_DSI");
-		newGame.setPrefSize(100, 40);
+		newGame.setPrefSize(100, 30);
 		Button preset = new Button("Play");
-		preset.setPrefSize(100, 40);
+		preset.setPrefSize(100, 30);
 		preset.setOnAction(e -> MathDoku.PresetGrid());
 		newGame.setOnMouseClicked(new FileLoaderHandler());
 		Button randomGame = new Button("Random Game");
-		randomGame.setPrefSize(100, 40);
+		randomGame.setPrefSize(100, 30);
 		VBox vbox = new VBox(10);
 		randomGame.setOnAction(e -> GameGenerator.createGrid(6));
-		vbox.getChildren().addAll(newGame, preset, randomGame);
+		vbox.getChildren().addAll(label,newGame, preset, randomGame);
 		vbox.setAlignment(Pos.CENTER);
 		preset.setDefaultButton(true);
 		return vbox;

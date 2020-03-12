@@ -125,6 +125,11 @@ public class GridConstructor {
 		for(StackPane s : cellsPos) {
 			grid.getChildren().add(s);
 		}
+		current = cells.get(0);
+		current.setStrokeType(StrokeType.INSIDE);
+		current.setStroke(Color.rgb(0, 0, 128, 0.4));
+		current.setStrokeWidth(MathDoku.getWidth());
+		keyTyped();
 		return grid;
 	}
 	
@@ -157,20 +162,20 @@ public class GridConstructor {
 					current.setStroke(Color.BLACK);
 					current.setStrokeWidth(0.25);
 				}
-				System.out.println("Click Pos: " + (((MyRectangle)event.getTarget()).getCellId())
-						+ "\tValue: " + ((MyRectangle) event.getTarget()).getValue() 
-						+ "\tOld Value: " + ((MyRectangle) event.getTarget()).getOldValue() 
-						+ "\tCageID: " +((MyRectangle)event.getTarget()).getCageId() 
-						+ "\tRow: " +((MyRectangle)event.getTarget()).getRow()
-						+"\tCol: " + ((MyRectangle)event.getTarget()).getCol()
-						+"\tCageID: "+((MyRectangle)event.getTarget()).isCageRed()
-						+"\tRow red: " + ((MyRectangle) event.getTarget()).isRowRed()
-						+"\tCol red: " + ((MyRectangle) event.getTarget()).isColRed()
-						+"\tCage: " + ((MyRectangle) event.getTarget()).getCage().getId()
-						+"\tSolValue: "+ ((MyRectangle) event.getTarget()).getSolution());
-						
+//				System.out.println("Click Pos: " + (((MyRectangle)event.getTarget()).getCellId())
+//						+ "\tValue: " + ((MyRectangle) event.getTarget()).getValue() 
+//						+ "\tOld Value: " + ((MyRectangle) event.getTarget()).getOldValue() 
+//						+ "\tCageID: " +((MyRectangle)event.getTarget()).getCageId() 
+//						+ "\tRow: " +((MyRectangle)event.getTarget()).getRow()
+//						+"\tCol: " + ((MyRectangle)event.getTarget()).getCol()
+//						+"\tCageID: "+((MyRectangle)event.getTarget()).isCageRed()
+//						+"\tRow red: " + ((MyRectangle) event.getTarget()).isRowRed()
+//						+"\tCol red: " + ((MyRectangle) event.getTarget()).isColRed()
+//						+"\tCage: " + ((MyRectangle) event.getTarget()).getCage().getId()
+//						+"\tSolValue: "+ ((MyRectangle) event.getTarget()).getSolution());
 				// Save the cell as current 
 				current = (MyRectangle) event.getTarget();
+				printInfo();
 				current.setStrokeType(StrokeType.INSIDE);
 				current.setStroke(Color.rgb(0, 0, 128, 0.4));
 //				current.setStroke(Color.rgb(80, 175, 255, 0.4));	//teal
@@ -179,9 +184,18 @@ public class GridConstructor {
 				// When user clicks on the grid, the focus is requested for the grid
 				requestFocus();
 				// Calls an eventHandler for the key input
-				keyTyped();
+//				keyTyped();
 			}
 		});
+	}
+	
+	public void printInfo() {
+		System.out.println("Click Pos: " + current.getCellId() + "\tValue: " + current.getValue() 
+		+ "\tOld Value: " + current.getOldValue() + "\tCageID: " + current.getCageId() 
+		+ "\tRow: " + current.getRow() +"\tCol: " + current.getCol() + "\tRow red: " + current.isRowRed()
+		+"\tCol red: " + current.isColRed() + "\tSolValue: "+ current.getSolution());
+//				+"\tCageID: "+((MyRectangle)event.getTarget()).isCageRed()
+//				+"\tCage: " + ((MyRectangle) event.getTarget()).getCage().getId()
 	}
 	
 	public void moveWithKeys(String move) {
@@ -218,6 +232,7 @@ public class GridConstructor {
 				current = cells.get(0);
 			break;
 		}
+		printInfo();
 		current.setStrokeType(StrokeType.INSIDE);
 		current.setStroke(Color.rgb(0, 0, 128, 0.4));
 		current.setStrokeWidth(MathDoku.getWidth());
@@ -236,10 +251,8 @@ public class GridConstructor {
 	 * Takes only digits
 	 */
 	public void keyTyped() {
-		
 		final KeyCombination redo = new KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN);
 		final KeyCombination undo = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHORTCUT_DOWN);
-		
 		grid.setOnKeyPressed(e -> {
 			if(undo.match(e)) {
 				System.out.println("undo");
@@ -301,6 +314,11 @@ public class GridConstructor {
 				}
 			}
 		});
+	}
+	
+	public void unregiSterKeys() {
+		grid.setOnKeyPressed(null);
+		grid.setOnKeyTyped(null);
 	}
 	
 	public boolean checkWin() {
@@ -400,6 +418,24 @@ public class GridConstructor {
 					Gui.solve.setDisable(false);
 				}); 
 				pause.play();
+				break;
+			}
+		}
+	}
+	
+	public void displayTest(MyRectangle r) {
+		for(StackPane s : cellsPos) {
+			if(((MyRectangle) s.getChildren().get(0)).getCellId() == r.getCellId()) {
+				MyRectangle cell = ((MyRectangle) s.getChildren().get(0));
+//				StackOperations.stackRedo.clear();
+				String number = String.valueOf(cell.getSolution());
+				Label label = new Label(number);
+				label.setMouseTransparent(true);
+				label.setFont(font);
+				if(s.getChildren().size() > 2) {
+					s.getChildren().remove(s.getChildren().size()-1);
+				}
+				s.getChildren().add(label);
 				break;
 			}
 		}
