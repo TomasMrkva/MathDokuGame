@@ -196,8 +196,8 @@ public class GridConstructor {
 	public void printInfo() {
 		System.out.println("Click Pos: " + current.getCellId() + "\tValue: " + current.getValue() 
 		+ "\tOld Value: " + current.getOldValue() + "\tCageID: " + current.getCageId() 
-		+ "\tRow: " + current.getRow() +"\tCol: " + current.getCol() + "\tCageID: " + current.getCageId()
-		+"\tCage red: " + current .isCageRed() + "    Row red: " + current.isRowRed()
+		+ "\tRow: " + current.getRow() +"\tCol: " + current.getCol()
+		+"\tCage red: " + current .isCageRed() + "\tRow red: " + current.isRowRed()
 		+"   Col red: " + current.isColRed() + "\tSolValue: "+ current.getSolution());
 	}
 	
@@ -328,8 +328,8 @@ public class GridConstructor {
 		Cage[] arr = cages.toArray(new Cage[cages.size()]);
 		if(GameEngine.checkAllCols(matrix) && GameEngine.checkAllRows(matrix) && GameEngine.checkAllCages(false, arr)) {
 			Gui.setText("Congratulations, you solved the game !!!");
-			Gui.hint.setDisable(true);
-			Gui.solve.setDisable(true);
+//			Gui.hint.setDisable(true);
+//			Gui.solve.setDisable(true);
 			return true;
 		}
 		else 

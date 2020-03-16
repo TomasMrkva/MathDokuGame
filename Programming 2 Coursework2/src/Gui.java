@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -15,12 +14,10 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -29,7 +26,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class Gui {
-	
 	private static GridConstructor grid;
 	protected static boolean mistakes;
 	protected static Button redo;
@@ -95,14 +91,12 @@ public class Gui {
 		undo = new Button();
 		undo.setText("<-");
 		undo.setPrefWidth(50);
-//		undoClick(undo);
 		undo.setOnAction(e -> Gui.undoAction());
 		undo.setDisable(true);
 		
 		redo = new Button();
 		redo.setText("->");
 		redo.setPrefWidth(50);
-//		redoClick(redo);
 		redo.setOnAction(e -> Gui.redoAction());
 		redo.setDisable(true);
 		

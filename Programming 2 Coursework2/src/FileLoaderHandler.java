@@ -37,7 +37,6 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 	private GridConstructor grid;
 	private Stage newWindow;
 	private TextArea area;
-	public static boolean started = false;
 
 	/**
 	 * Creates a new popup gui
@@ -45,7 +44,6 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 	@Override
 	public void handle(MouseEvent event) {
 		
-		started = true;
 		newWindow = new Stage();
 		area = new TextArea();
 		
@@ -58,15 +56,22 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 			newWindow.close();
 			Gui.randomGameMenu();
 		});
+		
 		Button choose = new Button("Choose File");
 		choose.setPrefWidth(85);
 		choose.addEventHandler(ActionEvent.ANY, new chooseFileHandler());
+		
 		Button cancel = new Button("Cancel");
 		cancel.setPrefWidth(85);
-		Button submit = new Button("Submit");
-		submit.addEventHandler(ActionEvent.ANY, new submitClickHandler());
+		cancel.setOnAction(e -> {
+			newWindow.close();
+			if(Gui.getGrid()!=null) 
+				Gui.getGrid().requestFocus();
+		});
 		
+		Button submit = new Button("Submit");
 		submit.setPrefWidth(85);
+		submit.addEventHandler(ActionEvent.ANY, new submitClickHandler());
 		
 		Label label = new Label("Specify your mathdoku here:");
 		label.setPadding(new Insets(0, 0, 10, 0));
@@ -88,12 +93,6 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
         newWindow.setMinHeight(270);
         newWindow.setMinWidth(300);
         newWindow.show();
-		
-		cancel.setOnAction(e -> {
-			newWindow.close();
-			if(Gui.getGrid()!=null) 
-				Gui.getGrid().requestFocus();
-		});
 	}
 	
 	/**
@@ -103,7 +102,7 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 		
 		@Override
 		public void handle(ActionEvent event) {
-						
+			
 			FileChooser fileChooser = new FileChooser();
 			fileChooser.setTitle("Open File to Load");
 			ExtensionFilter txtFilter = new ExtensionFilter("Text files","*.txt");
@@ -136,6 +135,7 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 		
 		@Override
 		public void handle(ActionEvent event) {
+			
 			int numberOfCells = 0;
 			int maxvalue = 0;
 			int currValue=0;
@@ -153,7 +153,6 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 			for (String line : area.getText().split("\\n")) {
 				String[] parts = line.split("[ ,]");
 				lines.add(parts);
-				//
 				if(!parts[0].matches("[0-9]+[+\\-x÷]$") && !parts[0].matches("[0-9]+$")) {
 					wrongFormat = true;
 					wrongPart = line;
@@ -164,6 +163,7 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 					wrongPart = line;
 					break;
 				}
+				
 				for (int i=1; i < parts.length; i++) {
 					try {
 						currValue = (Integer.valueOf(parts[i]));
@@ -210,7 +210,6 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 			else if((maxvalue != numberOfCells)) displayErrorMessage("Not enough cells!");
 			else if(numberOfCells == 0) displayErrorMessage("No cells! " + wrongPart);
 			else if((int)Math.pow(N, 2) != numberOfCells) displayErrorMessage("Not a squared grid! Number of cells: " + numberOfCells);
-			
 			else {
 				ArrayList<Cage> cages = new ArrayList<Cage>();	//List of all cages for the grid
 				boolean correctCage = false;
@@ -253,14 +252,18 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 		}
 		
 		public void createGrid(ArrayList<Cage> cages, int N) {
-						
-			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setCenter(null);
-			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setTop(null);
-			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setBottom(null);
-			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setLeft(null);
-			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setRight(null);
 			
-			Gui.setGrid(null);
+//			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setCenter(null);
+//			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setTop(null);
+//			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setBottom(null);
+//			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setLeft(null);
+//			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setRight(null);
+			if(MathDoku.pRoot.getChildren().size() > 1) {
+				for(int i=MathDoku.pRoot.getChildren().size()-1; i>=1 ;i--) {
+					MathDoku.pRoot.getChildren().remove(i);
+				}
+			}
+//			Gui.setGrid(null);
 			grid.addCages(cages);
 			grid.makeLabels();
 			grid.makeBorder(MathDoku.width, N, 2, Color.TOMATO);

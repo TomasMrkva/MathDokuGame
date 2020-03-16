@@ -325,6 +325,10 @@ public class GameEngine {
 	}
 	
 	public static boolean solve(ArrayList<MyRectangle> cells, int noCells) {
+		if(cells.get(0).getSolution() != 0) {
+			isSolvable = true;
+			return true;
+		} 
 		int position = 0;
 		double limit = Math.sqrt(noCells);
 		boolean backtrack = false;

@@ -130,8 +130,8 @@ public class Trial extends Application {
 		for (int row = 0; row < N; row++) {
 			for (int col = 0; col < N; col++) {
 				MyRectangle r = new MyRectangle(width,width);
-				r.setRow(row);
-				r.setCol(col);
+//				r.setRow(row);
+//				r.setCol(col);
 				//r.setStroke(Color.GREY);
 				r.setFill(Color.WHITE);
 //				if(col%2 == 0 && row%2 ==0) {

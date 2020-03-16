@@ -126,4 +126,49 @@ public class MathDoku extends Application {
 		grid.requestFocus();
 	}
 	
+	public static void createGame(GridConstructor grid, Group game, ArrayList<Cage> cages, int N) {
+		// Removes winning animation if there was one
+		if(MathDoku.pRoot.getChildren().size() > 1) {
+			for(int i=MathDoku.pRoot.getChildren().size()-1; i>=1 ;i--) {
+				MathDoku.pRoot.getChildren().remove(i);
+			}
+		}
+		grid.addCages(cages);
+		grid.makeLabels();
+		grid.makeBorder(MathDoku.width, N, 2, Color.TOMATO);
+		
+		Gui gui = new Gui(grid);
+		Group gameGrid = grid.getGrid();							
+        StackPane pane = new StackPane();
+        pane.getChildren().add(gameGrid);
+        pane.setPickOnBounds(false);
+        
+        ((BorderPane) MathDoku.pRoot.getChildren().get(0)).setTop(gui.loadGame());
+		((BorderPane) MathDoku.pRoot.getChildren().get(0)).setBottom(gui.bottomSide());
+		((BorderPane) MathDoku.pRoot.getChildren().get(0)).setLeft(gui.menu());
+		((BorderPane) MathDoku.pRoot.getChildren().get(0)).setRight(gui.numbers(N));
+		((BorderPane) MathDoku.pRoot.getChildren().get(0)).setCenter(pane);
+		
+		NumberBinding maxScale = Bindings.min(pane.widthProperty().divide((N*0.83)*100), pane.heightProperty().divide((N*0.83)*100));
+		pane.scaleXProperty().bind(maxScale);
+		pane.scaleYProperty().bind(maxScale);
+		if(N > 5) {
+			MathDoku.getStage().setMinHeight(MathDoku.width * N + 120);
+			MathDoku.getStage().setMinWidth(MathDoku.width * N + 140);				
+		} else {
+			MathDoku.getStage().setMinHeight(MathDoku.width * 6 + 120);
+			MathDoku.getStage().setMinWidth(MathDoku.width * 6 + 140);				
+		}
+		pStage.centerOnScreen();
+		
+		StackOperations.clear();
+		Gui.setText("Grid has not been completed!");
+		if(!GameEngine.solve(grid.getCells(), grid.getCells().size())) {
+			Gui.solve.setDisable(true);
+			Gui.hint.setDisable(true);
+		}
+		grid.requestFocus();
+		Gui.setGrid(GameGenerator.grid);
+	}
+	
 }

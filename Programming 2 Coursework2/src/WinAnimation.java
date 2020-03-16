@@ -24,12 +24,10 @@ import javafx.util.Duration;
 
 public class WinAnimation {
 
-//	static Text selectText;
-	public static boolean isWin;
-
 	public static void playAnimation(Pane pane) {
 		Gui.getGrid().unregiSterKeys();
 		PauseTransition pauseMain = new PauseTransition(Duration.seconds(0.5));
+		
 		pauseMain.setOnFinished(mainEvent -> {
 	        Circle small = new Circle(70);
 	        Circle big = new Circle(150);
@@ -134,8 +132,8 @@ public class WinAnimation {
 		        newSelectedText.setStyle("-fx-background-color: lightgrey");
 		    }
 		});
-		PauseTransition pauseButton = new PauseTransition(Duration.seconds(13.5));
-		pauseButton.setOnFinished(e -> {
+		PauseTransition pauseButtons = new PauseTransition(Duration.seconds(13.5));
+		pauseButtons.setOnFinished(e -> {
 			Label endGame = new Label(" Exit ");
 			endGame.setFont(new Font(25));
 			Label tryAgain = new Label(" Try Again ");
@@ -150,7 +148,6 @@ public class WinAnimation {
 				System.exit(0);
 			});
 			tryAgain.setOnMouseClicked(event -> {
-//				System.out.println("hi");
 				for(int i=pane.getChildren().size()-1; i > 0 ; i--) {
 					pane.getChildren().remove(i);
 				}
@@ -160,10 +157,10 @@ public class WinAnimation {
 				StackOperations.stackRedo.clear();
 				Gui.redo.setDisable(true);
 				Gui.undo.setDisable(true);
-				if(GameEngine.isSolvabale()) {
-					Gui.hint.setDisable(false);
-					Gui.solve.setDisable(false);
-				}
+//				if(GameEngine.isSolvabale()) {
+//					Gui.hint.setDisable(false);
+//					Gui.solve.setDisable(false);
+//				}
 				grid.keyTyped();
 				grid.requestFocus();
 			});
@@ -172,6 +169,6 @@ public class WinAnimation {
 			VBox vbox = (VBox) pane.getChildren().get(pane.getChildren().size()-1);
 			vbox.getChildren().addAll(loadGame, tryAgain, endGame);
 		});
-		pauseButton.play();
+		pauseButtons.play();
 	}
 }

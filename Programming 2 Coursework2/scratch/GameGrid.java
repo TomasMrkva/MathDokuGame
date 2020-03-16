@@ -51,6 +51,7 @@ public class GameGrid extends Application{
 		BorderPane.setAlignment(b1, Pos.CENTER);
 		BorderPane.setAlignment(b2, Pos.CENTER);
 		BorderPane.setAlignment(b3, Pos.CENTER);
+		System.out.println(javafx.scene.text.Font.getFamilies());
 
 
 		

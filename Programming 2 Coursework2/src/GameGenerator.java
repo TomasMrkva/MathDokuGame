@@ -20,6 +20,13 @@ public class GameGenerator {
 
 
 	public static void createGrid(int N, int difficulty) {
+		
+		if(MathDoku.pRoot.getChildren().size() > 1) {
+			for(int i=MathDoku.pRoot.getChildren().size()-1; i>=1 ;i--) {
+				MathDoku.pRoot.getChildren().remove(i);
+			}
+		}
+		
 		GridConstructor grid = new GridConstructor(N, MathDoku.getWidth());
 		GameGenerator.cells  = grid.getCells();
 		GameGenerator.N = N;
@@ -30,9 +37,7 @@ public class GameGenerator {
 		
 		solve(cells.size());
 		GameGenerator.fillGrid();
-		for(MyRectangle r : cells) {
-			System.err.println(r.getSolution() + ",");
-		}
+
 		grid.addCages(createCages());
 		grid.makeLabels();
 		
@@ -46,7 +51,8 @@ public class GameGenerator {
 				pane.heightProperty().divide((N * 0.83) * 100));
 		pane.scaleXProperty().bind(maxScale);
 		pane.scaleYProperty().bind(maxScale);
-
+//		pane.setStyle("-fx-border-color: blue");
+		
 		((BorderPane) MathDoku.pRoot.getChildren().get(0)).setTop(gui.loadGame());
 		((BorderPane) MathDoku.pRoot.getChildren().get(0)).setBottom(gui.bottomSide());
 		((BorderPane) MathDoku.pRoot.getChildren().get(0)).setLeft(gui.menu());
@@ -60,13 +66,7 @@ public class GameGenerator {
 			MathDoku.getStage().setMinHeight(MathDoku.width * 6 + 120);
 			MathDoku.getStage().setMinWidth(MathDoku.width * 6 + 140);				
 		}
-		System.err.println("SIZE OF THE GRID IS: " + cells.size());
-//		for(MyRectangle cell : cells) {
-//			System.err.print(cell.getSolution() + ", ");
-//		}
-//		for(MyRectangle cell : GameGenerator.grid.cells) {
-//			System.err.println("V2: " + cell.getSolution() + ",");
-//		}
+		
 		MathDoku.getStage().centerOnScreen();
 		grid.requestFocus();
 		Gui.setGrid(GameGenerator.grid);
