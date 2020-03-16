@@ -32,16 +32,23 @@ public class Gui {
 	protected static Button undo;
 	protected static Button hint;
 	protected static Button solve;
-	protected static Label label = new Label("Grid has not been completed!");
-	private static int N=0;
-	private static int difficulty=0;
+	protected static Label label; 
+	protected static Slider slider;
+//	private static int N=0;
+//	private static int difficulty=0;
 	
 	public Gui(GridConstructor grid) {
 		Gui.grid = grid;
+		Gui.label = new Label("Grid has not been completed!");
+		mistakes = false;
 	}
 	
 	public static void setText(String text) {
 		label.setText(text);
+	}
+	
+	public static void setFont(Font font) {
+		label.setFont(font);
 	}
 	
 	public static void setGrid(GridConstructor g) {
@@ -60,7 +67,7 @@ public class Gui {
 			button.setText(String.valueOf(i));
 			button.setPrefWidth(50);
 			button.setPrefHeight(25);
-			numButtonClick(button);
+			this.numButtonClick(button);
 			HBox hBox = new HBox();
 			hBox.getChildren().add(button);
 			numbers.getChildren().add(button);
@@ -69,14 +76,35 @@ public class Gui {
 		}
 		Button del = new Button("Del");
 		del.setPrefWidth(50);
-		numButtonClick(del);
+		this.numButtonClick(del);
 		numbers.getChildren().add(del);
-		numbers.setPadding(new Insets(MathDoku.getWidth()*1, 10, MathDoku.getWidth()*1, 10));
+		numbers.setPadding(new Insets(MathDoku.width, 10, MathDoku.width, 10));
 		numbers.setAlignment(Pos.CENTER);
 		VBox.setVgrow(del, Priority.ALWAYS);
 		del.setMaxHeight(Double.MAX_VALUE);
 		return numbers;
 	}
+	
+//	public VBox initialSetup() {
+//		Label label = new Label("Welcome to MathDoku");
+//		label.setFont(new Font("Helvetica", 20));
+//		label.setPadding(new Insets(0, 0, 15, 0));
+//		Button newGame = new Button("New Game");
+////		newGame.getStyleClass().add("BUTTON_DSI");
+//		newGame.setPrefSize(100, 30);
+//		Button preset = new Button("Play");
+//		preset.setPrefSize(100, 30);
+//		preset.setOnAction(e -> MathDoku.createPreset());
+//		newGame.setOnMouseClicked(new FileLoaderHandler());
+//		Button randomGame = new Button("Random Game");
+//		randomGame.setPrefSize(100, 30);
+//		VBox vbox = new VBox(10);
+//		randomGame.setOnAction(e -> Gui.randomGameMenu());
+//		vbox.getChildren().addAll(label,newGame, preset, randomGame);
+//		vbox.setAlignment(Pos.CENTER);
+//		preset.setDefaultButton(true);
+//		return vbox;
+//	}
 	
 	public VBox menu() {
 		Button clear = new Button("Clear");
@@ -86,7 +114,7 @@ public class Gui {
 		hintClick(hint);
 		solveClick(solve);
 		solve.setPrefWidth(50);
-		clearClick(clear);
+		this.clearClick(clear);
 		clear.setPrefWidth(50);
 		undo = new Button();
 		undo.setText("<-");
@@ -105,7 +133,7 @@ public class Gui {
 		menu.getChildren().addAll(hint, solve, clear, undo, redo);
 		menu.setAlignment(Pos.CENTER);
 		
-		menu.setPadding(new Insets(MathDoku.getWidth()*2, 10, MathDoku.getWidth()*2, 10));
+		menu.setPadding(new Insets(MathDoku.width*2, 10, MathDoku.width*2, 10));
 		menu.setAlignment(Pos.CENTER);
 		VBox.setVgrow(solve, Priority.ALWAYS);
 		VBox.setVgrow(clear, Priority.ALWAYS);
@@ -121,30 +149,11 @@ public class Gui {
 		return menu;
 	}
 	
-	public VBox initialSetup() {
-		Label label = new Label("Welcome to MathDoku");
-		label.setFont(new Font("Helvetica", 20));
-		label.setPadding(new Insets(0, 0, 15, 0));
-		Button newGame = new Button("New Game");
-//		newGame.getStyleClass().add("BUTTON_DSI");
-		newGame.setPrefSize(100, 30);
-		Button preset = new Button("Play");
-		preset.setPrefSize(100, 30);
-		preset.setOnAction(e -> MathDoku.PresetGrid());
-		newGame.setOnMouseClicked(new FileLoaderHandler());
-		Button randomGame = new Button("Random Game");
-		randomGame.setPrefSize(100, 30);
-		VBox vbox = new VBox(10);
-		randomGame.setOnAction(e -> Gui.randomGameMenu());
-		vbox.getChildren().addAll(label,newGame, preset, randomGame);
-		vbox.setAlignment(Pos.CENTER);
-		preset.setDefaultButton(true);
-		return vbox;
-	}
-	
 	public static void randomGameMenu() {
 		Button b = new Button("Cancel");
 		Button submit = new Button("Submit");
+		submit.setDefaultButton(true);
+		
 		Stage newWindow = new Stage();
 		Label label = new Label("Customize your game");
 		label.setFont(new Font("Helvetica", 20));
@@ -168,6 +177,8 @@ public class Gui {
 		dBox.setValue("Easy");
 		
 		submit.setOnAction(e -> {
+			int N = 0;
+			int difficulty = 0;
 			switch (cBox.getValue()) {
 				case "2x2": N=2; break;
 				case "3x3": N=3; break;
@@ -178,15 +189,15 @@ public class Gui {
 				case "8x8": N=8; break;
 			}
 			switch (dBox.getValue()) {
-				case "Easy": Gui.difficulty = 1; break;
-				case "Medium": Gui.difficulty = 2; break;
-				case "Hard": Gui.difficulty = 3; break;
+				case "Easy": difficulty = 1; break;
+				case "Medium": difficulty = 2; break;
+				case "Hard": difficulty = 3; break;
 			}
 			System.out.println("Size:" + N);
-			System.out.println("Difficulty" + Gui.difficulty);
+			System.out.println("Difficulty" + difficulty);
 			newWindow.close();
-			GameGenerator.createGrid(N, difficulty);
-//			GameGenerator.fillGrid();
+			RandomGame randomGame = new RandomGame(N, difficulty);
+			randomGame.createRandomGame();
 		});
 		
 		b.setOnAction(e -> newWindow.close());
@@ -199,31 +210,31 @@ public class Gui {
 	}
 	
 	public HBox loadGame() {
-		Slider slider = new Slider(12, 20, 16);
+		Slider slider = new Slider(12, 20, GridConstructor.font.getSize());
 		slider.setShowTickMarks(true);
 		slider.setShowTickLabels(true);
         slider.setMinorTickCount(1);
         slider.setMajorTickUnit(2);
 		slider.setPadding(new Insets(5, 10, 5, 10));
 		slider.setPrefWidth(100);
-		fontMaker(slider);
+		this.fontMaker(slider);
 		Button loadFile = new Button();
 		loadFile.setText("Load a new game");
 		CheckBox mistakes = new CheckBox("Show Mistakes");
 		mistakerChooser(mistakes);
 		loadFile.setOnMouseClicked(new FileLoaderHandler());
-		HBox load = new HBox(20);
-		load.setPadding(new Insets(5, 10, 5, 10));
-		load.getChildren().addAll(loadFile, mistakes, slider);
-		load.setAlignment(Pos.CENTER);
+		HBox loadBox = new HBox(20);
+		loadBox.setPadding(new Insets(5, 10, 5, 10));
+		loadBox.getChildren().addAll(loadFile, mistakes, slider);
+		loadBox.setAlignment(Pos.CENTER);
 		HBox.setHgrow(loadFile, Priority.ALWAYS);
 		HBox.setHgrow(slider, Priority.ALWAYS);
 		slider.setMaxWidth(400);
 		loadFile.setMaxWidth(300);
-		return load;
+		return loadBox;
 	}
 	
-	public HBox bottomSide() {
+	public HBox botomPanel() {
 		label.setPadding(new Insets(10));
 		label.setAlignment(Pos.CENTER);
 		label.setPrefWidth(300);
@@ -233,6 +244,7 @@ public class Gui {
 		HBox.setHgrow(label, Priority.ALWAYS);
 		label.setMaxWidth(Double.MAX_VALUE);
 		label.setMaxHeight(Double.MAX_VALUE);
+//		label.setFont(GridConstructor.font);
 		return hbox;
 	}
 	
@@ -298,7 +310,9 @@ public class Gui {
 			}
 		});
 	}
-	
+	/**
+	 * Used for redo with key combinations
+	 */
 	public static void redoAction() {
 		MyRectangle next = StackOperations.redo();
 		grid.updateNumber(next, false);
@@ -312,6 +326,9 @@ public class Gui {
 		grid.requestFocus();
 	}
 	
+	/**
+	 * Used for undo with key combinations
+	 */
 	public static void undoAction() {
 		MyRectangle previous = StackOperations.undo();
 		grid.updateNumber(previous, true);
@@ -331,7 +348,7 @@ public class Gui {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				Font font = new Font("Arial", newValue.intValue());
-//				System.out.println("works");
+				label.setFont(font);
 				grid.setFont(font);
 				grid.requestFocus();
 			}
@@ -343,9 +360,9 @@ public class Gui {
 		solveButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				for(MyRectangle cell : grid.getCells()) {
-					cell.setSolution(0);
-				}
+//				for(MyRectangle cell : grid.getCells()) {
+//					cell.setSolution(0);
+//				}
 				if(GameEngine.solve(grid.getCells(), grid.getCells().size())) {
 					for(MyRectangle r : grid.getCells()) {
 						grid.displaySolved(r);

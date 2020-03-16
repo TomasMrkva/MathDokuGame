@@ -15,18 +15,13 @@ import javafx.scene.control.ButtonType;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.NumberBinding;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -34,7 +29,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 
 public class FileLoaderHandler implements EventHandler<MouseEvent> {
 	
-	private GridConstructor grid;
+//	private GridConstructor grid;
 	private Stage newWindow;
 	private TextArea area;
 
@@ -50,8 +45,9 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 		BorderPane pane = new BorderPane();
 		pane.setPadding(new Insets(10));
 		
-		Button random = new Button("Random");
-		random.setPrefWidth(85);
+		Button random = new Button("Random Game");
+//		random.setPadding(new Insets(0, 10, 0, 0));
+		random.setPrefWidth(100);
 		random.setOnAction(e -> {
 			newWindow.close();
 			Gui.randomGameMenu();
@@ -62,7 +58,7 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 		choose.addEventHandler(ActionEvent.ANY, new chooseFileHandler());
 		
 		Button cancel = new Button("Cancel");
-		cancel.setPrefWidth(85);
+		cancel.setPrefWidth(75);
 		cancel.setOnAction(e -> {
 			newWindow.close();
 			if(Gui.getGrid()!=null) 
@@ -70,23 +66,33 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 		});
 		
 		Button submit = new Button("Submit");
-		submit.setPrefWidth(85);
+//		random.setPadding(new Insets(0, 0, 0, 20));
+		submit.setDefaultButton(true);
+		submit.setPrefWidth(75);
 		submit.addEventHandler(ActionEvent.ANY, new submitClickHandler());
 		
 		Label label = new Label("Specify your mathdoku here:");
 		label.setPadding(new Insets(0, 0, 10, 0));
 		
-		HBox buttons = new HBox(10);
+		HBox buttonsLeft = new HBox(5);
+		buttonsLeft.getChildren().addAll(choose, random);
+		buttonsLeft.setAlignment(Pos.BOTTOM_LEFT);
+		
+		HBox buttonsRight = new HBox(5);
+		buttonsRight.getChildren().addAll(submit, cancel);
+		buttonsLeft.setAlignment(Pos.BOTTOM_RIGHT);
+		
+		HBox buttons = new HBox(30);
 		buttons.setPadding(new Insets(10, 0, 10, 0));
 		buttons.setAlignment(Pos.CENTER);
-		buttons.getChildren().addAll(choose, random, submit, cancel);
+		buttons.getChildren().addAll(buttonsLeft, buttonsRight);
 		
 		pane.setTop(label);
 		pane.setCenter(area);
 		pane.setBottom(buttons);
 		BorderPane.setAlignment(label, Pos.BOTTOM_CENTER);
 		
-        Scene secondScene = new Scene(pane, 385, 370);
+        Scene secondScene = new Scene(pane, 410, 320);
         newWindow.setTitle("Load a new game");
         newWindow.setScene(secondScene);
         newWindow.initModality(Modality.APPLICATION_MODAL);
@@ -213,7 +219,7 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 			else {
 				ArrayList<Cage> cages = new ArrayList<Cage>();	//List of all cages for the grid
 				boolean correctCage = false;
-				grid = new GridConstructor(N, MathDoku.getWidth());
+				GridConstructor grid = new GridConstructor(N, MathDoku.width);
 				ArrayList<MyRectangle> cells = new ArrayList<MyRectangle>();	//Used for saving cells in a line
 				
 				// Loops through each array of Strings which were in one line
@@ -246,60 +252,11 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 					System.out.println();
 				}
 				if(correctCage) {
-					createGrid(cages, N);
+					MathDoku.createGame(grid, cages, N);
+//					createGrid(cages, N);
+					newWindow.close();
 				}
 			}
-		}
-		
-		public void createGrid(ArrayList<Cage> cages, int N) {
-			
-//			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setCenter(null);
-//			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setTop(null);
-//			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setBottom(null);
-//			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setLeft(null);
-//			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setRight(null);
-			if(MathDoku.pRoot.getChildren().size() > 1) {
-				for(int i=MathDoku.pRoot.getChildren().size()-1; i>=1 ;i--) {
-					MathDoku.pRoot.getChildren().remove(i);
-				}
-			}
-//			Gui.setGrid(null);
-			grid.addCages(cages);
-			grid.makeLabels();
-			grid.makeBorder(MathDoku.width, N, 2, Color.TOMATO);
-			Gui gui = new Gui(grid);
-			Group gameGrid = grid.getGrid();							
-	        StackPane pane = new StackPane();
-	        pane.getChildren().add(gameGrid);
-	        pane.setPickOnBounds(false);
-//			pane.setStyle("-fx-border-color: blue");
-	        
-			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setTop(gui.loadGame());
-			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setBottom(gui.bottomSide());
-			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setLeft(gui.menu());
-			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setRight(gui.numbers(N));
-			((BorderPane) MathDoku.pRoot.getChildren().get(0)).setCenter(pane);
-
-			NumberBinding maxScale = Bindings.min(pane.widthProperty().divide((N*0.83)*100), pane.heightProperty().divide((N*0.83)*100));
-			pane.scaleXProperty().bind(maxScale);
-			pane.scaleYProperty().bind(maxScale);
-			if(N > 5) {
-				MathDoku.getStage().setMinHeight(MathDoku.width * N + 120);
-				MathDoku.getStage().setMinWidth(MathDoku.width * N + 140);				
-			} else {
-				MathDoku.getStage().setMinHeight(MathDoku.width * 6 + 120);
-				MathDoku.getStage().setMinWidth(MathDoku.width * 6 + 140);				
-			}
-			MathDoku.getStage().centerOnScreen();
-//			Gui.setGrid(grid);
-			StackOperations.clear();
-			Gui.setText("Grid has not been completed!");
-			if(!GameEngine.solve(grid.getCells(), grid.getCells().size())) {
-				Gui.solve.setDisable(true);
-				Gui.hint.setDisable(true);
-			}
-			grid.requestFocus();
-			newWindow.close();
 		}
 		
 		public void displayErrorMessage(String message) {
@@ -389,5 +346,5 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 			return true;
 		}
 	}
+	
 }
-
