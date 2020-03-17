@@ -49,7 +49,7 @@ public class WinAnimation {
 	        path1.setNode(cir1);
 	        
 	        TranslateTransition transitionSmall = new TranslateTransition();
-	        transitionSmall.setDuration(Duration.seconds(0.75));
+	        transitionSmall.setDuration(Duration.seconds(0.5));
 	        transitionSmall.setToX(0);
 	        transitionSmall.setToY(0);
 	        transitionSmall.setNode(cir1);
@@ -59,7 +59,7 @@ public class WinAnimation {
 	        path2.setNode(cir2);
 	        
 	        TranslateTransition transitionBig = new TranslateTransition();
-	        transitionBig.setDuration(Duration.seconds(0.75));
+	        transitionBig.setDuration(Duration.seconds(0.5));
 	        transitionBig.setToX(0);
 	        transitionBig.setToY(0);
 	        transitionBig.setNode(cir2);
@@ -70,17 +70,16 @@ public class WinAnimation {
 		    SequentialTransition sequence2 = new SequentialTransition(cir2, path2, transitionBig);
 		    sequence2.play();
 	        
-		    ScaleTransition scale  = new ScaleTransition(Duration.seconds(4), cir2);
-		    scale.setDelay(Duration.seconds(3.75));
+		    ScaleTransition scale  = new ScaleTransition(Duration.seconds(2), cir2);
+		    scale.setDelay(Duration.seconds(3.5));
 		    scale.setCycleCount(3);
 		    scale.setAutoReverse(true);
-//		    scale.setCycleCount(1);
 		    scale.setToX(50);
 		    scale.setToY(50);
 		    scale.play();
 		    
 		    FillTransition fill = new FillTransition(Duration.seconds(3), cir2, Color.rgb(91, 132, 177), Color.rgb(252, 118, 106));
-		    fill.setDelay(Duration.seconds(4));
+		    fill.setDelay(Duration.seconds(3.5));
 		    fill.setCycleCount(6);
 		    fill.setAutoReverse(true);
 		    fill.play();
@@ -89,11 +88,12 @@ public class WinAnimation {
 		    text.setFont(new Font(45));
 		    text.setStyle("-fx-text-fill: transparent");
 		    
-		    PauseTransition pauseText = new PauseTransition(Duration.seconds(4));
+		    PauseTransition pauseText = new PauseTransition(Duration.seconds(3.6));
 		    pauseText.setOnFinished(e -> text.setStyle("-fx-text-fill: black"));
 		    pauseText.play();
 		    
 	        FadeTransition fade = new FadeTransition();
+	        fade.setDelay(Duration.seconds(6.5));
 	        fade.setDuration(Duration.seconds(3));
 	        fade.setAutoReverse(true);
 	        fade.setCycleCount(Animation.INDEFINITE);
@@ -104,10 +104,11 @@ public class WinAnimation {
 		    
 		    
 	        RotateTransition rotate = new RotateTransition();
+	        rotate.setDelay(Duration.seconds(3.65));
 	        rotate.setAxis(Rotate.Z_AXIS);
 	        rotate.setByAngle(360);  
-	        rotate.setCycleCount(5);  
-	        rotate.setDuration(Duration.seconds(2));  
+//	        rotate.setCycleCount(3);  
+	        rotate.setDuration(Duration.seconds(3.8));  
 //	        rotate.setAutoReverse(true);  
 	        rotate.setNode(text);
 	        rotate.play();
@@ -131,7 +132,7 @@ public class WinAnimation {
 		        newSelectedText.setStyle("-fx-background-color: lightgrey");
 		    }
 		});
-		PauseTransition pauseButtons = new PauseTransition(Duration.seconds(13.5));
+		PauseTransition pauseButtons = new PauseTransition(Duration.seconds(9));
 		pauseButtons.setOnFinished(e -> {
 			Label endGame = new Label(" Exit ");
 			endGame.setFont(new Font(25));

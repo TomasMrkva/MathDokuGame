@@ -244,14 +244,14 @@ public class GridConstructor {
 		final KeyCombination undo = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHORTCUT_DOWN);
 		grid.setOnKeyPressed(e -> {
 			if(undo.match(e)) {
-				System.out.println("undo");
+//				System.out.println("undo");
 				try {
 					Gui.undoAction();
 				} catch (EmptyStackException emptyStack) {
 					System.err.println("Undo stack is empty");
 				}
 			} else if(redo.match(e)) {
-				System.out.println("redo");
+//				System.out.println("redo");
 				try {
 					Gui.redoAction();
 				} catch (EmptyStackException emptyStack) {

@@ -168,18 +168,18 @@ public class Gui {
 		hBox.setAlignment(Pos.CENTER);
 		vBox.setAlignment(Pos.CENTER);
 		
-		ComboBox<String> cBox = new ComboBox<String>();
-		cBox.getItems().addAll("2x2", "3x3", "4x4", "5x5", "6x6", "7x7", "8x8");
-		cBox.setValue("2x2");
+		ComboBox<String> gridSize = new ComboBox<String>();
+		gridSize.getItems().addAll("2x2", "3x3", "4x4", "5x5", "6x6", "7x7", "8x8");
+		gridSize.setValue("2x2");
 		
-		ComboBox<String> dBox = new ComboBox<String>();
-		dBox.getItems().addAll("Easy", "Medium", "Hard");
-		dBox.setValue("Easy");
+		ComboBox<String> gameDifficulty = new ComboBox<String>();
+		gameDifficulty.getItems().addAll("Easy", "Medium", "Hard");
+		gameDifficulty.setValue("Easy");
 		
 		submit.setOnAction(e -> {
 			int N = 0;
 			int difficulty = 0;
-			switch (cBox.getValue()) {
+			switch (gridSize.getValue()) {
 				case "2x2": N=2; break;
 				case "3x3": N=3; break;
 				case "4x4": N=4; break;
@@ -188,21 +188,26 @@ public class Gui {
 				case "7x7": N=7; break;
 				case "8x8": N=8; break;
 			}
-			switch (dBox.getValue()) {
-				case "Easy": difficulty = 1; break;
-				case "Medium": difficulty = 2; break;
-				case "Hard": difficulty = 3; break;
+			switch (gameDifficulty.getValue()) {
+				case "Easy": difficulty = 4; break;
+				case "Medium": difficulty = 5; break;
+				case "Hard": difficulty = 7; break;
 			}
-			System.out.println("Size:" + N);
-			System.out.println("Difficulty" + difficulty);
+			System.out.println("Size: " + gridSize.getValue());
+			System.out.println("Difficulty: " + gameDifficulty.getValue());
 			newWindow.close();
 			RandomGame randomGame = new RandomGame(N, difficulty);
 			randomGame.createRandomGame();
 		});
 		
-		b.setOnAction(e -> newWindow.close());
+		b.setOnAction(e -> {
+			newWindow.close();
+			if (grid != null) {
+				grid.requestFocus();
+			}
+		});
 		
-		hBox.getChildren().addAll(cBox, dBox, b, submit);
+		hBox.getChildren().addAll(gridSize, gameDifficulty, b, submit);
 		vBox.getChildren().addAll(label, hBox); 
 		Scene scene = new Scene(vBox);
 		newWindow.setScene(scene);

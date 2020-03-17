@@ -155,7 +155,15 @@ public class RandomGame {
 				current.setOccupied(true);
 				cageCells.add(current);
 				neighbours = getNeighBours(current);
-				int limit = rand.nextInt(N/2)+2;
+				int limit;
+				if (difficulty == 5) {
+					limit = rand.nextInt(difficulty)+1;
+				} else if(difficulty == 7) {
+					limit = rand.nextInt(difficulty-1)+2;
+				} else {
+					limit = rand.nextInt(difficulty-1)+1;
+				}
+				
 				for(int j = 0; j < limit; j++) {
 					int index = rand.nextInt(neighbours.size());
 					if(!neighbours.get(index).isOccupied()){
@@ -171,7 +179,7 @@ public class RandomGame {
 					String result = String.valueOf(cageCells.get(0).getSolution());
 					cages.add(new Cage(result, arr));
 				} else {
-					int decision = rand.nextInt(7);
+					int decision = rand.nextInt(difficulty);
 					String result = createOperations(decision, cageCells);
 					cages.add(new Cage(result, arr));
 				}
@@ -192,7 +200,7 @@ public class RandomGame {
 			}
 			result = String.valueOf(total) + "+";
 			return result;
-		} else if (decision == 1) {
+		} else if (decision == 1 || decision == 2) {
 			total = 0;
 			Integer[] valuesSub = new Integer[cells.size()];
 			for (int i = 0; i < cells.size(); i++) {
