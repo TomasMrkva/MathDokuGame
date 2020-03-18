@@ -53,6 +53,7 @@ public class MathDoku extends Application {
 		Button preset = new Button("Play");
 		preset.getStyleClass().add("green");
 		preset.setPrefSize(100, 30);
+		preset.setDefaultButton(true);		
 		preset.setOnAction(e -> MathDoku.createPreset());
 		
 		Button randomGame = new Button("Random Game");
@@ -62,7 +63,6 @@ public class MathDoku extends Application {
 		VBox vbox = new VBox(10);
 		vbox.getChildren().addAll(label,newGame, preset, randomGame);
 		vbox.setAlignment(Pos.CENTER);
-		preset.setDefaultButton(true);		
 		
         game.setCenter(vbox);
 		stage.setMinHeight(300);

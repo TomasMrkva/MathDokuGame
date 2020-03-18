@@ -224,6 +224,8 @@ public class Gui {
 		slider.setPrefWidth(100);
 		this.fontMaker(slider);
 		Button loadFile = new Button();
+//		loadFile.setDefaultButton(true);		
+
 		loadFile.setText("Load a new game");
 		CheckBox mistakes = new CheckBox("Show Mistakes");
 		mistakerChooser(mistakes);
