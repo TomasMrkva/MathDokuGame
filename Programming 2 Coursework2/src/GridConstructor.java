@@ -243,7 +243,9 @@ public class GridConstructor {
 		final KeyCombination redo = new KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN);
 		final KeyCombination undo = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHORTCUT_DOWN);
 		grid.setOnKeyPressed(e -> {
-			if(undo.match(e)) {
+			if(e.getCode() == KeyCode.BACK_SPACE) {
+				displayNumber(null);
+			} else if(undo.match(e)) {
 //				System.out.println("undo");
 				try {
 					Gui.undoAction();
@@ -283,13 +285,19 @@ public class GridConstructor {
 						case "d": case "l":
 							moveWithKeys("right");
 							break;
-						}
+//						default:
+//							//Windows version
+//                            if((int)event.getCharacter().toCharArray()[0] == 8) { 
+//                                displayNumber(null); 
+//                            }
+                        }
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {
-					if(event.getCharacter().equals("")) {
+					//Mac/Linux ? version
+//					if(event.getCharacter().equals("")) {
 //						System.err.println("User entered a backspace");
-						displayNumber(null);
-					}
+//						displayNumber(null);
+//					}
 				}
 			}
 		});

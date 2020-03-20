@@ -70,7 +70,7 @@ public class MathDoku extends Application {
 //		root.setStyle("-fx-border-color: blue");
 		pRoot.getChildren().add(game);
 		pScene = new Scene(pRoot);
-		pScene.getStylesheets().add("styles.css");
+//		pScene.getStylesheets().add("styles.css");
 //		pScene = scene;
 //		pRoot = root;
 		stage.setScene(pScene);
