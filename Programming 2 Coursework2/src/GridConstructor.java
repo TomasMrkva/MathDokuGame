@@ -273,16 +273,16 @@ public class GridConstructor {
 						}
 					} else {
 						switch (event.getCharacter()) {
-						case "w": case "i":
+						case "w": case "W": case "i": case "I":
 							moveWithKeys("up");
 							break;
-						case "a": case "j":
+						case "a": case "A": case "j": case "J":
 							moveWithKeys("left");
 							break;
-						case "s": case "k":
+						case "s": case "S": case "k": case "K":
 							moveWithKeys("down");
 							break;
-						case "d": case "l":
+						case "d": case "D": case "l": case "L":
 							moveWithKeys("right");
 							break;
 //						default:

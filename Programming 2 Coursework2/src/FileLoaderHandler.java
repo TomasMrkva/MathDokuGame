@@ -144,7 +144,7 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 			
 			int numberOfCells = 0;
 			int maxvalue = 0;
-			int currValue=0;
+			int currValue = 0;
 			String wrongPart = null;
 			boolean wrongNumber = false;
 			boolean duplicateCell = false;
