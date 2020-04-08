@@ -14,7 +14,8 @@ import javafx.scene.control.ButtonType;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.nio.file.Files;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -118,7 +119,8 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 			if (file != null && file.exists() && file.canRead()) {
 				try {
 					area.clear();
-					BufferedReader buffered = new BufferedReader(new FileReader(file));
+					BufferedReader buffered = Files.newBufferedReader(file.toPath());
+//							new BufferedReader(new FileReader(file));
 					String line;
 					while ((line = buffered.readLine()) != null) {
 						area.appendText(line + "\n");
