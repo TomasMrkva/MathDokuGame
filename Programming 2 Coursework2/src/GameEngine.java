@@ -320,7 +320,7 @@ public class GameEngine {
 	
 	private static boolean isSolvable = false;
 	
-	public static boolean isSolvabale() {
+	public static boolean isSolvable() {
 		return isSolvable;
 	}
 	

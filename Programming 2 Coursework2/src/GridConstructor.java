@@ -32,7 +32,7 @@ public class GridConstructor {
 	private int N;	// Size of the grid
 	
 	public static Font font = new Font("Arial", 16);
-
+	
 	/**
 	 * Creates the initial grid of stackpanes, but no cages are added
 	 * @param N, the number of NxN grid
@@ -242,23 +242,43 @@ public class GridConstructor {
 	public void keyTyped() {
 		final KeyCombination redo = new KeyCodeCombination(KeyCode.Y, KeyCombination.SHORTCUT_DOWN);
 		final KeyCombination undo = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHORTCUT_DOWN);
+		
 		grid.setOnKeyPressed(e -> {
 			if(e.getCode() == KeyCode.BACK_SPACE) {
 				displayNumber(null);
-			} else if(undo.match(e)) {
-//				System.out.println("undo");
+				e.consume();
+			} 
+			else if (e.getCode() == KeyCode.UP) {
+				moveWithKeys("up");
+				grid.requestFocus();
+				e.consume();
+			} else if (e.getCode() == KeyCode.DOWN) {
+				moveWithKeys("down");
+				grid.requestFocus();
+				e.consume();
+			} else if (e.getCode() == KeyCode.LEFT) {
+				moveWithKeys("left");
+				grid.requestFocus();
+				e.consume();
+			} else if (e.getCode() == KeyCode.RIGHT) {
+				moveWithKeys("right");
+				grid.requestFocus();
+				e.consume();
+			}
+			else if(undo.match(e)) {
 				try {
 					Gui.undoAction();
 				} catch (EmptyStackException emptyStack) {
 					System.err.println("Undo stack is empty");
 				}
+				e.consume();
 			} else if(redo.match(e)) {
-//				System.out.println("redo");
 				try {
 					Gui.redoAction();
 				} catch (EmptyStackException emptyStack) {
 					System.err.println("Redo stack is empty");
 				}
+				e.consume();
 			}
 		});
 		
@@ -285,11 +305,7 @@ public class GridConstructor {
 						case "d": case "D": case "l": case "L":
 							moveWithKeys("right");
 							break;
-//						default:
-//							//Windows version
-//                            if((int)event.getCharacter().toCharArray()[0] == 8) { 
-//                                displayNumber(null); 
-//                            }
+
                         }
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {
@@ -325,23 +341,34 @@ public class GridConstructor {
 	 * @param number, takes the string value of the key input
 	 */
 	public void displayNumber(String number) {
-		Gui.undo.setDisable(false);
-		Gui.redo.setDisable(true);
-		if(GameEngine.isSolvabale()) {
-			Gui.hint.setDisable(false);
-			Gui.solve.setDisable(false);			
-		}
+//		Gui.undo.setDisable(false);
+//		if(GameEngine.isSolvabale()) {
+//			Gui.hint.setDisable(false);
+//			Gui.solve.setDisable(false);			
+//		}
 		for(StackPane cellPos : cellsPos) {
 			// finds the cell that user clicked on last
 			if (((MyRectangle)cellPos.getChildren().get(0)).getCellId() == current.getCellId()) {
-				StackOperations.stackRedo.clear();
 				
 				MyRectangle previous = new MyRectangle();
 				previous.setValue(number);
 				previous.setOldValue(((MyRectangle) cellPos.getChildren().get(0)).getValue());
 				previous.setCellId(((MyRectangle) cellPos.getChildren().get(0)).getCellId());
-				StackOperations.push(previous);
-				
+
+				if (previous.getValue() != null && previous.getOldValue() != null) {
+					if(!previous.getValue().equals(previous.getOldValue())) {
+						StackOperations.push(previous);
+						StackOperations.stackRedo.clear();
+						Gui.undo.setDisable(false);
+						Gui.redo.setDisable(true);
+					}
+				} else if(previous.getOldValue() != previous.getValue()){
+					StackOperations.push(previous);	
+					StackOperations.stackRedo.clear();
+					Gui.undo.setDisable(false);
+					Gui.redo.setDisable(true);
+				} 
+
 				Label label = new Label(number);
 				label.setMouseTransparent(true);	// the label is not going to register mouse clicks
 				label.setFont(font);
@@ -354,6 +381,7 @@ public class GridConstructor {
 				// add the label with the current number to the stackpane of the cell
 				((MyRectangle) cellPos.getChildren().get(0)).setValue(number);
 				cellPos.getChildren().add(label);
+				
 				if(Gui.mistakes == true) {
 					checkCurrentMistakes(current);
 					colorAllMistakes();
@@ -437,7 +465,7 @@ public class GridConstructor {
 				current = ((MyRectangle) cellPos.getChildren().get(0));
 				if(undo == true) {
 					updatedValue = cell.getOldValue();
-					if(GameEngine.isSolvabale()) {
+					if(GameEngine.isSolvable()) {
 						Gui.hint.setDisable(false);						
 					}
 				}

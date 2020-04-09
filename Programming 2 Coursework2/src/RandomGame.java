@@ -239,7 +239,7 @@ public class RandomGame {
 			}
 			if(amountDiv % 1 == 0) {
 				int convertedDouble = (int) amountDiv;
-				result = String.valueOf(convertedDouble) + "÷";
+				result = String.valueOf(convertedDouble) + "/";
 				return result;
 			} else {
 				return createOperations(4, cells);

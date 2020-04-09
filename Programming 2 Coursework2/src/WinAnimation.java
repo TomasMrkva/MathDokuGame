@@ -22,7 +22,7 @@ import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
 public class WinAnimation {
-
+	
 	public static void playAnimation(Pane pane) {
 		Gui.getGrid().unregiSterKeys();
 		PauseTransition pauseMain = new PauseTransition(Duration.seconds(0.5));
@@ -36,7 +36,7 @@ public class WinAnimation {
 	        
 	        Circle cir2  = new Circle(40);
 	        cir2.setFill(Color.TRANSPARENT);
-	               
+	        
 	        PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
 			pause.setOnFinished(fillEvent -> {
 				cir2.setFill(Color.rgb(91, 132, 177));

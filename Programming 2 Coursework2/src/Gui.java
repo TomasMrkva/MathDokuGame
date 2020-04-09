@@ -40,6 +40,7 @@ public class Gui {
 	public Gui(GridConstructor grid) {
 		Gui.grid = grid;
 		Gui.label = new Label("Grid has not been completed!");
+		Gui.label.setFont(GridConstructor.font);
 		mistakes = false;
 	}
 	
@@ -73,9 +74,11 @@ public class Gui {
 			numbers.getChildren().add(button);
 			VBox.setVgrow(button, Priority.ALWAYS);
 			button.setMaxHeight(Double.MAX_VALUE);
+			button.setFocusTraversable(false);
 		}
 		Button del = new Button("Del");
 		del.setPrefWidth(50);
+		del.setFocusTraversable(false);
 		this.numButtonClick(del);
 		numbers.getChildren().add(del);
 		numbers.setPadding(new Insets(MathDoku.width, 10, MathDoku.width, 10));
@@ -90,7 +93,7 @@ public class Gui {
 //		label.setFont(new Font("Helvetica", 20));
 //		label.setPadding(new Insets(0, 0, 15, 0));
 //		Button newGame = new Button("New Game");
-////		newGame.getStyleClass().add("BUTTON_DSI");
+//		newGame.getStyleClass().add("BUTTON_DSI");
 //		newGame.setPrefSize(100, 30);
 //		Button preset = new Button("Play");
 //		preset.setPrefSize(100, 30);
@@ -108,8 +111,11 @@ public class Gui {
 	
 	public VBox menu() {
 		Button clear = new Button("Clear");
+		clear.setFocusTraversable(false);
 		solve = new Button("Solve");
+		solve.setFocusTraversable(false);
 		hint = new Button("Hint");
+		hint.setFocusTraversable(false);
 		hint.setPrefWidth(50);
 		hintClick(hint);
 		solveClick(solve);
@@ -121,12 +127,14 @@ public class Gui {
 		undo.setPrefWidth(50);
 		undo.setOnAction(e -> Gui.undoAction());
 		undo.setDisable(true);
+		undo.setFocusTraversable(false);
 		
 		redo = new Button();
 		redo.setText("->");
 		redo.setPrefWidth(50);
 		redo.setOnAction(e -> Gui.redoAction());
 		redo.setDisable(true);
+		redo.setFocusTraversable(false);
 		
 		VBox menu = new VBox(5);
 		menu.setPadding(new Insets(10));
@@ -216,6 +224,7 @@ public class Gui {
 	
 	public HBox loadGame() {
 		Slider slider = new Slider(12, 20, GridConstructor.font.getSize());
+		slider.setFocusTraversable(false);
 		slider.setShowTickMarks(true);
 		slider.setShowTickLabels(true);
         slider.setMinorTickCount(1);
@@ -227,7 +236,9 @@ public class Gui {
 //		loadFile.setDefaultButton(true);		
 
 		loadFile.setText("Load a new game");
+		loadFile.setFocusTraversable(false);
 		CheckBox mistakes = new CheckBox("Show Mistakes");
+		mistakes.setFocusTraversable(false);
 		mistakerChooser(mistakes);
 		loadFile.setOnMouseClicked(new FileLoaderHandler());
 		HBox loadBox = new HBox(20);
@@ -308,7 +319,7 @@ public class Gui {
 					StackOperations.stackRedo.clear();
 					redo.setDisable(true);
 					undo.setDisable(true);
-					if(GameEngine.isSolvabale()) {
+					if(GameEngine.isSolvable()) {
 						hint.setDisable(false);
 						solve.setDisable(false);
 					}
