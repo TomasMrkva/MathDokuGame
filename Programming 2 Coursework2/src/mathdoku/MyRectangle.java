@@ -1,3 +1,4 @@
+package mathdoku;
 import javafx.scene.shape.Rectangle;
 
 public class MyRectangle extends Rectangle implements Comparable<MyRectangle>{

@@ -1,3 +1,4 @@
+package mathdoku;
 import java.util.stream.Stream;
 
 import javafx.animation.Animation;
