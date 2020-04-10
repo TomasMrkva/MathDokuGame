@@ -267,18 +267,20 @@ public class GridConstructor {
 				e.consume();
 			}
 			else if(undo.match(e)) {
-				try {
-					Gui.undoAction();
-				} catch (EmptyStackException emptyStack) {
-					System.err.println("Undo stack is empty");
-				}
+				Gui.undoAction();
+//				try {
+//					Gui.undoAction();
+//				} catch (EmptyStackException emptyStack) {
+//					System.err.println("Undo stack is empty");
+//				}
 				e.consume();
 			} else if(redo.match(e)) {
-				try {
-					Gui.redoAction();
-				} catch (EmptyStackException emptyStack) {
-					System.err.println("Redo stack is empty");
-				}
+				Gui.redoAction();
+//				try {
+//					Gui.redoAction();
+//				} catch (EmptyStackException emptyStack) {
+//					System.err.println("Redo stack is empty");
+//				}
 				e.consume();
 			}
 		});

@@ -333,11 +333,12 @@ public class Gui {
 	 * Used for redo with key combinations
 	 */
 	public static void redoAction() {
-		MyRectangle next = StackOperations.redo();
-		grid.updateNumber(next, false);
 		try {
-			StackOperations.stackRedo.peek();
+			MyRectangle next = StackOperations.redo();
+			grid.updateNumber(next, false);
 			undo.setDisable(false);
+			//Checks if the redo stack is empty now
+			StackOperations.stackRedo.peek();
 		} catch (EmptyStackException e) {
 			System.err.println("Redo stack is empty");
 			redo.setDisable(true);
@@ -349,11 +350,13 @@ public class Gui {
 	 * Used for undo with key combinations
 	 */
 	public static void undoAction() {
-		MyRectangle previous = StackOperations.undo();
-		grid.updateNumber(previous, true);
 		try {
-			StackOperations.stackUndo.peek();
+			MyRectangle previous = StackOperations.undo();
+			grid.updateNumber(previous, true);
 			redo.setDisable(false);
+			//Checks if the undo stack is empty now
+			StackOperations.stackUndo.peek();
+//			redo.setDisable(false);
 		} catch (EmptyStackException e) {
 			System.err.println("Undo stack is empty");
 			undo.setDisable(true);
