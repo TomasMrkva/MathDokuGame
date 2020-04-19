@@ -23,6 +23,7 @@ public class RandomGame {
 	public void createRandomGame() {
 		solve(cells.size());
 		fillGrid();
+//		uniqueSolution();
 		MathDoku.createGame(grid, createCages(), N);
 	}
 	
@@ -285,5 +286,84 @@ public class RandomGame {
 		}
 		return true;
 	}
+	
+//	private void uniqueSolution() {
+//		
+//		int n = this.nCr(N);
+//		
+//		int[][][] cols = new int[N][n][2];
+//		int[][][] rows = new int[N][n][2];
+//		
+//		int pos = 0;
+//		
+//		for(int i = 0; i < N; i++) {
+//			pos = 0;
+//			for(int j = 0; j < N-1; j++) {
+//				for(int y = j; y < N-1; y++) {
+//					int pair1 = grid.matrix[j][i].getSolution();
+//					int pair2 = grid.matrix[y+1][i].getSolution();
+//					cols[i][pos][0] = pair1;
+//					cols[i][pos][1] = pair2;
+//					pos++;
+//				}
+//			}
+//		}
+//		
+//		for(int i = 0; i < N; i++) {
+//			System.out.println("*********** Col " + i + " ***********");
+//			for(int j=0; j<n; j++) {
+//				System.out.print("[");
+//				for(int k=0; k<2; k++) {
+//					System.out.print(cols[i][j][k]);
+//					if (k==0) {
+//						System.out.print(",");
+//					}
+//				}
+//				System.out.print("]  ");
+//			}
+//			System.out.println();
+//		}
+//		
+//		for(int i = 0; i < N; i++) {
+//			pos = 0;
+//			for(int j = 0; j < N-1; j++) {
+//				for(int y = j; y < N-1; y++) {
+//					int pair1 = grid.matrix[i][j].getSolution();
+//					int pair2 = grid.matrix[i][y+1].getSolution();
+//					rows[i][pos][0] = pair1;
+//					rows[i][pos][1] = pair2;
+//					pos++;
+//				}
+//			}
+//		}
+//		
+//		for(int i = 0; i < N; i++) {
+//			System.out.println("*********** Row " + i + " ***********");
+//			for(int j=0; j<n; j++) {
+//				System.out.print("[");
+//				for(int k=0; k<2; k++) {
+//					System.out.print(rows[i][j][k]);
+//					if (k==0) {
+//						System.out.print(",");
+//					}
+//				}
+//				System.out.print("]  ");
+//			}
+//			System.out.println();
+//		}
+//		
+//	}
+//	
+//	 
+//	private int nCr(int n) { 
+//	    return fact(n) / (fact(2) * fact(n - 2)); 
+//	} 
+//	  
+//	private int fact(int n) { 
+//	    int res = 1; 
+//	    for (int i = 2; i <= n; i++) 
+//	        res = res * i; 
+//	    return res; 
+//	} 
 	
 }

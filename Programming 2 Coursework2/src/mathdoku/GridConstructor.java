@@ -1,7 +1,5 @@
 package mathdoku;
 import java.util.ArrayList;
-import java.util.EmptyStackException;
-
 import javafx.animation.PauseTransition;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -29,7 +27,7 @@ public class GridConstructor {
 //	public MyRectangle current; ??
 	private MyRectangle current;	// The pointer the current cell in the grid
 	private ArrayList<MyRectangle> cells;	//List of the cells, used for making cages
-	private MyRectangle[][] matrix;
+	public MyRectangle[][] matrix;
 	private int N;	// Size of the grid
 	
 	public static Font font = new Font("Arial", 16);
