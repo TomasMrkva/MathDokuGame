@@ -11,8 +11,12 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -51,7 +55,6 @@ public class MathDoku extends Application {
 		label.setPadding(new Insets(0, 0, 15, 0));
 		
 		Button newGame = new Button("New Game");
-//		newGame.getStyleClass().add("BUTTON_DSI");
 		newGame.setPrefSize(100, 30);
 		newGame.setOnMouseClicked(new FileLoaderHandler());
 		Button preset = new Button("Play");
@@ -97,11 +100,6 @@ public class MathDoku extends Application {
 				MathDoku.pRoot.getChildren().remove(i);
 			}
 		}
-//		if(grid == null) {
-//			grid = new GridConstructor(N, width);
-//			cages = MathDoku.cages;
-//		}
-//		grid.addCages(cages);
 		grid.makeLabels();
 		grid.makeBorder(MathDoku.width, N, 2, Color.TOMATO);
 		Gui gui = new Gui(grid);
@@ -129,6 +127,15 @@ public class MathDoku extends Application {
 		pStage.centerOnScreen();
 		StackOperations.clear();
 		
+//		Alert solveAlert = new Alert(AlertType.NONE);
+//		solveAlert.setTitle("Generating a new Game");
+//		solveAlert.setHeaderText("Please wait...");
+//		solveAlert.setContentText("Checking solutions...");
+//		ProgressIndicator pi = new ProgressIndicator();
+//		pi.setMaxSize(40, 40);
+//		solveAlert.setGraphic(pi);
+//		solveAlert.show();
+		
 		Task<Boolean> task = new Task<Boolean>() {
 			@Override
 			protected Boolean call() {
@@ -142,7 +149,10 @@ public class MathDoku extends Application {
 		};
 		
 		task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+			
             public void handle(WorkerStateEvent event) {
+//            	solveAlert.setResult(ButtonType.CANCEL);
+//				solveAlert.close();
             	if(task.getValue()){
             		Gui.solve.setDisable(false);
         			Gui.hint.setDisable(false);
@@ -152,13 +162,31 @@ public class MathDoku extends Application {
 		
 		Thread th = new Thread(task);
 		th.start();
-		grid.requestFocus();
 		
-//		if(!GameEngine.solve(grid.getCells(), grid.getCells().size())) {
+//		if(random) {
+//			if(GameEngine.solve(grid.getCells(), "button")) {
+//				Gui.solve.setDisable(false);
+//    			Gui.hint.setDisable(false);
+////    			System.out.println("hi");
+//			}
+//			else {
+//				if(GameEngine.solve(grid.getCells(), "default")) {
+//					Gui.solve.setDisable(false);
+//	    			Gui.hint.setDisable(false);
+////	    			System.out.println("hi");
+//				}
+//			}
+//		}
+//		grid.requestFocus();
+//		if(!GameEngine.solve(grid.getCells(), "default")) {
 //			Gui.solve.setDisable(true);
 //			Gui.hint.setDisable(true);
-//			grid.requestFocus();
 //		}
+//		else {
+//			Gui.solve.setDisable(false);
+//			Gui.hint.setDisable(false);
+//		}
+//		grid.requestFocus();
 
 	}
 	

@@ -18,8 +18,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -65,19 +70,26 @@ public class Gui {
 	
 	public static void randomGameMenu() {
 		Button b = new Button("Cancel");
+		b.setPrefWidth(70);
+
 		Button submit = new Button("Submit");
 		submit.setDefaultButton(true);
+		submit.setPrefWidth(70);
 		
 		Stage newWindow = new Stage();
 		Label label = new Label("Customize your game");
 		label.setFont(new Font("Helvetica", 20));
+		label.setPadding(new Insets(20, 0, 0, 0));
 		
 		newWindow.setTitle("Random game");
-		newWindow.setMinHeight(150);
+		newWindow.setMinHeight(170);
 		newWindow.setMinWidth(400);
+		newWindow.setMaxHeight(170);
+		newWindow.setMaxWidth(400);
+
 		newWindow.initModality(Modality.APPLICATION_MODAL);
 		
-		VBox vBox = new VBox(20);
+		VBox vBox = new VBox(10);
 		HBox hBox = new HBox(10);
 		hBox.setAlignment(Pos.CENTER);
 		vBox.setAlignment(Pos.CENTER);
@@ -89,6 +101,13 @@ public class Gui {
 		ComboBox<String> gameDifficulty = new ComboBox<String>();
 		gameDifficulty.getItems().addAll("Easy", "Medium", "Hard");
 		gameDifficulty.setValue("Easy");
+		
+		CheckBox box = new CheckBox("Unique");
+
+//		Label lb = new Label("Unique");
+//		lb.setGraphic(new CheckBox());
+//		lb.setContentDisplay(ContentDisplay.BOTTOM);
+
 		
 		submit.setOnAction(e -> {
 			int N = 0;
@@ -111,34 +130,37 @@ public class Gui {
 			System.out.println("Difficulty: " + gameDifficulty.getValue());
 			newWindow.close();
 			
-			RandomGame randomGame = new RandomGame(N, difficulty);
-			randomGame.generateRandomGame();
+			RandomGame randomGame = new RandomGame(N, difficulty, box.isSelected());
+//			randomGame.generateRandomGame();
 //			randomGame.createGame();
+
+			Alert generateAlert = new Alert(AlertType.NONE);
+			generateAlert.setTitle("Generating a new Game");
+			generateAlert.setHeaderText("Please wait...");
+			generateAlert.setContentText("The game is being generated...");
+			ProgressIndicator pi = new ProgressIndicator();
+			pi.setMaxSize(40, 40);
+			generateAlert.setGraphic(pi);
+			generateAlert.show();
 			
-//			Alert generateAlert = new Alert(AlertType.NONE);
-//			generateAlert.setTitle("Generating a new Game");
-//			generateAlert.setHeaderText("Please wait...");
-//			generateAlert.setContentText("The game is being generated...");
-//			generateAlert.show();
-//			
-//			Task<Void> task = new Task<Void>() {
-//				@Override
-//				protected Void call() {
-//					randomGame.generateRandomGame();
-//					return null;
-//				}
-//			};
-//			task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-//				@Override
-//				public void handle(WorkerStateEvent event) {
-//					randomGame.createGame();
-//					generateAlert.setResult(ButtonType.CANCEL);
-//					generateAlert.close();
-//				}
-//            });
-//			
-//			Thread thread = new Thread(task);
-//			thread.start();
+			Task<Void> task = new Task<Void>() {
+				@Override
+				protected Void call() {
+					randomGame.generateRandomGame();
+					return null;
+				}
+			};
+			task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+				@Override
+				public void handle(WorkerStateEvent event) {
+					generateAlert.setResult(ButtonType.CANCEL);
+					generateAlert.close();
+					randomGame.createGame();
+				}
+            });
+			
+			Thread thread = new Thread(task);
+			thread.start();
 		});
 		
 		b.setOnAction(e -> {
@@ -148,8 +170,13 @@ public class Gui {
 			}
 		});
 		
-		hBox.getChildren().addAll(gridSize, gameDifficulty, b, submit);
-		vBox.getChildren().addAll(label, hBox); 
+		HBox subCancel = new HBox(10);
+		subCancel.setAlignment(Pos.BOTTOM_RIGHT);
+		subCancel.getChildren().addAll(b, submit);
+		subCancel.setPadding(new Insets(10, 10, 10, 10));
+		
+		hBox.getChildren().addAll(gridSize, gameDifficulty, box);
+		vBox.getChildren().addAll(label, hBox, subCancel); 
 		Scene scene = new Scene(vBox);
 		newWindow.setScene(scene);
 		newWindow.show();
@@ -254,12 +281,16 @@ public class Gui {
 		VBox.setVgrow(undo, Priority.ALWAYS);
 		VBox.setVgrow(redo, Priority.ALWAYS);
 		VBox.setVgrow(hint, Priority.ALWAYS);
+		VBox.setVgrow(config, Priority.ALWAYS);
+
 
 		hint.setMaxHeight(Double.MAX_VALUE);
 		solve.setMaxHeight(Double.MAX_VALUE);
 		clear.setMaxHeight(Double.MAX_VALUE);
 		undo.setMaxHeight(Double.MAX_VALUE);
 		redo.setMaxHeight(Double.MAX_VALUE);
+		config.setMaxHeight(Double.MAX_VALUE);
+
 		return menu;
 	}
 	
@@ -303,6 +334,7 @@ public class Gui {
 		HBox.setHgrow(label, Priority.ALWAYS);
 		label.setMaxWidth(Double.MAX_VALUE);
 		label.setMaxHeight(Double.MAX_VALUE);
+
 //		label.setFont(GridConstructor.font);
 		return hbox;
 	}
@@ -455,19 +487,53 @@ public class Gui {
 	}
 	
 	public void configAction() {
+		TextArea area = new TextArea();
+		area.setEditable(true);
+		Stage newWindow = new Stage();
+		BorderPane pane = new BorderPane();
+		HBox hBox = new HBox();
+		
+		pane.setPadding(new Insets(10));
+		newWindow.setMinHeight(150+(15*grid.getCages().size()));
+		newWindow.setMinWidth(250);
+		newWindow.setWidth(250);
+		
+		Button b = new Button("Close");
+		b.setOnAction(e -> newWindow.close());
+		b.setPrefSize(60, 30);
+
 		System.out.println();
 		System.out.println("***Configuration***");
-		for(Cage cage : grid.getCages()) {
+		
+		for(int i=0; i < grid.getCages().size(); i++) {
+			Cage cage = grid.getCages().get(i);
 			System.out.print(cage.getId() + " ");
-			for(int i = 0; i < cage.getCells().size(); i++) {
-				MyRectangle cell = cage.getCells().get(i);
-				if(i == cage.getCells().size()-1)
+			area.appendText(cage.getId() + " ");
+			for(int j = 0; j < cage.getCells().size(); j++) {
+				MyRectangle cell = cage.getCells().get(j);
+				if(j == cage.getCells().size()-1) {
 					System.out.print((cell.getCellId()+1));
-				else
+					area.appendText(String.valueOf(cell.getCellId()+1));		
+				}
+				else {
 					System.out.print((cell.getCellId()+1) + ",");
+					area.appendText((cell.getCellId()+1) + ",");	
+				}
+			}
+			if(i != grid.getCages().size()-1){
+				area.appendText("\n");				
 			}
 			System.out.println();
 		}
+		hBox.setAlignment(Pos.BASELINE_RIGHT);
+		hBox.setPadding(new Insets(10, 0, 10, 10));
+		hBox.getChildren().add(b);
+		
+		pane.setCenter(area);
+		pane.setBottom(hBox);
+		BorderPane.setAlignment(b, Pos.BOTTOM_RIGHT);
+		newWindow.setScene(new Scene(pane));
+		newWindow.show();
 	}
 	
 }
