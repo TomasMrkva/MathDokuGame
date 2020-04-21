@@ -78,7 +78,7 @@ public class MyRectangle extends Rectangle implements Comparable<MyRectangle>{
 	public String getRow() {
 		return row;
 	}
-
+	
 	public void setColRed(boolean value) {
 		colRed = value;
 	}

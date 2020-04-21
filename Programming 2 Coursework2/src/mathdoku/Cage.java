@@ -14,19 +14,19 @@ public class Cage {
 	
 	/**
 	 * Creates a new cage with a name of the operation
-	 * @param result String version of operation
+	 * @param cageId String version of operation and result
 	 * @param r the group of cells that are added
 	 */
-	public Cage(String result, MyRectangle... r) {
+	public Cage(String cageId, MyRectangle... r) {
 		cells = new ArrayList<MyRectangle>();
-		this.cageId = result;
-		String opCode = result.replaceAll("[0-9]", "");
+		this.cageId = cageId;
+		String opCode = cageId.replaceAll("[0-9]", "");
 		if(opCode.isEmpty()) {
 			this.opCode = ' ';
 		}
 		 else
 			this.opCode = opCode.charAt(0);
-		String number = result.replaceAll("\\D+", "");
+		String number = cageId.replaceAll("\\D+", "");
 		this.result = Integer.valueOf(number);
 		// Calls the method, to make a cell of the inputed cells
 		this.add(r);

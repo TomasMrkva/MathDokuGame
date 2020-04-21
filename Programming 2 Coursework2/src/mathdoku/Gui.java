@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -61,6 +63,98 @@ public class Gui {
 		return grid;
 	}
 	
+	public static void randomGameMenu() {
+		Button b = new Button("Cancel");
+		Button submit = new Button("Submit");
+		submit.setDefaultButton(true);
+		
+		Stage newWindow = new Stage();
+		Label label = new Label("Customize your game");
+		label.setFont(new Font("Helvetica", 20));
+		
+		newWindow.setTitle("Random game");
+		newWindow.setMinHeight(150);
+		newWindow.setMinWidth(400);
+		newWindow.initModality(Modality.APPLICATION_MODAL);
+		
+		VBox vBox = new VBox(20);
+		HBox hBox = new HBox(10);
+		hBox.setAlignment(Pos.CENTER);
+		vBox.setAlignment(Pos.CENTER);
+		
+		ComboBox<String> gridSize = new ComboBox<String>();
+		gridSize.getItems().addAll("2x2", "3x3", "4x4", "5x5", "6x6", "7x7", "8x8");
+		gridSize.setValue("2x2");
+		
+		ComboBox<String> gameDifficulty = new ComboBox<String>();
+		gameDifficulty.getItems().addAll("Easy", "Medium", "Hard");
+		gameDifficulty.setValue("Easy");
+		
+		submit.setOnAction(e -> {
+			int N = 0;
+			int difficulty = 0;
+			switch (gridSize.getValue()) {
+				case "2x2": N=2; break;
+				case "3x3": N=3; break;
+				case "4x4": N=4; break;
+				case "5x5": N=5; break;
+				case "6x6": N=6; break;
+				case "7x7": N=7; break;
+				case "8x8": N=8; break;
+			}
+			switch (gameDifficulty.getValue()) {
+				case "Easy": difficulty = 4; break;
+				case "Medium": difficulty = 5; break;
+				case "Hard": difficulty = 7; break;
+			}
+			System.out.println("Size: " + gridSize.getValue());
+			System.out.println("Difficulty: " + gameDifficulty.getValue());
+			newWindow.close();
+			
+			RandomGame randomGame = new RandomGame(N, difficulty);
+			randomGame.generateRandomGame();
+//			randomGame.createGame();
+			
+//			Alert generateAlert = new Alert(AlertType.NONE);
+//			generateAlert.setTitle("Generating a new Game");
+//			generateAlert.setHeaderText("Please wait...");
+//			generateAlert.setContentText("The game is being generated...");
+//			generateAlert.show();
+//			
+//			Task<Void> task = new Task<Void>() {
+//				@Override
+//				protected Void call() {
+//					randomGame.generateRandomGame();
+//					return null;
+//				}
+//			};
+//			task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+//				@Override
+//				public void handle(WorkerStateEvent event) {
+//					randomGame.createGame();
+//					generateAlert.setResult(ButtonType.CANCEL);
+//					generateAlert.close();
+//				}
+//            });
+//			
+//			Thread thread = new Thread(task);
+//			thread.start();
+		});
+		
+		b.setOnAction(e -> {
+			newWindow.close();
+			if (grid != null) {
+				grid.requestFocus();
+			}
+		});
+		
+		hBox.getChildren().addAll(gridSize, gameDifficulty, b, submit);
+		vBox.getChildren().addAll(label, hBox); 
+		Scene scene = new Scene(vBox);
+		newWindow.setScene(scene);
+		newWindow.show();
+	}
+	
 	public VBox numbers(int N) {
 		VBox numbers = new VBox(5);
 //		numbers.setStyle("-fx-border-color: blue");
@@ -113,16 +207,21 @@ public class Gui {
 	public VBox menu() {
 		Button clear = new Button("Clear");
 		clear.setFocusTraversable(false);
+		this.clearClick(clear);
+		clear.setPrefWidth(50);
+		
 		solve = new Button("Solve");
 		solve.setFocusTraversable(false);
+		solve.setPrefWidth(50);
+		solve.setDisable(true);
+		this.solveClick(solve);
+		
 		hint = new Button("Hint");
 		hint.setFocusTraversable(false);
 		hint.setPrefWidth(50);
-		hintClick(hint);
-		solveClick(solve);
-		solve.setPrefWidth(50);
-		this.clearClick(clear);
-		clear.setPrefWidth(50);
+		hint.setDisable(true);
+		this.hintClick(hint);
+		
 		undo = new Button();
 		undo.setText("<-");
 		undo.setPrefWidth(50);
@@ -137,12 +236,18 @@ public class Gui {
 		redo.setDisable(true);
 		redo.setFocusTraversable(false);
 		
+		Button config = new Button("Config");
+		redo.setPrefWidth(50);
+		config.setFocusTraversable(false);
+		config.setOnAction(e -> configAction());
+		
 		VBox menu = new VBox(5);
 		menu.setPadding(new Insets(10));
-		menu.getChildren().addAll(hint, solve, clear, undo, redo);
+		menu.getChildren().addAll(hint, solve, clear, undo, redo, config);
 		menu.setAlignment(Pos.CENTER);
 		
-		menu.setPadding(new Insets(MathDoku.width*2, 10, MathDoku.width*2, 10));
+//		menu.setPadding(new Insets(MathDoku.width*2, 10, MathDoku.width*2, 10));
+		menu.setPadding(new Insets(MathDoku.width*1.8, 10, MathDoku.width*1.8, 10));
 		menu.setAlignment(Pos.CENTER);
 		VBox.setVgrow(solve, Priority.ALWAYS);
 		VBox.setVgrow(clear, Priority.ALWAYS);
@@ -156,71 +261,6 @@ public class Gui {
 		undo.setMaxHeight(Double.MAX_VALUE);
 		redo.setMaxHeight(Double.MAX_VALUE);
 		return menu;
-	}
-	
-	public static void randomGameMenu() {
-		Button b = new Button("Cancel");
-		Button submit = new Button("Submit");
-		submit.setDefaultButton(true);
-		
-		Stage newWindow = new Stage();
-		Label label = new Label("Customize your game");
-		label.setFont(new Font("Helvetica", 20));
-		
-		newWindow.setTitle("Random game");
-		newWindow.setMinHeight(150);
-		newWindow.setMinWidth(400);
-		newWindow.initModality(Modality.APPLICATION_MODAL);
-		
-		VBox vBox = new VBox(20);
-		HBox hBox = new HBox(10);
-		hBox.setAlignment(Pos.CENTER);
-		vBox.setAlignment(Pos.CENTER);
-		
-		ComboBox<String> gridSize = new ComboBox<String>();
-		gridSize.getItems().addAll("2x2", "3x3", "4x4", "5x5", "6x6", "7x7", "8x8");
-		gridSize.setValue("2x2");
-		
-		ComboBox<String> gameDifficulty = new ComboBox<String>();
-		gameDifficulty.getItems().addAll("Easy", "Medium", "Hard");
-		gameDifficulty.setValue("Easy");
-		
-		submit.setOnAction(e -> {
-			int N = 0;
-			int difficulty = 0;
-			switch (gridSize.getValue()) {
-				case "2x2": N=2; break;
-				case "3x3": N=3; break;
-				case "4x4": N=4; break;
-				case "5x5": N=5; break;
-				case "6x6": N=6; break;
-				case "7x7": N=7; break;
-				case "8x8": N=8; break;
-			}
-			switch (gameDifficulty.getValue()) {
-				case "Easy": difficulty = 4; break;
-				case "Medium": difficulty = 5; break;
-				case "Hard": difficulty = 7; break;
-			}
-			System.out.println("Size: " + gridSize.getValue());
-			System.out.println("Difficulty: " + gameDifficulty.getValue());
-			newWindow.close();
-			RandomGame randomGame = new RandomGame(N, difficulty);
-			randomGame.createRandomGame();
-		});
-		
-		b.setOnAction(e -> {
-			newWindow.close();
-			if (grid != null) {
-				grid.requestFocus();
-			}
-		});
-		
-		hBox.getChildren().addAll(gridSize, gameDifficulty, b, submit);
-		vBox.getChildren().addAll(label, hBox); 
-		Scene scene = new Scene(vBox);
-		newWindow.setScene(scene);
-		newWindow.show();
 	}
 	
 	public HBox loadGame() {
@@ -385,7 +425,7 @@ public class Gui {
 //				for(MyRectangle cell : grid.getCells()) {
 //					cell.setSolution(0);
 //				}
-				if(GameEngine.solve(grid.getCells(), grid.getCells().size())) {
+				if(GameEngine.solve(grid.getCells(), "button")) {
 					for(MyRectangle r : grid.getCells()) {
 						grid.displaySolved(r);
 					}
@@ -412,6 +452,22 @@ public class Gui {
 				grid.requestFocus();
 			}
 		});
+	}
+	
+	public void configAction() {
+		System.out.println();
+		System.out.println("***Configuration***");
+		for(Cage cage : grid.getCages()) {
+			System.out.print(cage.getId() + " ");
+			for(int i = 0; i < cage.getCells().size(); i++) {
+				MyRectangle cell = cage.getCells().get(i);
+				if(i == cage.getCells().size()-1)
+					System.out.print((cell.getCellId()+1));
+				else
+					System.out.print((cell.getCellId()+1) + ",");
+			}
+			System.out.println();
+		}
 	}
 	
 }

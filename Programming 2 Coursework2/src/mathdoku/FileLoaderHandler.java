@@ -255,7 +255,8 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 					System.out.println();
 				}
 				if(correctCage) {
-					MathDoku.createGame(grid, cages, N);
+					grid.addCages(cages);
+					MathDoku.createGame(grid, cages, N, false);
 //					createGrid(cages, N);
 					newWindow.close();
 				}

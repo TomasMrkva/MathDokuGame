@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -82,11 +85,12 @@ public class MathDoku extends Application {
 	
 	public static void createPreset() {
 		GridConstructor grid = new GridConstructor(presetN, width);
-		MakeCages(grid);
-		createGame(grid, cages, presetN);
+		makeCages(grid);
+		grid.addCages(cages);
+		createGame(grid, cages, presetN, false);
 	}
 	
-	public static void createGame(GridConstructor grid, ArrayList<Cage> cages, int N) {
+	public static void createGame(GridConstructor grid, ArrayList<Cage> cages, int N, boolean random) {
 		// Removes winning animation if there was one
 		if(MathDoku.pRoot.getChildren().size() > 1) {
 			for(int i=MathDoku.pRoot.getChildren().size()-1; i>=1 ;i--) {
@@ -97,7 +101,7 @@ public class MathDoku extends Application {
 //			grid = new GridConstructor(N, width);
 //			cages = MathDoku.cages;
 //		}
-		grid.addCages(cages);
+//		grid.addCages(cages);
 		grid.makeLabels();
 		grid.makeBorder(MathDoku.width, N, 2, Color.TOMATO);
 		Gui gui = new Gui(grid);
@@ -124,20 +128,45 @@ public class MathDoku extends Application {
 		}
 		pStage.centerOnScreen();
 		StackOperations.clear();
-		if(!GameEngine.solve(grid.getCells(), grid.getCells().size())) {
-			Gui.solve.setDisable(true);
-			Gui.hint.setDisable(true);
-		}
+		
+		Task<Boolean> task = new Task<Boolean>() {
+			@Override
+			protected Boolean call() {
+				if(random) {
+					return GameEngine.solve(grid.getCells(), "button");
+				} else {
+					return GameEngine.solve(grid.getCells(), "default");
+				
+				}
+			}
+		};
+		
+		task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+            public void handle(WorkerStateEvent event) {
+            	if(task.getValue()){
+            		Gui.solve.setDisable(false);
+        			Gui.hint.setDisable(false);
+            	};
+            }
+        });
+		
+		Thread th = new Thread(task);
+		th.start();
 		grid.requestFocus();
-//		Gui.setText("Grid has not been completed!");
-//		Gui.setGrid(GameGenerator.grid);
+		
+//		if(!GameEngine.solve(grid.getCells(), grid.getCells().size())) {
+//			Gui.solve.setDisable(true);
+//			Gui.hint.setDisable(true);
+//			grid.requestFocus();
+//		}
+
 	}
 	
 	/**
 	 * Creates a class for each cage and adds it to the ArrayList 
 	 * @param grid
 	 */
-	public static void MakeCages(GridConstructor grid) {
+	public static void makeCages(GridConstructor grid) {
 		cages.add(new Cage("11+", grid.getCell(1), grid.getCell(7)));
 		cages.add(new Cage("2÷", grid.getCell(2), grid.getCell(3)));
 		cages.add(new Cage("3-", grid.getCell(8), grid.getCell(9)));

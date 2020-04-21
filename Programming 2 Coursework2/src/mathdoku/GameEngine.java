@@ -168,9 +168,6 @@ public class GameEngine {
 			for (int col = 0; col < matrix.length; col++) {
 				String num = matrix[row][col].getValue();
 				if (set.contains(num)) {
-//					MathDoku.setText("Wrong");
-//					System.out.println("wrong value is: " + num + " r: " + matrix[row][col].getRow() + " c: "
-//							+ matrix[row][col].getCol());
 					set = null;
 					return false;
 				}
@@ -187,9 +184,6 @@ public class GameEngine {
 			for (int row = 0; row < matrix.length; row++) {
 				String num = matrix[row][col].getValue();
 				if (set.contains(num)) {
-//					MathDoku.setText("Wrong");
-//					System.out.println("wrong value is: " + num + " r: " + matrix[row][col].getRow() + " c: "
-//							+ matrix[row][col].getCol());
 					set = null;
 					return false;
 				}
@@ -320,33 +314,64 @@ public class GameEngine {
 	}
 	
 	private static boolean isSolvable = false;
+	public static int noOfSolutions = 0;
 	
 	public static boolean isSolvable() {
 		return isSolvable;
 	}
 	
-	public static boolean solve(ArrayList<MyRectangle> cells, int noCells) {
-		if(cells.get(0).getSolution() != 0) {
-			isSolvable = true;
-			return true;
-		} 
+	public static boolean solve(ArrayList<MyRectangle> cells, String mode) {
+		
+		int lastBacktrack = 0;
 		int position = 0;
-		double limit = Math.sqrt(noCells);
+		double limit = Math.sqrt(cells.size());
 		boolean backtrack = false;
+		ArrayList<Integer[]> solutionSet = new ArrayList<Integer[]>();
+		
+		noOfSolutions = 0;
+		//when the solve button is not pressed, solve, otherwise show previously done solution
+		if(!mode.equals("button")) {
+			for (MyRectangle cell : cells) {
+				cell.setSolution(0);
+			} 
+		} else {
+			if(cells.get(0).getSolution() != 0) {
+				isSolvable = true;
+				return true;
+			}
+		}
 		while(position != cells.size()) {
-//			System.out.println(position);
-			if(position < 0) {
+			if(position < 0 && noOfSolutions == 0) {
 				System.err.println("Unsolvable");
 				isSolvable = false;
 				return false;
+			} 
+//			else if(position < 0 && noOfSolutions > 1 && mode.equals("generator")) {
+//				System.out.println("Found more than one solution, breaking!");
+//				return false;
+//			} 
+			else if(position < 0) {
+				System.out.println("Number of solutions: " + noOfSolutions + "\n");
+				for(int i = 0; i < cells.size(); i++) {
+					int cellSolution = solutionSet.get(0)[i];
+					cells.get(i).setSolution(cellSolution);
+				}
+				int counter = 0;
+				for(Integer [] arr : solutionSet) {
+					counter++;
+					System.out.println("Solution number: " + counter);
+					for(int i=0;i<arr.length;i+=(int)limit){
+					    System.out.println(Arrays.toString(Arrays.copyOfRange(arr, i, Math.min(arr.length,i+(int)limit))));
+					}          
+					System.out.println();
+				}
+				return true;
 			}
 			MyRectangle curr = cells.get(position);
-			if(curr.getSolution() == (int) limit) {
+			if(curr.getSolution() == (int) limit)
 				backtrack = true;
-			}
-			else {
+			else
 				curr.setSolution(curr.getSolution()+1);
-			}
 			while(curr.getSolution() <= limit) {
 				if(backtrack == true) break;
 				else if( GameEngine.isRowCorrect(cells, curr) && GameEngine.isColCorrect(cells, curr) ) {
@@ -356,9 +381,30 @@ public class GameEngine {
 						break;
 					} else {
 						if( GameEngine.checkAllCages(true, curr.getCage()) == true ) {
-							position++;
-							backtrack = false;
-							break;
+							if(position == cells.size()-1){
+								Integer[] solution = new Integer[cells.size()];
+								for(int i = 0; i < cells.size(); i++) {
+									solution[i] = cells.get(i).getSolution();
+								}
+								solutionSet.add(solution);
+								while(position > lastBacktrack) {
+									MyRectangle tmp = cells.get(position);
+									tmp.setSolution(0);
+									position--;
+								}
+								noOfSolutions++;
+								if(noOfSolutions > 1 && mode.equals("generator")) {
+									System.out.println("Found more than one solution, breaking!");
+									return false;
+								}
+								curr=cells.get(position);	//last backtracked cell
+								isSolvable = true;
+								System.err.println("Solvable");
+							} else {
+								position++;
+								backtrack = false;
+								break;								
+							}
 						}
 					}
 				}
@@ -371,12 +417,12 @@ public class GameEngine {
 			}
 			if(backtrack) {
 				curr.setSolution(0);
+				lastBacktrack = position;
 				position--;	
 			}
 			backtrack = false;
 		}
-		System.err.println("Solvable");
-		isSolvable = true;
+		
 		return true;
 	}
 	

@@ -80,6 +80,10 @@ public class GridConstructor {
 		}
 	}
 	
+	public ArrayList<Cage> getCages(){
+		return cages;
+	}
+	
 	/**
 	 * Makes the labels of each cage
 	 * this method has to be called 3rd

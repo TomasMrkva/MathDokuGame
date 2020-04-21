@@ -8,24 +8,43 @@ public class RandomGame {
 	
 	private GridConstructor grid;
 	private int difficulty;
-	private ArrayList<MyRectangle> cells;
-	private int N;
+	protected ArrayList<MyRectangle> cells;
+	protected int N;
 	private Random rand;
+	private ArrayList<Cage> cages;
 
 	public RandomGame(int N, int difficulty) {
 		this.N = N;
 		this.difficulty = difficulty;
 		rand = new Random();
-		grid = new GridConstructor(N, MathDoku.width);
-		cells = grid.getCells();
+		GameEngine.noOfSolutions = 0;
+//		grid = new GridConstructor(N, MathDoku.width);
+//		cells = grid.getCells();
 	}
 	
-	public void createRandomGame() {
-		solve(cells.size());
-		fillGrid();
-//		uniqueSolution();
-		MathDoku.createGame(grid, createCages(), N);
+	public void generateRandomGame() {
+//		solve(cells.size());
+//		fillGrid();
+//		cages = createCages();
+//		grid.addCages(cages);
+		while(GameEngine.noOfSolutions != 1) {
+			rand = new Random();
+			grid = new GridConstructor(N, MathDoku.width);
+			cells = grid.getCells();
+			System.out.println(cells.size());
+			solve(cells.size());
+			fillGrid();
+			cages = createCages();
+			grid.addCages(cages);
+			GameEngine.solve(cells,"generator");
+//			System.out.println("done");
+		}
+		MathDoku.createGame(grid, cages, N, true);
 	}
+	
+//	public void createGame() {
+//		MathDoku.createGame(grid, cages, N);
+//	}
 	
 	private void fillGrid() {
 		Random rand = new Random();
@@ -159,13 +178,12 @@ public class RandomGame {
 				neighbours = getNeighBours(current);
 				int limit;
 				if (difficulty == 5) {
-					limit = rand.nextInt(difficulty)+1;
+					limit = rand.nextInt(difficulty-2)+1;
 				} else if(difficulty == 7) {
-					limit = rand.nextInt(difficulty-1)+2;
+					limit = rand.nextInt(difficulty-2)+2;
 				} else {
-					limit = rand.nextInt(difficulty-1)+1;
+					limit = rand.nextInt(difficulty-1)+2;
 				}
-				
 				for(int j = 0; j < limit; j++) {
 					int index = rand.nextInt(neighbours.size());
 					if(!neighbours.get(index).isOccupied()){
@@ -188,6 +206,68 @@ public class RandomGame {
 				cageCells.clear();
 			}
 		}
+		if(N < 8)
+			return mergeSizeOneCells(cages);
+		else 
+			return cages;
+	}
+	
+	private ArrayList<Cage> mergeSizeOneCells(ArrayList<Cage> cages) {
+//		System.err.println("begin");
+		ArrayList<Cage> sizeOneCages = new ArrayList<Cage>();
+		ArrayList<MyRectangle> sizeOneCells = new ArrayList<>();
+		ArrayList<MyRectangle> neighbours = new ArrayList<MyRectangle>();
+		int counter = 0;
+		
+		for(int i=0; i < cages.size(); i++) { 
+			Cage cage = cages.get(i);
+			if(cage.getCells().size()==1) {
+				sizeOneCages.add(cage);
+				cages.remove(cage);
+				i--;
+			}
+		}
+		for(Cage cage : sizeOneCages) {
+			for(MyRectangle cell : cage.getCells()) {
+				sizeOneCells.add(cell);
+			}
+		}
+		for(int i=0; i < sizeOneCells.size(); i++) {
+			MyRectangle cell = sizeOneCells.get(i);
+			neighbours = getNeighBours(cell);
+			for(int j=0; j < neighbours.size(); j++) {
+				MyRectangle r = neighbours.get(j);
+				if (r.getCage().getCells().size() == 1) {
+//					System.out.println("Detected a pair: " + r.getCage().getCells().get(0).getCellId()
+//							+ " : " + cell.getCellId());
+					int decision = rand.nextInt(difficulty);
+					ArrayList<MyRectangle> cageCells = new ArrayList<MyRectangle>();
+					cageCells.add(cell);
+					cageCells.add(r.getCage().getCells().get(0));
+					
+					sizeOneCages.remove(cell.getCage());
+					sizeOneCages.remove(r.getCage());
+					sizeOneCells.remove(cell);
+					sizeOneCells.remove(r.getCage().getCells().get(0));
+
+					String result = createOperations(decision, cageCells);
+//					System.out.println(result);
+					MyRectangle[] arr = cageCells.toArray(new MyRectangle[cageCells.size()]);
+					Arrays.sort(arr);
+					cages.add(new Cage(result, arr));
+//					System.out.println("added a new cage: " + result);
+					i--;
+					counter++;
+//					System.err.println(counter + " iterations");
+					break;
+				}
+			}
+		}
+		for(Cage c : sizeOneCages) {
+			String result = String.valueOf(c.getCells().get(0).getSolution());
+			cages.add(new Cage(result, c.getCells().get(0)));
+		}
+//		System.err.println("final iteration done");
 		return cages;
 	}
 	
@@ -226,8 +306,12 @@ public class RandomGame {
 			for (MyRectangle cell : cells) {
 				total = total * Integer.valueOf(cell.getSolution());
 			}
-			result = String.valueOf(total) + "x";
-			return result;		
+			if(total > 2000)
+				return createOperations(rand.nextInt(2), cells);
+			else {
+				result = String.valueOf(total) + "x";
+				return result;						
+			}
 		} else {
 			Double[] valuesDiv = new Double[cells.size()];
 			for (int i = 0; i < cells.size(); i++) {
@@ -241,7 +325,7 @@ public class RandomGame {
 			}
 			if(amountDiv % 1 == 0) {
 				int convertedDouble = (int) amountDiv;
-				result = String.valueOf(convertedDouble) + "/";
+				result = String.valueOf(convertedDouble) + "÷";
 				return result;
 			} else {
 				return createOperations(4, cells);
