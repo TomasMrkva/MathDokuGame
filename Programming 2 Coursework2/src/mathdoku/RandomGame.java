@@ -19,45 +19,34 @@ public class RandomGame {
 		this.N = N;
 		this.difficulty = difficulty;
 		this.unique = unique;
-//		System.err.println(unique);
 		rand = new Random();
 		GameEngine.noOfSolutions = 0;
-//		grid = new GridConstructor(N, MathDoku.width);
-//		cells = grid.getCells();
 	}
 	
 	public void generateRandomGame() {
 
 		if(unique) {
-//			int counter = 0;
 			long start = System.currentTimeMillis();
 			while(GameEngine.noOfSolutions != 1) {
 				rand = new Random();
 				grid = new GridConstructor(N, MathDoku.width);
 				cells = grid.getCells();
-//				System.out.println(cells.size());
 				solve(cells.size());
 				fillGrid();
 				cages = createCages();
 				grid.addCages(cages);
 				GameEngine.solve(cells,"generator");
-//				counter++;
 				if(N == 7 && difficulty == 7 && System.currentTimeMillis() - start > 30000) {
 					difficulty--;
-					System.out.println(System.currentTimeMillis() - start + "ms elapsed,"
-							+ "setting difficulty to: " + difficulty);
+					System.out.println(System.currentTimeMillis() - start + " ms elapsed,"
+							+ " setting difficulty to: " + difficulty);
 					start = System.currentTimeMillis();
 					slowFactor++;
 				} else if(N == 7 && System.currentTimeMillis() - start > 30000) {
-					slowFactor++;
+					slowFactor++;	
+					start = System.currentTimeMillis();
 				}
-//				if(counter == 10 && N == 7 && difficulty == 7 && difficulty > 4) {
-//					System.err.println("Setting difficulty to 6");
-//					difficulty --;
-//				}
-//				System.out.println("done");
 			}
-//			MathDoku.createGame(grid, cages, N, true);
 		} else {
 			grid = new GridConstructor(N, MathDoku.width);
 			cells = grid.getCells();
@@ -65,9 +54,7 @@ public class RandomGame {
 			fillGrid();
 			cages = createCages();
 			grid.addCages(cages);
-//			MathDoku.createGame(grid, cages, N, true);
 		}
-//		MathDoku.createGame(grid, cages, N, true);
 	}
 	
 	public void createGame() {
@@ -249,11 +236,9 @@ public class RandomGame {
 	}
 	
 	private ArrayList<Cage> mergeSizeOneCells(ArrayList<Cage> cages) {
-//		System.err.println("begin");
 		ArrayList<Cage> sizeOneCages = new ArrayList<Cage>();
 		ArrayList<MyRectangle> sizeOneCells = new ArrayList<>();
 		ArrayList<MyRectangle> neighbours = new ArrayList<MyRectangle>();
-//		int counter = 0;
 		
 		for(int i=0; i < cages.size(); i++) { 
 			Cage cage = cages.get(i);
@@ -274,8 +259,6 @@ public class RandomGame {
 			for(int j=0; j < neighbours.size(); j++) {
 				MyRectangle r = neighbours.get(j);
 				if (r.getCage().getCells().size() == 1) {
-//					System.out.println("Detected a pair: " + r.getCage().getCells().get(0).getCellId()
-//							+ " : " + cell.getCellId());
 					int decision = rand.nextInt(difficulty);
 					ArrayList<MyRectangle> cageCells = new ArrayList<MyRectangle>();
 					cageCells.add(cell);
@@ -287,14 +270,9 @@ public class RandomGame {
 					sizeOneCells.remove(r.getCage().getCells().get(0));
 
 					String result = createOperations(decision, cageCells);
-//					System.out.println(result);
 					MyRectangle[] arr = cageCells.toArray(new MyRectangle[cageCells.size()]);
 					Arrays.sort(arr);
 					cages.add(new Cage(result, arr));
-//					System.out.println("added a new cage: " + result);
-					i--;
-//					counter++;
-//					System.err.println(counter + " iterations");
 					break;
 				}
 			}
@@ -303,7 +281,6 @@ public class RandomGame {
 			String result = String.valueOf(c.getCells().get(0).getSolution());
 			cages.add(new Cage(result, c.getCells().get(0)));
 		}
-//		System.err.println("final iteration done");
 		return cages;
 	}
 	
@@ -414,84 +391,5 @@ public class RandomGame {
 		}
 		return true;
 	}
-	
-//	private void uniqueSolution() {
-//		
-//		int n = this.nCr(N);
-//		
-//		int[][][] cols = new int[N][n][2];
-//		int[][][] rows = new int[N][n][2];
-//		
-//		int pos = 0;
-//		
-//		for(int i = 0; i < N; i++) {
-//			pos = 0;
-//			for(int j = 0; j < N-1; j++) {
-//				for(int y = j; y < N-1; y++) {
-//					int pair1 = grid.matrix[j][i].getSolution();
-//					int pair2 = grid.matrix[y+1][i].getSolution();
-//					cols[i][pos][0] = pair1;
-//					cols[i][pos][1] = pair2;
-//					pos++;
-//				}
-//			}
-//		}
-//		
-//		for(int i = 0; i < N; i++) {
-//			System.out.println("*********** Col " + i + " ***********");
-//			for(int j=0; j<n; j++) {
-//				System.out.print("[");
-//				for(int k=0; k<2; k++) {
-//					System.out.print(cols[i][j][k]);
-//					if (k==0) {
-//						System.out.print(",");
-//					}
-//				}
-//				System.out.print("]  ");
-//			}
-//			System.out.println();
-//		}
-//		
-//		for(int i = 0; i < N; i++) {
-//			pos = 0;
-//			for(int j = 0; j < N-1; j++) {
-//				for(int y = j; y < N-1; y++) {
-//					int pair1 = grid.matrix[i][j].getSolution();
-//					int pair2 = grid.matrix[i][y+1].getSolution();
-//					rows[i][pos][0] = pair1;
-//					rows[i][pos][1] = pair2;
-//					pos++;
-//				}
-//			}
-//		}
-//		
-//		for(int i = 0; i < N; i++) {
-//			System.out.println("*********** Row " + i + " ***********");
-//			for(int j=0; j<n; j++) {
-//				System.out.print("[");
-//				for(int k=0; k<2; k++) {
-//					System.out.print(rows[i][j][k]);
-//					if (k==0) {
-//						System.out.print(",");
-//					}
-//				}
-//				System.out.print("]  ");
-//			}
-//			System.out.println();
-//		}
-//		
-//	}
-//	
-//	 
-//	private int nCr(int n) { 
-//	    return fact(n) / (fact(2) * fact(n - 2)); 
-//	} 
-//	  
-//	private int fact(int n) { 
-//	    int res = 1; 
-//	    for (int i = 2; i <= n; i++) 
-//	        res = res * i; 
-//	    return res; 
-//	} 
 	
 }

@@ -31,7 +31,6 @@ import javafx.stage.FileChooser.ExtensionFilter;
 
 public class FileLoaderHandler implements EventHandler<MouseEvent> {
 	
-//	private GridConstructor grid;
 	private Stage newWindow;
 	private TextArea area;
 
@@ -48,7 +47,6 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 		pane.setPadding(new Insets(10));
 		
 		Button random = new Button("Random Game");
-//		random.setPadding(new Insets(0, 10, 0, 0));
 		random.setPrefWidth(100);
 		random.setOnAction(e -> {
 			newWindow.close();
@@ -68,7 +66,6 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 		});
 		
 		Button submit = new Button("Submit");
-//		random.setPadding(new Insets(0, 0, 0, 20));
 		submit.setDefaultButton(true);
 		submit.setPrefWidth(75);
 		submit.addEventHandler(ActionEvent.ANY, new submitClickHandler());
@@ -157,8 +154,7 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 			ArrayList<String[]> lines = new ArrayList<String[]>();
 			Set<String> uniqueCells = new HashSet<String>();
 			
-			// Splits the text in the TextArea into separate arrays, each array is 
-			// one line
+			// Splits the text in the TextArea into separate arrays, each array is one line
 			for (String line : area.getText().split("\\n")) {
 				String[] parts = line.split("[ ,]");
 				lines.add(parts);
@@ -238,10 +234,8 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 					MyRectangle[] cellsArray = cells.toArray(new MyRectangle[cells.size()]);
 //					Arrays.sort(cellsArray, Comparator.comparing(MyRectangle::getCellId));
 					Arrays.sort(cellsArray);
-//					for(MyRectangle cell : cellsArray) {
-//						System.err.println(cell.getCellId());
-//					}
-					System.out.println("******* " + line[0] + " ********");
+
+//					System.out.println("******* " + line[0] + " ********");
 					correctCage = isCageCorrect(cellsArray, N);	//Checks whether the cells in a line are neighbors
 					if(correctCage) {
 						//If yes: add cages to the grid
@@ -253,12 +247,11 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 						displayErrorMessage("Wrong format of a cage on the line: "+ Arrays.toString(line));
 						break;
 					}
-					System.out.println();
+//					System.out.println();
 				}
 				if(correctCage) {
 					grid.addCages(cages);
 					MathDoku.createGame(grid, cages, N, false);
-//					createGrid(cages, N);
 					newWindow.close();
 				}
 			}
@@ -294,57 +287,56 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 						if(cellCol == 0) {
 							hashSet.add(cell.getCellId()+N);
 							hashSet.add(cell.getCellId()+1);
-							System.out.println("CellID 0:0 : " + cell.getCellId());
+//							System.out.println("CellID 0:0 : " + cell.getCellId());
 						} else if(cellCol == N-1) {
 							hashSet.add(cell.getCellId()+N);
 							hashSet.add(cell.getCellId()-1);
-							System.out.println("CellID 0:N-1 : " + cell.getCellId());
+//							System.out.println("CellID 0:N-1 : " + cell.getCellId());
 						} else {
 							hashSet.add(cell.getCellId()+N);
 							hashSet.add(cell.getCellId()+1);
 							hashSet.add(cell.getCellId()-1);
-							System.out.println("CellID 0:* : " + cell.getCellId());
+//							System.out.println("CellID 0:* : " + cell.getCellId());
 						}
 					} else if(cellRow == N-1) {
 						if(cellCol == 0) {
 							hashSet.add(cell.getCellId()-N);
 							hashSet.add(cell.getCellId()+1);
-							System.out.println("CellID N-1:0 : " + cell.getCellId());
+//							System.out.println("CellID N-1:0 : " + cell.getCellId());
 						} else if(cellCol == N-1) {
 							hashSet.add(cell.getCellId()-N);
 							hashSet.add(cell.getCellId()-1);
-							System.out.println("CellID N-1:N-1 : " + cell.getCellId());
+//							System.out.println("CellID N-1:N-1 : " + cell.getCellId());
 						} else {
 							hashSet.add(cell.getCellId()-N);
 							hashSet.add(cell.getCellId()+1);
 							hashSet.add(cell.getCellId()-1);
-							System.out.println("CellID N-1:* : " + cell.getCellId());
+//							System.out.println("CellID N-1:* : " + cell.getCellId());
 						}
 					} else if(cellCol == 0) {
 						hashSet.add(cell.getCellId()+1);
 						hashSet.add(cell.getCellId()+N);
 						hashSet.add(cell.getCellId()-N);
-						System.out.println("CellID *:0 : " + cell.getCellId());
+//						System.out.println("CellID *:0 : " + cell.getCellId());
 					} else if(cellCol == N-1) {
 						hashSet.add(cell.getCellId()-1);
 						hashSet.add(cell.getCellId()+N);
 						hashSet.add(cell.getCellId()-N);
-						System.out.println("CellID *:N-1 : " + cell.getCellId());
+//						System.out.println("CellID *:N-1 : " + cell.getCellId());
 					} else {
 						hashSet.add(cell.getCellId()-N);
 						hashSet.add(cell.getCellId()+N);
 						hashSet.add(cell.getCellId()+1);
 						hashSet.add(cell.getCellId()-1);
-						System.out.println("CellID *:* : " + cell.getCellId());
+//						System.out.println("CellID *:* : " + cell.getCellId());
 					}
 				}
-			System.out.println();
+//			System.out.println();
 			} else {
 				hashSet.add(cellsArray[0].getCellId());
 			}
 			for(MyRectangle cell : cellsArray) {
 				if(hashSet.add(cell.getCellId()) == true) {
-//					System.out.println(cell.getCellId());
 					return false;
 				}
 			}

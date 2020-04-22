@@ -4,8 +4,6 @@ import java.util.EmptyStackException;
 import java.util.Optional;
 import java.util.Random;
 
-import com.sun.glass.events.KeyEvent;
-
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -26,7 +24,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -46,8 +43,6 @@ public class Gui {
 	protected static Button solve;
 	protected static Label label; 
 	protected static Slider slider;
-//	private static int N=0;
-//	private static int difficulty=0;
 	
 	public Gui(GridConstructor grid) {
 		Gui.grid = grid;
@@ -130,12 +125,6 @@ public class Gui {
 		ComboBox<String> gameDifficulty = new ComboBox<String>();
 		gameDifficulty.getItems().addAll("Easy", "Medium", "Hard");
 		gameDifficulty.setValue("Easy");
-		
-
-//		Label lb = new Label("Unique");
-//		lb.setGraphic(new CheckBox());
-//		lb.setContentDisplay(ContentDisplay.BOTTOM);
-
 		
 		submit.setOnAction(e -> {
 			int N = 0;
@@ -227,7 +216,6 @@ public class Gui {
 	
 	public VBox numbers(int N) {
 		VBox numbers = new VBox(5);
-//		numbers.setStyle("-fx-border-color: blue");
 		for(int i=1; i <= N; i++) {
 			Button button = new Button();
 			button.setText(String.valueOf(i));
@@ -252,27 +240,6 @@ public class Gui {
 		del.setMaxHeight(Double.MAX_VALUE);
 		return numbers;
 	}
-	
-//	public VBox initialSetup() {
-//		Label label = new Label("Welcome to MathDoku");
-//		label.setFont(new Font("Helvetica", 20));
-//		label.setPadding(new Insets(0, 0, 15, 0));
-//		Button newGame = new Button("New Game");
-//		newGame.getStyleClass().add("BUTTON_DSI");
-//		newGame.setPrefSize(100, 30);
-//		Button preset = new Button("Play");
-//		preset.setPrefSize(100, 30);
-//		preset.setOnAction(e -> MathDoku.createPreset());
-//		newGame.setOnMouseClicked(new FileLoaderHandler());
-//		Button randomGame = new Button("Random Game");
-//		randomGame.setPrefSize(100, 30);
-//		VBox vbox = new VBox(10);
-//		randomGame.setOnAction(e -> Gui.randomGameMenu());
-//		vbox.getChildren().addAll(label,newGame, preset, randomGame);
-//		vbox.setAlignment(Pos.CENTER);
-//		preset.setDefaultButton(true);
-//		return vbox;
-//	}
 	
 	public VBox menu() {
 		Button clear = new Button("Clear");
@@ -348,7 +315,6 @@ public class Gui {
 		slider.setPrefWidth(100);
 		this.fontMaker(slider);
 		Button loadFile = new Button();
-//		loadFile.setDefaultButton(true);		
 
 		loadFile.setText("Load a new game");
 		loadFile.setFocusTraversable(false);
@@ -377,13 +343,12 @@ public class Gui {
 		HBox.setHgrow(label, Priority.ALWAYS);
 		label.setMaxWidth(Double.MAX_VALUE);
 		label.setMaxHeight(Double.MAX_VALUE);
-
-//		label.setFont(GridConstructor.font);
 		return hbox;
 	}
 	
-	//GUI Handling methods
-	
+	/*
+	 * GUI EventHanxling methods
+	 */
 	public void numButtonClick(Button b) {
 		b.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -471,7 +436,6 @@ public class Gui {
 			redo.setDisable(false);
 			//Checks if the undo stack is empty now
 			StackOperations.stackUndo.peek();
-//			redo.setDisable(false);
 		} catch (EmptyStackException e) {
 			System.err.println("Undo stack is empty");
 			undo.setDisable(true);
@@ -497,9 +461,6 @@ public class Gui {
 		solveButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-//				for(MyRectangle cell : grid.getCells()) {
-//					cell.setSolution(0);
-//				}
 				if(GameEngine.solve(grid.getCells(), "button")) {
 					for(MyRectangle r : grid.getCells()) {
 						grid.displaySolved(r);

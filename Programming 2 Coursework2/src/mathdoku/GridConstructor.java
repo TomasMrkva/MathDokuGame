@@ -24,7 +24,6 @@ public class GridConstructor {
 	//List of StackPanes which contain the cells MyRectangle class and labels
 	private ArrayList<StackPane> cellsPos;
 	private  ArrayList<Cage> cages;
-//	public MyRectangle current; ??
 	private MyRectangle current;	// The pointer the current cell in the grid
 	private ArrayList<MyRectangle> cells;	//List of the cells, used for making cages
 	public MyRectangle[][] matrix;
@@ -247,7 +246,7 @@ public class GridConstructor {
 		final KeyCombination undo = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHORTCUT_DOWN);
 		
 		grid.setOnKeyPressed(e -> {
-			if(e.getCode() == KeyCode.BACK_SPACE) {
+			if(e.getCode() == KeyCode.BACK_SPACE || e.getCode() == KeyCode.DELETE) {
 				displayNumber(null);
 				e.consume();
 			} 
@@ -270,19 +269,9 @@ public class GridConstructor {
 			}
 			else if(undo.match(e)) {
 				Gui.undoAction();
-//				try {
-//					Gui.undoAction();
-//				} catch (EmptyStackException emptyStack) {
-//					System.err.println("Undo stack is empty");
-//				}
 				e.consume();
 			} else if(redo.match(e)) {
 				Gui.redoAction();
-//				try {
-//					Gui.redoAction();
-//				} catch (EmptyStackException emptyStack) {
-//					System.err.println("Redo stack is empty");
-//				}
 				e.consume();
 			}
 		});
@@ -310,13 +299,11 @@ public class GridConstructor {
 						case "d": case "D": case "l": case "L":
 							moveWithKeys("right");
 							break;
-
                         }
 					}
 				} catch (ArrayIndexOutOfBoundsException e) {
 					//Mac/Linux ? version
 //					if(event.getCharacter().equals("")) {
-//						System.err.println("User entered a backspace");
 //						displayNumber(null);
 //					}
 				}
@@ -333,8 +320,6 @@ public class GridConstructor {
 		Cage[] arr = cages.toArray(new Cage[cages.size()]);
 		if(GameEngine.checkAllCols(matrix) && GameEngine.checkAllRows(matrix) && GameEngine.checkAllCages(false, arr)) {
 			Gui.setText("Congratulations, you solved the game !!!");
-//			Gui.hint.setDisable(true);
-//			Gui.solve.setDisable(true);
 			return true;
 		}
 		else 
@@ -439,24 +424,6 @@ public class GridConstructor {
 			}
 		}
 	}
-	
-//	public void displayTest(MyRectangle r) {
-//		for(StackPane s : cellsPos) {
-//			if(((MyRectangle) s.getChildren().get(0)).getCellId() == r.getCellId()) {
-//				MyRectangle cell = ((MyRectangle) s.getChildren().get(0));
-////				StackOperations.stackRedo.clear();
-//				String number = String.valueOf(cell.getSolution());
-//				Label label = new Label(number);
-//				label.setMouseTransparent(true);
-//				label.setFont(font);
-//				if(s.getChildren().size() > 2) {
-//					s.getChildren().remove(s.getChildren().size()-1);
-//				}
-//				s.getChildren().add(label);
-//				break;
-//			}
-//		}
-//	}
 	
 	public void updateNumber(MyRectangle cell, boolean undo) {
 		String updatedValue;

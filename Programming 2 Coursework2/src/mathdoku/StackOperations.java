@@ -8,7 +8,6 @@ public class StackOperations {
 	
 	public static void push(MyRectangle cell) {
 		StackOperations.stackUndo.push(cell);
-//		System.out.println(stackUndo.size());
 	}
 	
 	public static MyRectangle undo() {

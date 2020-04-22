@@ -103,19 +103,15 @@ public class WinAnimation {
 	        fade.setToValue(0.3);
 		    fade.play();
 		    
-		    
 	        RotateTransition rotate = new RotateTransition();
 	        rotate.setDelay(Duration.seconds(3.65));
 	        rotate.setAxis(Rotate.Z_AXIS);
 	        rotate.setByAngle(360);  
-//	        rotate.setCycleCount(3);  
 	        rotate.setDuration(Duration.seconds(3.8));  
-//	        rotate.setAutoReverse(true);  
 	        rotate.setNode(text);
 	        rotate.play();
 	        
 	        VBox vbox = new VBox(5);
-//			abh.setStyle("-fx-border-color: blue");
 			vbox.setAlignment(Pos.CENTER);
 	        vbox.getChildren().add(text);
 	        
@@ -158,10 +154,6 @@ public class WinAnimation {
 				StackOperations.stackRedo.clear();
 				Gui.redo.setDisable(true);
 				Gui.undo.setDisable(true);
-//				if(GameEngine.isSolvabale()) {
-//					Gui.hint.setDisable(false);
-//					Gui.solve.setDisable(false);
-//				}
 				grid.keyTyped();
 				grid.requestFocus();
 			});
@@ -172,4 +164,5 @@ public class WinAnimation {
 		});
 		pauseButtons.play();
 	}
+	
 }

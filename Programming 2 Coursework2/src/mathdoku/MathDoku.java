@@ -35,7 +35,6 @@ import javafx.stage.Stage;
 public class MathDoku extends Application {
 
 	private static ArrayList<Cage> cages = new ArrayList<Cage>();
-//	private static int N=6;
 	private static final int presetN = 6;
 	public static double width = 80;
 	public static Stage pStage;
@@ -77,12 +76,8 @@ public class MathDoku extends Application {
         game.setCenter(vbox);
 		stage.setMinHeight(300);
 		stage.setMinWidth(300);
-//		root.setStyle("-fx-border-color: blue");
 		pRoot.getChildren().add(game);
 		pScene = new Scene(pRoot);
-//		pScene.getStylesheets().add("styles.css");
-//		pScene = scene;
-//		pRoot = root;
 		stage.setScene(pScene);
 		stage.centerOnScreen();
 		stage.show();
@@ -175,43 +170,11 @@ public class MathDoku extends Application {
 	    			info.setContentText("The number of solutions is: "+ GameEngine.noOfSolutions);
 	    			info.showAndWait();
         		}
-//    			 if (result.isPresent() && result.get() == ButtonType.OK) 
-//    			info.show();
-//    			Button b = (Button) info.getDialogPane().lookupButton(ButtonType.OK);
-//    			b.setOnAction(e ->{
-//    				info.close();
-//    			});
-//        		System.err.println(GameEngine.noOfSolutions);
             }
         });
-		
 		Thread th = new Thread(task);
 		th.start();
 		
-//		if(random) {
-//			if(GameEngine.solve(grid.getCells(), "button")) {
-//				Gui.solve.setDisable(false);
-//    			Gui.hint.setDisable(false);
-////    			System.out.println("hi");
-//			}
-//			else {
-//				if(GameEngine.solve(grid.getCells(), "default")) {
-//					Gui.solve.setDisable(false);
-//	    			Gui.hint.setDisable(false);
-////	    			System.out.println("hi");
-//				}
-//			}
-//		}
-//		grid.requestFocus();
-//		if(!GameEngine.solve(grid.getCells(), "default")) {
-//			Gui.solve.setDisable(true);
-//			Gui.hint.setDisable(true);
-//		}
-//		else {
-//			Gui.solve.setDisable(false);
-//			Gui.hint.setDisable(false);
-//		}
-
 		grid.requestFocus();
 	}
 	

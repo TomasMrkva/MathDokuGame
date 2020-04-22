@@ -274,8 +274,8 @@ public class GameEngine {
 				break;
 
 			default:
-				return false;
-//				throw new IllegalArgumentException("Unexpected value: " + cage.getOPSymbol());
+				throw new IllegalArgumentException("Unexpected value: " + cage.getOPSymbol());
+//				return false;
 			}
 		}
 		return true;
@@ -321,15 +321,6 @@ public class GameEngine {
 	}
 	
 	public static boolean solve(ArrayList<MyRectangle> cells, String mode) {
-		
-		long start = System.currentTimeMillis();
-		int lastBacktrack = 0;
-		int position = 0;
-		double limit = Math.sqrt(cells.size());
-		boolean backtrack = false;
-		ArrayList<Integer[]> solutionSet = new ArrayList<Integer[]>();
-		
-		noOfSolutions = 0;
 		//when the solve button is not pressed, solve, otherwise show previously done solution
 		if(!mode.equals("button")) {
 			for (MyRectangle cell : cells) {
@@ -341,6 +332,15 @@ public class GameEngine {
 				return true;
 			}
 		}
+		
+		long start = System.currentTimeMillis();
+		int lastBacktrack = 0;
+		int position = 0;
+		double limit = Math.sqrt(cells.size());
+		boolean backtrack = false;
+		ArrayList<Integer[]> solutionSet = new ArrayList<Integer[]>();
+		noOfSolutions = 0;
+		
 		while(position != cells.size()) {
 			if(System.currentTimeMillis()- start > 30000 && mode.equals("generator")) {
 				System.out.println("Backtracking timeout, breaking!");
@@ -383,6 +383,7 @@ public class GameEngine {
 						break;
 					} else {
 						if( GameEngine.checkAllCages(true, curr.getCage()) == true ) {
+							// Found a solution
 							if(position == cells.size()-1){
 								Integer[] solution = new Integer[cells.size()];
 								for(int i = 0; i < cells.size(); i++) {
