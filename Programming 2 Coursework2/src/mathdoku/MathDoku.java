@@ -1,7 +1,9 @@
 package mathdoku;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.concurrent.Task;
@@ -17,6 +19,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -128,9 +131,17 @@ public class MathDoku extends Application {
 		StackOperations.clear();
 		
 		Alert solveAlert = new Alert(AlertType.NONE);
-		solveAlert.setTitle("Generating a new Game");
-		solveAlert.setHeaderText("Please wait...");
-		solveAlert.setContentText("Checking solutions...");
+		solveAlert.setTitle("Solving");
+		solveAlert.setHeaderText("Please wait, checking solutions...");
+		solveAlert.setContentText("To forcequit, doubleclick on this window");
+		solveAlert.getDialogPane().setOnMouseClicked(event -> {
+			if(event.getButton().equals(MouseButton.PRIMARY)){
+	            if(event.getClickCount() == 2){
+	            	Platform.exit();
+	            	System.exit(0);
+	            }
+	        }
+		});
 		ProgressIndicator pi = new ProgressIndicator();
 		pi.setMaxSize(40, 40);
 		solveAlert.setGraphic(pi);
@@ -157,6 +168,20 @@ public class MathDoku extends Application {
             		Gui.solve.setDisable(false);
         			Gui.hint.setDisable(false);
             	};
+        		if(GameEngine.noOfSolutions > 1) {
+	    			Alert info = new Alert(AlertType.INFORMATION);
+	    			info.setTitle("Multiple solutions!");
+	    			info.setHeaderText("This grid has more than 1 solution!");
+	    			info.setContentText("The number of solutions is: "+ GameEngine.noOfSolutions);
+	    			info.showAndWait();
+        		}
+//    			 if (result.isPresent() && result.get() == ButtonType.OK) 
+//    			info.show();
+//    			Button b = (Button) info.getDialogPane().lookupButton(ButtonType.OK);
+//    			b.setOnAction(e ->{
+//    				info.close();
+//    			});
+//        		System.err.println(GameEngine.noOfSolutions);
             }
         });
 		
@@ -186,8 +211,8 @@ public class MathDoku extends Application {
 //			Gui.solve.setDisable(false);
 //			Gui.hint.setDisable(false);
 //		}
-		grid.requestFocus();
 
+		grid.requestFocus();
 	}
 	
 	/**

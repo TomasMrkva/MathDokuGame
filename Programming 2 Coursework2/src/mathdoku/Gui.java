@@ -3,6 +3,10 @@ import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.Optional;
 import java.util.Random;
+
+import com.sun.glass.events.KeyEvent;
+
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
@@ -22,6 +26,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -157,8 +163,17 @@ public class Gui {
 			
 			Alert generateAlert = new Alert(AlertType.NONE);
 			generateAlert.setTitle("Generating a new Game");
-			generateAlert.setHeaderText("Please wait...");
-			generateAlert.setContentText("The game is being generated...");
+			generateAlert.setHeaderText("Please wait,  the game is being generated...");
+			generateAlert.setContentText("To forcequit, doubleclick on this window");
+			generateAlert.setGraphic(new Button("Cancel"));
+			generateAlert.getDialogPane().setOnMouseClicked(event -> {
+				if(event.getButton().equals(MouseButton.PRIMARY)){
+		            if(event.getClickCount() == 2){
+		            	Platform.exit();
+		            	System.exit(0);
+		            }
+		        }
+			});
 			generateAlert.setGraphic(pi);
 			generateAlert.show();
 			
@@ -172,6 +187,7 @@ public class Gui {
 			task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 				@Override
 				public void handle(WorkerStateEvent event) {
+
 					generateAlert.setResult(ButtonType.CANCEL);
 					generateAlert.close();
 					randomGame.createGame();

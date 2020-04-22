@@ -219,6 +219,7 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 			else if((maxvalue != numberOfCells)) displayErrorMessage("Not enough cells!");
 			else if(numberOfCells == 0) displayErrorMessage("No cells! " + wrongPart);
 			else if((int)Math.pow(N, 2) != numberOfCells) displayErrorMessage("Not a squared grid! Number of cells: " + numberOfCells);
+			else if(numberOfCells > 64) displayErrorMessage("Cell number too high: " + numberOfCells);
 			else {
 				ArrayList<Cage> cages = new ArrayList<Cage>();	//List of all cages for the grid
 				boolean correctCage = false;
