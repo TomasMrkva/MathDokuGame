@@ -13,6 +13,7 @@ public class RandomGame {
 	private Random rand;
 	private ArrayList<Cage> cages;
 	private boolean unique;
+	public int slowFactor;
 
 	public RandomGame(int N, int difficulty, boolean unique) {
 		this.N = N;
@@ -45,8 +46,10 @@ public class RandomGame {
 					difficulty--;
 					System.out.println(System.currentTimeMillis() - start + "ms elapsed,"
 							+ "setting difficulty to: " + difficulty);
-					start=System.currentTimeMillis();
-					
+					start = System.currentTimeMillis();
+					slowFactor++;
+				} else if(N == 7 && System.currentTimeMillis() - start > 30000) {
+					slowFactor++;
 				}
 //				if(counter == 10 && N == 7 && difficulty == 7 && difficulty > 4) {
 //					System.err.println("Setting difficulty to 6");
@@ -202,12 +205,18 @@ public class RandomGame {
 				cageCells.add(current);
 				neighbours = getNeighBours(current);
 				int limit;
-				if (difficulty == 5) {
-					limit = rand.nextInt(difficulty-2)+2;
-				} else if(difficulty == 7) {
-					limit = rand.nextInt(difficulty-2)+2;
+				if(slowFactor == 2) {
+					limit = rand.nextInt(difficulty-1)+1;
+				} else if(slowFactor == 3) {
+					limit = rand.nextInt(difficulty-2)+1;
 				} else {
-					limit = rand.nextInt(difficulty-2)+2;
+					if (difficulty == 5) {
+						limit = rand.nextInt(difficulty-2)+2;
+					} else if(difficulty == 7) {
+						limit = rand.nextInt(difficulty-2)+2;
+					} else {
+						limit = rand.nextInt(difficulty-2)+2;
+					}
 				}
 				for(int j = 0; j < limit; j++) {
 					int index = rand.nextInt(neighbours.size());

@@ -322,6 +322,7 @@ public class GameEngine {
 	
 	public static boolean solve(ArrayList<MyRectangle> cells, String mode) {
 		
+		long start = System.currentTimeMillis();
 		int lastBacktrack = 0;
 		int position = 0;
 		double limit = Math.sqrt(cells.size());
@@ -341,6 +342,11 @@ public class GameEngine {
 			}
 		}
 		while(position != cells.size()) {
+			if(System.currentTimeMillis()- start > 30000 && mode.equals("generator")) {
+				System.out.println("Backtracking timeout, breaking!");
+				noOfSolutions = 2;
+				return false;
+			}
 			if(position < 0 && noOfSolutions == 0) {
 				System.err.println("Unsolvable");
 				isSolvable = false;
