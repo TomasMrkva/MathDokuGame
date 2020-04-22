@@ -18,9 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
@@ -517,7 +515,7 @@ public class Gui {
 	
 	public void configAction() {
 		TextArea area = new TextArea();
-		area.setEditable(true);
+		area.setEditable(false);
 		Stage newWindow = new Stage();
 		BorderPane pane = new BorderPane();
 		HBox hBox = new HBox();
