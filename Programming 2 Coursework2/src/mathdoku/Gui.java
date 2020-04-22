@@ -94,15 +94,39 @@ public class Gui {
 		hBox.setAlignment(Pos.CENTER);
 		vBox.setAlignment(Pos.CENTER);
 		
+		CheckBox box = new CheckBox("Unique");
+		
 		ComboBox<String> gridSize = new ComboBox<String>();
 		gridSize.getItems().addAll("2x2", "3x3", "4x4", "5x5", "6x6", "7x7", "8x8");
 		gridSize.setValue("2x2");
+		gridSize.valueProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				if(newValue.equals("8x8") && box.isSelected()) {
+					showErrorMessage();
+					submit.setDisable(true);
+				} else {
+					submit.setDisable(false);
+				}
+			}
+		});
+		box.selectedProperty().addListener(new ChangeListener<Boolean>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if (newValue && gridSize.getValue().equals("8x8")) {
+					showErrorMessage();
+					submit.setDisable(true);
+				} else {
+					submit.setDisable(false);
+				}
+			}
+		});
 		
 		ComboBox<String> gameDifficulty = new ComboBox<String>();
 		gameDifficulty.getItems().addAll("Easy", "Medium", "Hard");
 		gameDifficulty.setValue("Easy");
 		
-		CheckBox box = new CheckBox("Unique");
 
 //		Label lb = new Label("Unique");
 //		lb.setGraphic(new CheckBox());
@@ -129,17 +153,14 @@ public class Gui {
 			System.out.println("Size: " + gridSize.getValue());
 			System.out.println("Difficulty: " + gameDifficulty.getValue());
 			newWindow.close();
-			
 			RandomGame randomGame = new RandomGame(N, difficulty, box.isSelected());
-//			randomGame.generateRandomGame();
-//			randomGame.createGame();
-
+			ProgressIndicator pi = new ProgressIndicator();
+			pi.setMaxSize(40, 40);
+			
 			Alert generateAlert = new Alert(AlertType.NONE);
 			generateAlert.setTitle("Generating a new Game");
 			generateAlert.setHeaderText("Please wait...");
 			generateAlert.setContentText("The game is being generated...");
-			ProgressIndicator pi = new ProgressIndicator();
-			pi.setMaxSize(40, 40);
 			generateAlert.setGraphic(pi);
 			generateAlert.show();
 			
@@ -158,9 +179,9 @@ public class Gui {
 					randomGame.createGame();
 				}
             });
-			
 			Thread thread = new Thread(task);
 			thread.start();
+
 		});
 		
 		b.setOnAction(e -> {
@@ -180,6 +201,14 @@ public class Gui {
 		Scene scene = new Scene(vBox);
 		newWindow.setScene(scene);
 		newWindow.show();
+	}
+	
+	public static void showErrorMessage() {
+		Alert alert = new Alert(AlertType.WARNING);
+		alert.setTitle("Warning");
+		alert.setHeaderText("Please change your selection");
+		alert.setContentText("Sorry, 8x8 grid is too big for a single solution game");
+		alert.showAndWait();
 	}
 	
 	public VBox numbers(int N) {

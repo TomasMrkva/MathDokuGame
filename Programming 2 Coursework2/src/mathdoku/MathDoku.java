@@ -127,14 +127,14 @@ public class MathDoku extends Application {
 		pStage.centerOnScreen();
 		StackOperations.clear();
 		
-//		Alert solveAlert = new Alert(AlertType.NONE);
-//		solveAlert.setTitle("Generating a new Game");
-//		solveAlert.setHeaderText("Please wait...");
-//		solveAlert.setContentText("Checking solutions...");
-//		ProgressIndicator pi = new ProgressIndicator();
-//		pi.setMaxSize(40, 40);
-//		solveAlert.setGraphic(pi);
-//		solveAlert.show();
+		Alert solveAlert = new Alert(AlertType.NONE);
+		solveAlert.setTitle("Generating a new Game");
+		solveAlert.setHeaderText("Please wait...");
+		solveAlert.setContentText("Checking solutions...");
+		ProgressIndicator pi = new ProgressIndicator();
+		pi.setMaxSize(40, 40);
+		solveAlert.setGraphic(pi);
+		solveAlert.show();
 		
 		Task<Boolean> task = new Task<Boolean>() {
 			@Override
@@ -151,8 +151,8 @@ public class MathDoku extends Application {
 		task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 			
             public void handle(WorkerStateEvent event) {
-//            	solveAlert.setResult(ButtonType.CANCEL);
-//				solveAlert.close();
+            	solveAlert.setResult(ButtonType.CANCEL);
+				solveAlert.close();
             	if(task.getValue()){
             		Gui.solve.setDisable(false);
         			Gui.hint.setDisable(false);
@@ -186,7 +186,7 @@ public class MathDoku extends Application {
 //			Gui.solve.setDisable(false);
 //			Gui.hint.setDisable(false);
 //		}
-//		grid.requestFocus();
+		grid.requestFocus();
 
 	}
 	

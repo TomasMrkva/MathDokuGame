@@ -327,8 +327,8 @@ public class GameEngine {
 		double limit = Math.sqrt(cells.size());
 		boolean backtrack = false;
 		ArrayList<Integer[]> solutionSet = new ArrayList<Integer[]>();
-		noOfSolutions = 0;
 		
+		noOfSolutions = 0;
 		//when the solve button is not pressed, solve, otherwise show previously done solution
 		if(!mode.equals("button")) {
 			for (MyRectangle cell : cells) {
@@ -347,7 +347,7 @@ public class GameEngine {
 				return false;
 			} 
 			else if(position < 0) {
-				System.out.println("Number of solutions: " + noOfSolutions);
+				System.out.println("Number of solutions: " + noOfSolutions + "\n");
 				for(int i = 0; i < cells.size(); i++) {
 					int cellSolution = solutionSet.get(0)[i];
 					cells.get(i).setSolution(cellSolution);
