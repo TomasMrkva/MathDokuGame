@@ -315,6 +315,7 @@ public class GameEngine {
 	
 	private static boolean isSolvable = false;
 	public static int noOfSolutions = 0;
+	public static ArrayList<Integer[]> solutionSet;
 	
 	public static boolean isSolvable() {
 		return isSolvable;
@@ -338,7 +339,7 @@ public class GameEngine {
 		int position = 0;
 		double limit = Math.sqrt(cells.size());
 		boolean backtrack = false;
-		ArrayList<Integer[]> solutionSet = new ArrayList<Integer[]>();
+		solutionSet = new ArrayList<Integer[]>();
 		noOfSolutions = 0;
 		
 		while(position != cells.size()) {
@@ -421,6 +422,7 @@ public class GameEngine {
 			if(backtrack) {
 				curr.setSolution(0);
 				lastBacktrack = position;
+//				System.err.println(lastBacktrack);
 				position--;	
 			}
 			backtrack = false;

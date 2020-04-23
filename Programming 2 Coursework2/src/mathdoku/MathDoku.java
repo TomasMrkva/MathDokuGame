@@ -1,7 +1,5 @@
 package mathdoku;
 import java.util.ArrayList;
-import java.util.Optional;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -127,7 +125,7 @@ public class MathDoku extends Application {
 		
 		Alert solveAlert = new Alert(AlertType.NONE);
 		solveAlert.setTitle("Solving");
-		solveAlert.setHeaderText("Please wait, checking solutions...");
+		solveAlert.setHeaderText("Please wait, checking all possible solutions...");
 		solveAlert.setContentText("To forcequit, doubleclick on this window");
 		solveAlert.getDialogPane().setOnMouseClicked(event -> {
 			if(event.getButton().equals(MouseButton.PRIMARY)){
@@ -163,19 +161,23 @@ public class MathDoku extends Application {
             		Gui.solve.setDisable(false);
         			Gui.hint.setDisable(false);
             	};
+            	Alert info = new Alert(AlertType.INFORMATION);
         		if(GameEngine.noOfSolutions > 1) {
-	    			Alert info = new Alert(AlertType.INFORMATION);
 	    			info.setTitle("Multiple solutions!");
 	    			info.setHeaderText("This grid has more than 1 solution!");
 	    			info.setContentText("The number of solutions is: "+ GameEngine.noOfSolutions);
 	    			info.showAndWait();
+//	    			System.out.println("NoOfSolutions: " + GameEngine.noOfSolutions);
+        		} else if(GameEngine.noOfSolutions == 1 && !random){
+        			info.setTitle("Single solution!");
+	    			info.setHeaderText("This grid has a unique solution!");
+	    			info.showAndWait();
         		}
+        		grid.requestFocus();
             }
         });
 		Thread th = new Thread(task);
 		th.start();
-		
-		grid.requestFocus();
 	}
 	
 	/**

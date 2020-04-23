@@ -311,7 +311,7 @@ public class GridConstructor {
 		});
 	}
 	
-	public void unregiSterKeys() {
+	public void unregisterKeys() {
 		grid.setOnKeyPressed(null);
 		grid.setOnKeyTyped(null);
 	}

@@ -24,6 +24,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -33,6 +35,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 public class Gui {
 	private static GridConstructor grid;
@@ -461,6 +464,20 @@ public class Gui {
 		solveButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				boolean isEmpty = true;
+				for(MyRectangle cell : grid.getCells()) {
+					if(cell.getValue() != null) {
+						isEmpty = false;
+					}
+				}
+				if(GameEngine.noOfSolutions > 1 && !isEmpty) {
+					int pos = personalizedHint(true).getKey();
+					Integer[] solutions = GameEngine.solutionSet.get(pos);
+					for(int i = 0; i < solutions.length; i++) {
+						MyRectangle r = grid.getCells().get(i);
+						r.setSolution(solutions[i]);
+					}					
+				}
 				if(GameEngine.solve(grid.getCells(), "button")) {
 					for(MyRectangle r : grid.getCells()) {
 						grid.displaySolved(r);
@@ -476,18 +493,87 @@ public class Gui {
 			@Override
 			public void handle(ActionEvent event) {
 				ArrayList<MyRectangle> wrongCells = new ArrayList<MyRectangle>();
+				
+				boolean isEmpty = true;
 				for(MyRectangle cell : grid.getCells()) {
-					if(cell.getValue() == null || Integer.valueOf(cell.getValue()) != cell.getSolution()) {
-						wrongCells.add(cell);
+					if(cell.getValue() != null) {
+						isEmpty = false;
+					}
+				}
+				System.out.println(GameEngine.noOfSolutions);
+				if(GameEngine.noOfSolutions > 1 && !isEmpty ) {
+					wrongCells = personalizedHint(false).getValue();
+				} else {
+					for(MyRectangle cell : grid.getCells()) {
+						if(cell.getValue() == null || Integer.valueOf(cell.getValue()) != cell.getSolution()) {
+							wrongCells.add(cell);
+						}
 					}
 				}
 				if(!wrongCells.isEmpty()) {
 					MyRectangle r = wrongCells.get(new Random().nextInt(wrongCells.size()));	
 					grid.displaySolved(r);
-				}
+				}					
 				grid.requestFocus();
 			}
 		});
+	}
+	
+	public Pair<Integer, ArrayList<MyRectangle> > personalizedHint(boolean solveClick) {
+		ArrayList<Integer[]> solutionSet = GameEngine.solutionSet;
+		ArrayList<Integer[]> userSolutions = new ArrayList<Integer[]>();
+		int[] solutionScore = new int[solutionSet.size()];
+		int max = 0;
+		int pos = 0;
+		
+		for(int i = 0; i < grid.getCells().size(); i++) {
+			MyRectangle cell = grid.getCells().get(i);
+			Integer[] userSol = new Integer[2];
+			if(cell.getValue() != null) {
+				userSol[0] = i;
+				userSol[1] = Integer.parseInt(cell.getValue());
+			} else {
+				userSol[0] = i;
+				userSol[1] = -1;
+			}
+			userSolutions.add(userSol);
+		}
+		for(int i = 0; i < solutionSet.size(); i++) {
+			for(int j = 0; j < userSolutions.size(); j++) {
+				int index = userSolutions.get(j)[0];
+				if(userSolutions.get(j)[1] == solutionSet.get(i)[index]) {
+					solutionScore[i]++;
+				}
+			}
+		}
+		for(int i = 0; i < solutionScore.length; i++) {
+			if (solutionScore[i] > max) {
+				max = solutionScore[i];
+				pos = i;
+			}
+		}
+		if(solveClick) {
+			System.out.println("User values are similar to solution #: " + (pos+1));
+			return new Pair<Integer, ArrayList<MyRectangle>>(pos, null);
+		}
+		ArrayList<MyRectangle> wrongCells = new ArrayList<MyRectangle>();
+		Integer[] personalizedSols = solutionSet.get(pos);
+		if(max > 0){
+			for(int i = 0; i < personalizedSols.length; i++) {
+				if(userSolutions.get(i)[0] == i  &&  userSolutions.get(i)[1] != personalizedSols[i]) {
+					wrongCells.add(grid.getCells().get(i));
+				}
+			}
+		} else {
+			for(int i = 0; i < personalizedSols.length; i++ ) {
+				MyRectangle cell = grid.getCells().get(i);
+				if(cell.getValue() == null || Integer.valueOf(cell.getValue()) != personalizedSols[i]) {
+					wrongCells.add(cell);
+				}
+			}
+		}
+		System.out.println("User values are similar to solution #: " + (pos+1));
+		return new Pair<Integer, ArrayList<MyRectangle>>(pos, wrongCells);
 	}
 	
 	public void configAction() {
@@ -537,7 +623,12 @@ public class Gui {
 		pane.setBottom(hBox);
 		BorderPane.setAlignment(b, Pos.BOTTOM_RIGHT);
 		newWindow.setScene(new Scene(pane));
+		
+//		Clipboard clipboard = Clipboard.getSystemClipboard();
+//	    ClipboardContent content = new ClipboardContent();
+//	    content.putString(area.getText());
+//	    Clipboard.getSystemClipboard().setContent(content);
+	 
 		newWindow.show();
 	}
-	
 }

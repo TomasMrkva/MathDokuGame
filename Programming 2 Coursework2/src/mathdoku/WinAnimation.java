@@ -14,6 +14,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -25,8 +26,9 @@ import javafx.util.Duration;
 public class WinAnimation {
 	
 	public static void playAnimation(Pane pane) {
-		Gui.getGrid().unregiSterKeys();
-		PauseTransition pauseMain = new PauseTransition(Duration.seconds(0.5));
+		Gui.getGrid().unregisterKeys();
+
+		PauseTransition pauseMain = new PauseTransition(Duration.seconds(0));
 		
 		pauseMain.setOnFinished(mainEvent -> {
 	        Circle small = new Circle(70);

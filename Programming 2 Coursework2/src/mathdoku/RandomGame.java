@@ -21,10 +21,10 @@ public class RandomGame {
 		this.unique = unique;
 		rand = new Random();
 		GameEngine.noOfSolutions = 0;
+		slowFactor = 0;
 	}
 	
 	public void generateRandomGame() {
-
 		if(unique) {
 			long start = System.currentTimeMillis();
 			while(GameEngine.noOfSolutions != 1) {
@@ -47,7 +47,8 @@ public class RandomGame {
 					start = System.currentTimeMillis();
 				}
 			}
-		} else {
+		} 
+		else {
 			grid = new GridConstructor(N, MathDoku.width);
 			cells = grid.getCells();
 			solve(cells.size());
