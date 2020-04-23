@@ -500,7 +500,7 @@ public class Gui {
 						isEmpty = false;
 					}
 				}
-				System.out.println(GameEngine.noOfSolutions);
+//				System.out.println(GameEngine.noOfSolutions);
 				if(GameEngine.noOfSolutions > 1 && !isEmpty ) {
 					wrongCells = personalizedHint(false).getValue();
 				} else {

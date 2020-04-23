@@ -38,6 +38,7 @@ public class MathDoku extends Application {
 	public static Stage pStage;
 	public static Scene pScene;
 	public static StackPane pRoot;
+	private static boolean preset;
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -83,6 +84,7 @@ public class MathDoku extends Application {
 	
 	
 	public static void createPreset() {
+		preset = true;
 		GridConstructor grid = new GridConstructor(presetN, width);
 		makeCages(grid);
 		grid.addCages(cages);
@@ -168,10 +170,13 @@ public class MathDoku extends Application {
 	    			info.setContentText("The number of solutions is: "+ GameEngine.noOfSolutions);
 	    			info.showAndWait();
 //	    			System.out.println("NoOfSolutions: " + GameEngine.noOfSolutions);
-        		} else if(GameEngine.noOfSolutions == 1 && !random){
+        		} else if(GameEngine.noOfSolutions == 1 && !random && !preset){
         			info.setTitle("Single solution!");
 	    			info.setHeaderText("This grid has a unique solution!");
 	    			info.showAndWait();
+        		} else if(preset) {
+        			System.out.println("preset");
+        			preset = false;
         		}
         		grid.requestFocus();
             }
