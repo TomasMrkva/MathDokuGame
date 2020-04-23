@@ -24,6 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  * Mathdoku game main class
@@ -88,10 +89,10 @@ public class MathDoku extends Application {
 		GridConstructor grid = new GridConstructor(presetN, width);
 		makeCages(grid);
 		grid.addCages(cages);
-		createGame(grid, cages, presetN, false);
+		createGame(grid, cages, presetN, "multiple");
 	}
 	
-	public static void createGame(GridConstructor grid, ArrayList<Cage> cages, int N, boolean random) {
+	public static void createGame(GridConstructor grid, ArrayList<Cage> cages, int N, String mode) {
 		// Removes winning animation if there was one
 		if(MathDoku.pRoot.getChildren().size() > 1) {
 			for(int i=MathDoku.pRoot.getChildren().size()-1; i>=1 ;i--) {
@@ -126,8 +127,14 @@ public class MathDoku extends Application {
 		StackOperations.clear();
 		
 		Alert solveAlert = new Alert(AlertType.NONE);
+		solveAlert.initStyle(StageStyle.UNDECORATED);
 		solveAlert.setTitle("Solving");
-		solveAlert.setHeaderText("Please wait, checking all possible solutions...");
+		if(mode.equals("single")) {
+			solveAlert.setHeaderText("Please wait, finding a solution...");			
+		}
+		else {
+			solveAlert.setHeaderText("Please wait, checking all possible solutions...");			
+		}
 		solveAlert.setContentText("To forcequit, doubleclick on this window");
 		solveAlert.getDialogPane().setOnMouseClicked(event -> {
 			if(event.getButton().equals(MouseButton.PRIMARY)){
@@ -137,6 +144,7 @@ public class MathDoku extends Application {
 	            }
 	        }
 		});
+		
 		ProgressIndicator pi = new ProgressIndicator();
 		pi.setMaxSize(40, 40);
 		solveAlert.setGraphic(pi);
@@ -144,12 +152,15 @@ public class MathDoku extends Application {
 		
 		Task<Boolean> task = new Task<Boolean>() {
 			@Override
-			protected Boolean call() {
-				if(random) {
+			protected Boolean call() throws Exception {
+				if(mode.equals("random"))
 					return GameEngine.solve(grid.getCells(), "button");
-				} else {
+				else if(mode.equals("multiple"))
 					return GameEngine.solve(grid.getCells(), "default");
-				
+				else if(mode.equals("single"))
+					return GameEngine.solve(grid.getCells(), mode);
+				else {
+					throw new Exception("Unidentified mode");
 				}
 			}
 		};
@@ -170,14 +181,16 @@ public class MathDoku extends Application {
 	    			info.setContentText("The number of solutions is: "+ GameEngine.noOfSolutions);
 	    			info.showAndWait();
 //	    			System.out.println("NoOfSolutions: " + GameEngine.noOfSolutions);
-        		} else if(GameEngine.noOfSolutions == 1 && !random && !preset){
+        		} else if(GameEngine.noOfSolutions == 1 && mode.equals("single")) {
+        			info = null;
+        		} else if(GameEngine.noOfSolutions == 1 && !mode.equals("random") && !preset){
         			info.setTitle("Single solution!");
 	    			info.setHeaderText("This grid has a unique solution!");
 	    			info.showAndWait();
         		} else if(preset) {
-        			System.out.println("preset");
+//        			System.out.println("preset");
         			preset = false;
-        		}
+        		} 
         		grid.requestFocus();
             }
         });

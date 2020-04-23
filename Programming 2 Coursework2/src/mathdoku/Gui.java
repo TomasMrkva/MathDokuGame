@@ -73,22 +73,20 @@ public class Gui {
 	public static void randomGameMenu() {
 		Button b = new Button("Cancel");
 		b.setPrefWidth(70);
-
 		Button submit = new Button("Submit");
 		submit.setDefaultButton(true);
 		submit.setPrefWidth(70);
 		
-		Stage newWindow = new Stage();
 		Label label = new Label("Customize your game");
 		label.setFont(new Font("Helvetica", 20));
 		label.setPadding(new Insets(20, 0, 0, 0));
 		
+		Stage newWindow = new Stage();
 		newWindow.setTitle("Random game");
 		newWindow.setMinHeight(170);
 		newWindow.setMinWidth(400);
 		newWindow.setMaxHeight(170);
 		newWindow.setMaxWidth(400);
-
 		newWindow.initModality(Modality.APPLICATION_MODAL);
 		
 		VBox vBox = new VBox(10);
@@ -97,7 +95,6 @@ public class Gui {
 		vBox.setAlignment(Pos.CENTER);
 		
 		CheckBox box = new CheckBox("Unique");
-		
 		ComboBox<String> gridSize = new ComboBox<String>();
 		gridSize.getItems().addAll("2x2", "3x3", "4x4", "5x5", "6x6", "7x7", "8x8");
 		gridSize.setValue("2x2");
@@ -113,7 +110,6 @@ public class Gui {
 			}
 		});
 		box.selectedProperty().addListener(new ChangeListener<Boolean>() {
-
 			@Override
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 				if (newValue && gridSize.getValue().equals("8x8")) {
@@ -128,7 +124,6 @@ public class Gui {
 		ComboBox<String> gameDifficulty = new ComboBox<String>();
 		gameDifficulty.getItems().addAll("Easy", "Medium", "Hard");
 		gameDifficulty.setValue("Easy");
-		
 		submit.setOnAction(e -> {
 			int N = 0;
 			int difficulty = 0;
@@ -187,7 +182,6 @@ public class Gui {
             });
 			Thread thread = new Thread(task);
 			thread.start();
-
 		});
 		
 		b.setOnAction(e -> {
@@ -196,7 +190,6 @@ public class Gui {
 				grid.requestFocus();
 			}
 		});
-		
 		HBox subCancel = new HBox(10);
 		subCancel.setAlignment(Pos.BOTTOM_RIGHT);
 		subCancel.getChildren().addAll(b, submit);
@@ -296,14 +289,12 @@ public class Gui {
 		VBox.setVgrow(hint, Priority.ALWAYS);
 		VBox.setVgrow(config, Priority.ALWAYS);
 
-
 		hint.setMaxHeight(Double.MAX_VALUE);
 		solve.setMaxHeight(Double.MAX_VALUE);
 		clear.setMaxHeight(Double.MAX_VALUE);
 		undo.setMaxHeight(Double.MAX_VALUE);
 		redo.setMaxHeight(Double.MAX_VALUE);
 		config.setMaxHeight(Double.MAX_VALUE);
-
 		return menu;
 	}
 	
@@ -318,7 +309,6 @@ public class Gui {
 		slider.setPrefWidth(100);
 		this.fontMaker(slider);
 		Button loadFile = new Button();
-
 		loadFile.setText("Load a new game");
 		loadFile.setFocusTraversable(false);
 		CheckBox mistakes = new CheckBox("Show Mistakes");
@@ -580,40 +570,37 @@ public class Gui {
 		TextArea area = new TextArea();
 		area.setEditable(false);
 		Stage newWindow = new Stage();
+		newWindow.setTitle("Current game configuration");
 		BorderPane pane = new BorderPane();
 		HBox hBox = new HBox();
-		
 		pane.setPadding(new Insets(10));
 		newWindow.setMinHeight(150+(15*grid.getCages().size()));
 		newWindow.setMinWidth(250);
 		newWindow.setWidth(250);
-		
 		Button b = new Button("Close");
 		b.setOnAction(e -> newWindow.close());
 		b.setPrefSize(60, 30);
-
-		System.out.println();
-		System.out.println("***Configuration***");
-		
+//		System.out.println();
+//		System.out.println("***Configuration***");
 		for(int i=0; i < grid.getCages().size(); i++) {
 			Cage cage = grid.getCages().get(i);
-			System.out.print(cage.getId() + " ");
+//			System.out.print(cage.getId() + " ");
 			area.appendText(cage.getId() + " ");
 			for(int j = 0; j < cage.getCells().size(); j++) {
 				MyRectangle cell = cage.getCells().get(j);
 				if(j == cage.getCells().size()-1) {
-					System.out.print((cell.getCellId()+1));
+//					System.out.print((cell.getCellId()+1));
 					area.appendText(String.valueOf(cell.getCellId()+1));		
 				}
 				else {
-					System.out.print((cell.getCellId()+1) + ",");
+//					System.out.print((cell.getCellId()+1) + ",");
 					area.appendText((cell.getCellId()+1) + ",");	
 				}
 			}
 			if(i != grid.getCages().size()-1){
 				area.appendText("\n");				
 			}
-			System.out.println();
+//			System.out.println();
 		}
 		hBox.setAlignment(Pos.BASELINE_RIGHT);
 		hBox.setPadding(new Insets(10, 0, 10, 10));
@@ -624,11 +611,10 @@ public class Gui {
 		BorderPane.setAlignment(b, Pos.BOTTOM_RIGHT);
 		newWindow.setScene(new Scene(pane));
 		
-//		Clipboard clipboard = Clipboard.getSystemClipboard();
-//	    ClipboardContent content = new ClipboardContent();
-//	    content.putString(area.getText());
-//	    Clipboard.getSystemClipboard().setContent(content);
-	 
+		// Copies to clipboard
+	    ClipboardContent content = new ClipboardContent();
+	    content.putString(area.getText());
+	    Clipboard.getSystemClipboard().setContent(content);
 		newWindow.show();
 	}
 }

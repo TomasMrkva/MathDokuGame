@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
@@ -12,6 +14,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,6 +30,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 public class FileLoaderHandler implements EventHandler<MouseEvent> {
@@ -250,11 +254,38 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 //					System.out.println();
 				}
 				if(correctCage) {
-					grid.addCages(cages);
-					MathDoku.createGame(grid, cages, N, false);
 					newWindow.close();
+					boolean solutions = solutionAlert();
+					grid.addCages(cages);
+					if(solutions)
+						MathDoku.createGame(grid, cages, N, "multiple");
+					else
+						MathDoku.createGame(grid, cages, N, "single");
 				}
 			}
+		}
+		
+		public boolean solutionAlert() {
+			Alert alert = new Alert(AlertType.CONFIRMATION, "", ButtonType.APPLY);
+			CheckBox box = new CheckBox("Find all solutions");
+			box.setSelected(true);
+			box.selectedProperty().addListener(new ChangeListener<Boolean>() {
+				@Override
+				public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+					if(newValue == true) {
+						alert.setContentText("The system will find all possible solutions, it might take a while");
+					} else {
+						alert.setContentText("The system will find only one solution");
+					}
+//					System.out.println(box.isSelected());
+				}
+			});
+			alert.setHeaderText("The game may have multiple solutions:");
+			alert.setContentText("Please select if you want to find all solutions");
+			alert.initStyle(StageStyle.UNDECORATED);
+			alert.setGraphic(box);
+			alert.showAndWait();
+			return box.isSelected();
 		}
 		
 		public void displayErrorMessage(String message) {

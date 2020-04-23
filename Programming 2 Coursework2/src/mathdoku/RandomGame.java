@@ -59,7 +59,7 @@ public class RandomGame {
 	}
 	
 	public void createGame() {
-		MathDoku.createGame(grid, cages, N, true);
+		MathDoku.createGame(grid, cages, N, "random");
 	}
 	
 	private void fillGrid() {

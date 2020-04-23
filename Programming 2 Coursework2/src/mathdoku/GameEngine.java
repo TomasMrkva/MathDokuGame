@@ -386,6 +386,11 @@ public class GameEngine {
 						if( GameEngine.checkAllCages(true, curr.getCage()) == true ) {
 							// Found a solution
 							if(position == cells.size()-1){
+								noOfSolutions++;
+								if(noOfSolutions == 1 && mode.equals("single")){
+									System.err.println("Found one solution, breaking!");
+									return true;
+								}
 								Integer[] solution = new Integer[cells.size()];
 								for(int i = 0; i < cells.size(); i++) {
 									solution[i] = cells.get(i).getSolution();
@@ -396,7 +401,6 @@ public class GameEngine {
 									tmp.setSolution(0);
 									position--;
 								}
-								noOfSolutions++;
 								if(noOfSolutions > 1 && mode.equals("generator")) {
 									System.out.println("Found more than one solution, breaking!");
 									return false;
