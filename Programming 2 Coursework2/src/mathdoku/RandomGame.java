@@ -13,19 +13,22 @@ public class RandomGame {
 	private Random rand;
 	private ArrayList<Cage> cages;
 	private boolean unique;
+	private boolean checkAllSols;
 	public int slowFactor;
 
-	public RandomGame(int N, int difficulty, boolean unique) {
+	public RandomGame(int N, int difficulty, boolean unique, boolean checkAllSols) {
 		this.N = N;
 		this.difficulty = difficulty;
 		this.unique = unique;
-		rand = new Random();
+		this.checkAllSols = checkAllSols;
+//		rand = new Random();
 		GameEngine.noOfSolutions = 0;
 		slowFactor = 0;
 	}
 	
 	public void generateRandomGame() {
 		if(unique) {
+//			System.err.println("if");
 			long start = System.currentTimeMillis();
 			while(GameEngine.noOfSolutions != 1) {
 				rand = new Random();
@@ -48,7 +51,22 @@ public class RandomGame {
 				}
 			}
 		} 
-		else {
+		else if(checkAllSols){
+			while(GameEngine.noOfSolutions < 2) {
+//				System.err.println("elseif");
+				rand = new Random();
+				grid = new GridConstructor(N, MathDoku.width);
+				cells = grid.getCells();
+				solve(cells.size());
+				fillGrid();
+				cages = createCages();
+				grid.addCages(cages);
+				GameEngine.solve(cells,"multiple");
+				System.out.println("No of solutions: " + GameEngine.noOfSolutions);
+			}	
+		} else {
+//			System.err.println("else");
+			rand = new Random();
 			grid = new GridConstructor(N, MathDoku.width);
 			cells = grid.getCells();
 			solve(cells.size());
@@ -59,7 +77,7 @@ public class RandomGame {
 	}
 	
 	public void createGame() {
-		MathDoku.createGame(grid, cages, N, "random");
+			MathDoku.createGame(grid, cages, N, "random");
 	}
 	
 	private void fillGrid() {

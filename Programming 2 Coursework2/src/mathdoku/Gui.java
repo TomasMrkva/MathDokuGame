@@ -22,6 +22,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.Clipboard;
@@ -94,33 +95,56 @@ public class Gui {
 		hBox.setAlignment(Pos.CENTER);
 		vBox.setAlignment(Pos.CENTER);
 		
-		CheckBox box = new CheckBox("Unique");
+		RadioButton unique = new RadioButton("Unique");
+		RadioButton checkSols = new RadioButton("Find all solutions");
+		VBox radioBox = new VBox();
+		radioBox.getChildren().addAll(unique, checkSols);
+
 		ComboBox<String> gridSize = new ComboBox<String>();
 		gridSize.getItems().addAll("2x2", "3x3", "4x4", "5x5", "6x6", "7x7", "8x8");
 		gridSize.setValue("2x2");
 		gridSize.valueProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				if(newValue.equals("8x8") && box.isSelected()) {
-					showErrorMessage();
+				if(newValue.equals("8x8") && unique.isSelected()) {
+					showErrorMessageUnique();
 					submit.setDisable(true);
+				} else if(newValue.equals("8x8") && checkSols.isSelected()) {
+					showErrorMessageCheckAllSols();
 				} else {
 					submit.setDisable(false);
 				}
 			}
 		});
-		box.selectedProperty().addListener(new ChangeListener<Boolean>() {
+		unique.selectedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if (checkSols.isSelected() && newValue) {
+					checkSols.setSelected(false);
+				}
 				if (newValue && gridSize.getValue().equals("8x8")) {
-					showErrorMessage();
+					showErrorMessageUnique();
 					submit.setDisable(true);
 				} else {
 					submit.setDisable(false);
 				}
 			}
 		});
-		
+		checkSols.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if (unique.isSelected() && newValue) {
+					unique.setSelected(false);
+				}
+				if(newValue && gridSize.getValue().equals("8x8")) {
+					showErrorMessageCheckAllSols();
+					submit.setDisable(true);
+				} else {
+					submit.setDisable(false);
+				}
+			}
+		});
+
 		ComboBox<String> gameDifficulty = new ComboBox<String>();
 		gameDifficulty.getItems().addAll("Easy", "Medium", "Hard");
 		gameDifficulty.setValue("Easy");
@@ -144,7 +168,9 @@ public class Gui {
 			System.out.println("Size: " + gridSize.getValue());
 			System.out.println("Difficulty: " + gameDifficulty.getValue());
 			newWindow.close();
-			RandomGame randomGame = new RandomGame(N, difficulty, box.isSelected());
+//			System.err.println("Unique: " + unique.isSelected() + " CheckSols: " + checkSols.isSelected());
+			RandomGame randomGame = new RandomGame(N, difficulty, unique.isSelected(), checkSols.isSelected());
+
 			ProgressIndicator pi = new ProgressIndicator();
 			pi.setMaxSize(40, 40);
 			
@@ -195,18 +221,26 @@ public class Gui {
 		subCancel.getChildren().addAll(b, submit);
 		subCancel.setPadding(new Insets(10, 10, 10, 10));
 		
-		hBox.getChildren().addAll(gridSize, gameDifficulty, box);
+		hBox.getChildren().addAll(gridSize, gameDifficulty, radioBox);
 		vBox.getChildren().addAll(label, hBox, subCancel); 
 		Scene scene = new Scene(vBox);
 		newWindow.setScene(scene);
 		newWindow.show();
 	}
 	
-	public static void showErrorMessage() {
+	public static void showErrorMessageUnique() {
 		Alert alert = new Alert(AlertType.WARNING);
 		alert.setTitle("Warning");
 		alert.setHeaderText("Please change your selection");
 		alert.setContentText("Sorry, 8x8 grid is too big for a single solution game");
+		alert.showAndWait();
+	}
+	
+	public static void showErrorMessageCheckAllSols() {
+		Alert alert = new Alert(AlertType.WARNING);
+		alert.setTitle("Warning");
+		alert.setHeaderText("Please change your selection");
+		alert.setContentText("Sorry, 8x8 grid is too big for checking all solutions");
 		alert.showAndWait();
 	}
 	

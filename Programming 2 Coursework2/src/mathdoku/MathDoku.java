@@ -1,7 +1,7 @@
 package mathdoku;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.concurrent.Task;
@@ -92,13 +92,28 @@ public class MathDoku extends Application {
 		createGame(grid, cages, presetN, "multiple");
 	}
 	
+	/**
+	 * Checks if the String parameter is correct
+	 * @param String mode (can be only random/single/multiple)
+	 * @return true if the mode is correct
+	 * @throws InvalidParameterException if the mode is incorrect
+	 */
+	static boolean isModeCorrect(String mode) throws InvalidParameterException {
+		if(mode.equals("random") || mode.equals("single") || mode.equals("multiple"))
+			return true;
+		else 
+			throw new InvalidParameterException("Invalid mode");
+	}
+	
 	public static void createGame(GridConstructor grid, ArrayList<Cage> cages, int N, String mode) {
 		// Removes winning animation if there was one
+		isModeCorrect(mode);
 		if(MathDoku.pRoot.getChildren().size() > 1) {
 			for(int i=MathDoku.pRoot.getChildren().size()-1; i>=1 ;i--) {
 				MathDoku.pRoot.getChildren().remove(i);
 			}
 		}
+		isModeCorrect(mode);
 		grid.makeLabels();
 		grid.makeBorder(MathDoku.width, N, 2, Color.TOMATO);
 		Gui gui = new Gui(grid);
@@ -126,6 +141,12 @@ public class MathDoku extends Application {
 		pStage.centerOnScreen();
 		StackOperations.clear();
 		
+		Alert solveAlert = solveAlert(mode);
+		solveAlert.show();
+		solvingTask(grid, solveAlert, mode);
+	}
+	
+	public static Alert solveAlert(String mode) {
 		Alert solveAlert = new Alert(AlertType.NONE);
 		solveAlert.initStyle(StageStyle.UNDECORATED);
 		solveAlert.setTitle("Solving");
@@ -139,7 +160,7 @@ public class MathDoku extends Application {
 		solveAlert.getDialogPane().setOnMouseClicked(event -> {
 			if(event.getButton().equals(MouseButton.PRIMARY)){
 	            if(event.getClickCount() == 2){
-	            	Platform.exit();
+//	            	Platform.exit();
 	            	System.exit(0);
 	            }
 	        }
@@ -148,49 +169,44 @@ public class MathDoku extends Application {
 		ProgressIndicator pi = new ProgressIndicator();
 		pi.setMaxSize(40, 40);
 		solveAlert.setGraphic(pi);
-		solveAlert.show();
-		
+		return solveAlert;
+	}
+	
+	public static void solvingTask(GridConstructor grid, Alert solveAlert, String mode) {
 		Task<Boolean> task = new Task<Boolean>() {
 			@Override
-			protected Boolean call() throws Exception {
+			protected Boolean call() {
 				if(mode.equals("random"))
 					return GameEngine.solve(grid.getCells(), "button");
 				else if(mode.equals("multiple"))
 					return GameEngine.solve(grid.getCells(), "default");
-				else if(mode.equals("single"))
+				else 
 					return GameEngine.solve(grid.getCells(), mode);
-				else {
-					throw new Exception("Unidentified mode");
-				}
 			}
 		};
-		
 		task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-			
+			@Override
             public void handle(WorkerStateEvent event) {
             	solveAlert.setResult(ButtonType.CANCEL);
 				solveAlert.close();
             	if(task.getValue()){
             		Gui.solve.setDisable(false);
         			Gui.hint.setDisable(false);
-            	};
+            	}
             	Alert info = new Alert(AlertType.INFORMATION);
         		if(GameEngine.noOfSolutions > 1) {
 	    			info.setTitle("Multiple solutions!");
 	    			info.setHeaderText("This grid has more than 1 solution!");
 	    			info.setContentText("The number of solutions is: "+ GameEngine.noOfSolutions);
 	    			info.showAndWait();
-//	    			System.out.println("NoOfSolutions: " + GameEngine.noOfSolutions);
         		} else if(GameEngine.noOfSolutions == 1 && mode.equals("single")) {
         			info = null;
         		} else if(GameEngine.noOfSolutions == 1 && !mode.equals("random") && !preset){
         			info.setTitle("Single solution!");
 	    			info.setHeaderText("This grid has a unique solution!");
 	    			info.showAndWait();
-        		} else if(preset) {
-//        			System.out.println("preset");
+        		} else if(preset)
         			preset = false;
-        		} 
         		grid.requestFocus();
             }
         });

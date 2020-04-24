@@ -345,7 +345,7 @@ public class GameEngine {
 		while(position != cells.size()) {
 			if(System.currentTimeMillis()- start > 30000 && mode.equals("generator")) {
 				System.out.println("Backtracking timeout, breaking!");
-				noOfSolutions = 2;
+				noOfSolutions = -1;
 				return false;
 			}
 			if(position < 0 && noOfSolutions == 0) {

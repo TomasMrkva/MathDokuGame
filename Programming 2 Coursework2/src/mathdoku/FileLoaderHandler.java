@@ -39,7 +39,7 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 	private TextArea area;
 
 	/**
-	 * Creates a new popup gui
+	 * Creates a new popup gui to handle config inputs
 	 */
 	@Override
 	public void handle(MouseEvent event) {
