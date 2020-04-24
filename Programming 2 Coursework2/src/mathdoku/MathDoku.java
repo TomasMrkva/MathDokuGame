@@ -148,7 +148,7 @@ public class MathDoku extends Application {
 	
 	public static Alert solveAlert(String mode) {
 		Alert solveAlert = new Alert(AlertType.NONE);
-		solveAlert.initStyle(StageStyle.UNDECORATED);
+//		solveAlert.initStyle(StageStyle.UNDECORATED);
 		solveAlert.setTitle("Solving");
 		if(mode.equals("single")) {
 			solveAlert.setHeaderText("Please wait, finding a solution...");			

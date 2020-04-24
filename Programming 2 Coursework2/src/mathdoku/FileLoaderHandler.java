@@ -30,7 +30,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 public class FileLoaderHandler implements EventHandler<MouseEvent> {
@@ -252,18 +251,20 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 //					System.out.println();
 				}
 				if(correctCage) {
-					newWindow.close();
-					boolean solutions = solutionAlert();
-					grid.addCages(cages);
-					if(solutions)
-						MathDoku.createGame(grid, cages, N, "multiple");
-					else
-						MathDoku.createGame(grid, cages, N, "single");
+					Boolean solutions = solutionAlert();
+					if(solutions != null) {
+						newWindow.close();
+						grid.addCages(cages);
+						if(solutions.booleanValue())
+							MathDoku.createGame(grid, cages, N, "multiple");
+						else
+							MathDoku.createGame(grid, cages, N, "single");						
+					}
 				}
 			}
 		}
 		
-		public boolean solutionAlert() {
+		public Boolean solutionAlert() {
 			Alert alert = new Alert(AlertType.CONFIRMATION, "", ButtonType.APPLY);
 			CheckBox box = new CheckBox("Find all solutions");
 			box.setSelected(true);
@@ -280,10 +281,13 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 			});
 			alert.setHeaderText("The game may have multiple solutions:");
 			alert.setContentText("Please select if you want to find all solutions");
-			alert.initStyle(StageStyle.UNDECORATED);
+//			alert.initStyle(StageStyle.UNDECORATED);
 			alert.setGraphic(box);
-			alert.showAndWait();
-			return box.isSelected();
+			Optional<ButtonType> result = alert.showAndWait();
+			if (result.isPresent() && result.get() == ButtonType.APPLY)
+				return box.isSelected();
+			else 
+				return null;
 		}
 		
 		public void displayErrorMessage(String message) {

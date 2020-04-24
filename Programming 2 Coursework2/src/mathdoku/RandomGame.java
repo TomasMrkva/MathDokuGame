@@ -40,7 +40,7 @@ public class RandomGame {
 				cages = createCages();
 				grid.addCages(cages);
 				GameEngine.solve(cells,"generator");
-				if(N == 7 && difficulty == 7 && System.currentTimeMillis() - start > 30000) {
+				if(N == 7 && difficulty == 7 && System.currentTimeMillis() - start > 50000) {
 					difficulty--;
 					System.out.println(System.currentTimeMillis() - start + " ms elapsed,"
 							+ " setting difficulty to: " + difficulty);
