@@ -1,4 +1,5 @@
 package mathdoku;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.Optional;
@@ -97,7 +98,7 @@ public class Gui {
 		
 		RadioButton unique = new RadioButton("Unique");
 		RadioButton checkSols = new RadioButton("Find all solutions");
-		VBox radioBox = new VBox();
+		VBox radioBox = new VBox(2);
 		radioBox.getChildren().addAll(unique, checkSols);
 
 		ComboBox<String> gridSize = new ComboBox<String>();
@@ -148,67 +149,6 @@ public class Gui {
 		ComboBox<String> gameDifficulty = new ComboBox<String>();
 		gameDifficulty.getItems().addAll("Easy", "Medium", "Hard");
 		gameDifficulty.setValue("Easy");
-		submit.setOnAction(e -> {
-			int N = 0;
-			int difficulty = 0;
-			switch (gridSize.getValue()) {
-				case "2x2": N=2; break;
-				case "3x3": N=3; break;
-				case "4x4": N=4; break;
-				case "5x5": N=5; break;
-				case "6x6": N=6; break;
-				case "7x7": N=7; break;
-				case "8x8": N=8; break;
-			}
-			switch (gameDifficulty.getValue()) {
-				case "Easy": difficulty = 4; break;
-				case "Medium": difficulty = 5; break;
-				case "Hard": difficulty = 7; break;
-			}
-			System.out.println("Size: " + gridSize.getValue());
-			System.out.println("Difficulty: " + gameDifficulty.getValue());
-			newWindow.close();
-//			System.err.println("Unique: " + unique.isSelected() + " CheckSols: " + checkSols.isSelected());
-			RandomGame randomGame = new RandomGame(N, difficulty, unique.isSelected(), checkSols.isSelected());
-
-			ProgressIndicator pi = new ProgressIndicator();
-			pi.setMaxSize(40, 40);
-			
-			Alert generateAlert = new Alert(AlertType.NONE);
-			generateAlert.setTitle("Generating a new Game");
-			generateAlert.setHeaderText("Please wait,  the game is being generated...");
-			generateAlert.setContentText("To forcequit, doubleclick on this window");
-			generateAlert.setGraphic(new Button("Cancel"));
-			generateAlert.getDialogPane().setOnMouseClicked(event -> {
-				if(event.getButton().equals(MouseButton.PRIMARY)){
-		            if(event.getClickCount() == 2){
-		            	Platform.exit();
-		            	System.exit(0);
-		            }
-		        }
-			});
-			generateAlert.setGraphic(pi);
-			generateAlert.show();
-			
-			Task<Void> task = new Task<Void>() {
-				@Override
-				protected Void call() {
-					randomGame.generateRandomGame();
-					return null;
-				}
-			};
-			task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-				@Override
-				public void handle(WorkerStateEvent event) {
-
-					generateAlert.setResult(ButtonType.CANCEL);
-					generateAlert.close();
-					randomGame.createGame();
-				}
-            });
-			Thread thread = new Thread(task);
-			thread.start();
-		});
 		
 		b.setOnAction(e -> {
 			newWindow.close();
@@ -216,9 +156,15 @@ public class Gui {
 				grid.requestFocus();
 			}
 		});
+		
+		submit.setOnAction(e -> {
+			newWindow.close();
+			submitButtonAction(unique.isSelected(), checkSols.isSelected(), gridSize.getValue(), gameDifficulty.getValue());
+		});
+		
 		HBox subCancel = new HBox(10);
 		subCancel.setAlignment(Pos.BOTTOM_RIGHT);
-		subCancel.getChildren().addAll(b, submit);
+		subCancel.getChildren().addAll(submit, b);
 		subCancel.setPadding(new Insets(10, 10, 10, 10));
 		
 		hBox.getChildren().addAll(gridSize, gameDifficulty, radioBox);
@@ -226,6 +172,75 @@ public class Gui {
 		Scene scene = new Scene(vBox);
 		newWindow.setScene(scene);
 		newWindow.show();
+	}
+	
+	public static void submitButtonAction(boolean uniqueSelected, boolean checkSolsSelected, String gridSize, String gameDifficulty) {
+		int N = 0;
+		int difficulty = 0;
+		switch (gridSize) {
+			case "2x2": N=2; break;
+			case "3x3": N=3; break;
+			case "4x4": N=4; break;
+			case "5x5": N=5; break;
+			case "6x6": N=6; break;
+			case "7x7": N=7; break;
+			case "8x8": N=8; break;
+		}
+		switch (gameDifficulty) {
+			case "Easy": difficulty = 4; break;
+			case "Medium": difficulty = 5; break;
+			case "Hard": difficulty = 7; break;
+		}
+		System.out.println("Size: " + gridSize);
+		System.out.println("Difficulty: " + gameDifficulty);
+//		newWindow.close();
+//		System.err.println("Unique: " + unique.isSelected() + " CheckSols: " + checkSols.isSelected());
+		RandomGame randomGame = new RandomGame(N, difficulty, uniqueSelected, checkSolsSelected);
+
+		ProgressIndicator pi = new ProgressIndicator();
+		pi.setMaxSize(40, 40);
+		
+		Alert generateAlert = new Alert(AlertType.NONE);
+		generateAlert.setGraphic(pi);
+		generateAlert.setTitle("Generating a new Game");
+		generateAlert.setHeaderText("Please wait,  the game is being generated...");
+		generateAlert.setContentText("To forcequit, doubleclick on this window");
+//		generateAlert.setGraphic(new Button("Cancel"));
+		generateAlert.getDialogPane().setOnMouseClicked(event -> {
+			if(event.getButton().equals(MouseButton.PRIMARY)){
+	            if(event.getClickCount() == 2){
+	            	Platform.exit();
+	            	System.exit(0);
+	            }
+	        }
+		});
+		generateAlert.show();
+		
+		Task<Void> task = new Task<Void>() {
+			@Override
+			protected Void call() {
+				try {
+					randomGame.generateRandomGame();
+				} catch (InvalidParameterException e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+		};
+		task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+			@Override
+			public void handle(WorkerStateEvent event) {
+				generateAlert.setResult(ButtonType.CANCEL);
+				generateAlert.close();
+				try {
+					randomGame.createGame();
+				} catch (InvalidParameterException e) {
+					e.printStackTrace();
+				}
+			}
+        });
+		Thread thread = new Thread(task);
+		thread.start();
 	}
 	
 	public static void showErrorMessageUnique() {

@@ -142,10 +142,8 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 	 * Handler for submit button
 	 */
 	class submitClickHandler implements EventHandler<ActionEvent>{
-		
 		@Override
 		public void handle(ActionEvent event) {
-			
 			int numberOfCells = 0;
 			int maxvalue = 0;
 			int currValue = 0;
@@ -273,7 +271,7 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 				@Override
 				public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 					if(newValue == true) {
-						alert.setContentText("The system will find all possible solutions, it might take a while");
+						alert.setContentText("The system will find all possible solutions, this might take a while");
 					} else {
 						alert.setContentText("The system will find only one solution");
 					}

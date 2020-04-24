@@ -1,5 +1,6 @@
 package mathdoku;
- import java.util.ArrayList;
+ import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -321,17 +322,27 @@ public class GameEngine {
 		return isSolvable;
 	}
 	
+	public static boolean isModeCorrect(String mode) throws InvalidParameterException {
+		if(mode.equals("random") || mode.equals("button") || mode.equals("single") || mode.equals("generator") || mode.equals("default")) 
+			return true;
+//		System.err.println("Debugging purposes: Wrong mode for solver: " + mode);
+		return false;
+	}
+	
 	public static boolean solve(ArrayList<MyRectangle> cells, String mode) {
-		//when the solve button is not pressed, solve, otherwise show previously done solution
-		if(!mode.equals("button")) {
-			for (MyRectangle cell : cells) {
-				cell.setSolution(0);
-			} 
-		} else {
+		if(!isModeCorrect(mode)) 
+			throw new InvalidParameterException("Debugging purposes: Wrong mode for solve(): " + mode);
+		//when the solve button is pressed or generating without trying to find
+		// multiple solutions is selected show previously done solution, otherwise solve
+		if(mode.equals("random") || mode.equals("button")) {
 			if(cells.get(0).getSolution() != 0) {
 				isSolvable = true;
 				return true;
 			}
+		} else {
+			for (MyRectangle cell : cells) {
+				cell.setSolution(0);
+			} 
 		}
 		
 		long start = System.currentTimeMillis();
@@ -343,7 +354,8 @@ public class GameEngine {
 		noOfSolutions = 0;
 		
 		while(position != cells.size()) {
-			if(System.currentTimeMillis()- start > 30000 && mode.equals("generator")) {
+			
+			if(System.currentTimeMillis() - start > 30000 && mode.equals("generator")) {
 				System.out.println("Backtracking timeout, breaking!");
 				noOfSolutions = -1;
 				return false;
@@ -370,6 +382,7 @@ public class GameEngine {
 				}
 				return true;
 			}
+			
 			MyRectangle curr = cells.get(position);
 			if(curr.getSolution() == (int) limit)
 				backtrack = true;
@@ -383,7 +396,7 @@ public class GameEngine {
 						backtrack = false;
 						break;
 					} else {
-						if( GameEngine.checkAllCages(true, curr.getCage()) == true ) {
+						if(GameEngine.checkAllCages(true, curr.getCage()) == true) {
 							// Found a solution
 							if(position == cells.size()-1){
 								noOfSolutions++;
@@ -431,7 +444,6 @@ public class GameEngine {
 			}
 			backtrack = false;
 		}
-		
 		return true;
 	}
 	

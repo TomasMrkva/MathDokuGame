@@ -98,22 +98,22 @@ public class MathDoku extends Application {
 	 * @return true if the mode is correct
 	 * @throws InvalidParameterException if the mode is incorrect
 	 */
-	static boolean isModeCorrect(String mode) throws InvalidParameterException {
+	public static boolean isModeCorrect(String mode) throws InvalidParameterException {
 		if(mode.equals("random") || mode.equals("single") || mode.equals("multiple"))
 			return true;
-		else 
-			throw new InvalidParameterException("Invalid mode");
+		return false;
 	}
 	
-	public static void createGame(GridConstructor grid, ArrayList<Cage> cages, int N, String mode) {
+	public static void createGame(GridConstructor grid, ArrayList<Cage> cages, int N, String mode) throws InvalidParameterException{
 		// Removes winning animation if there was one
-		isModeCorrect(mode);
+		if(!isModeCorrect(mode)) throw new InvalidParameterException();
 		if(MathDoku.pRoot.getChildren().size() > 1) {
 			for(int i=MathDoku.pRoot.getChildren().size()-1; i>=1 ;i--) {
 				MathDoku.pRoot.getChildren().remove(i);
 			}
 		}
-		isModeCorrect(mode);
+		if(!isModeCorrect(mode)) 
+			throw new InvalidParameterException("Debugging purposes: Wrong mode for createGame(): " + mode);
 		grid.makeLabels();
 		grid.makeBorder(MathDoku.width, N, 2, Color.TOMATO);
 		Gui gui = new Gui(grid);
@@ -177,7 +177,7 @@ public class MathDoku extends Application {
 			@Override
 			protected Boolean call() {
 				if(mode.equals("random"))
-					return GameEngine.solve(grid.getCells(), "button");
+					return GameEngine.solve(grid.getCells(), mode);
 				else if(mode.equals("multiple"))
 					return GameEngine.solve(grid.getCells(), "default");
 				else 
@@ -193,6 +193,10 @@ public class MathDoku extends Application {
             		Gui.solve.setDisable(false);
         			Gui.hint.setDisable(false);
             	}
+//            	else {
+//					Gui.solve.setDisable(true);
+//					Gui.solve.setDisable(true);
+//				}
             	Alert info = new Alert(AlertType.INFORMATION);
         		if(GameEngine.noOfSolutions > 1) {
 	    			info.setTitle("Multiple solutions!");

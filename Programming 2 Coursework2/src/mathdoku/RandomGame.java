@@ -1,4 +1,5 @@
 package mathdoku;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,7 +27,7 @@ public class RandomGame {
 		slowFactor = 0;
 	}
 	
-	public void generateRandomGame() {
+	public void generateRandomGame() throws InvalidParameterException {
 		if(unique) {
 //			System.err.println("if");
 			long start = System.currentTimeMillis();
@@ -61,7 +62,7 @@ public class RandomGame {
 				fillGrid();
 				cages = createCages();
 				grid.addCages(cages);
-				GameEngine.solve(cells,"multiple");
+				GameEngine.solve(cells,"default");
 				System.out.println("No of solutions: " + GameEngine.noOfSolutions);
 			}	
 		} else {
@@ -76,7 +77,7 @@ public class RandomGame {
 		}
 	}
 	
-	public void createGame() {
+	public void createGame() throws InvalidParameterException {
 			MathDoku.createGame(grid, cages, N, "random");
 	}
 	
