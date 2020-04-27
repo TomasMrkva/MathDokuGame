@@ -88,8 +88,8 @@ public class Gui {
 		
 		Stage newWindow = new Stage();
 		newWindow.setTitle("Random game");
-//		newWindow.setMinHeight(170);
-//		newWindow.setMinWidth(400);
+		newWindow.setMinHeight(170);
+		newWindow.setMinWidth(400);
 //		newWindow.setMaxHeight(170);
 //		newWindow.setMaxWidth(400);
 		newWindow.initModality(Modality.APPLICATION_MODAL);
