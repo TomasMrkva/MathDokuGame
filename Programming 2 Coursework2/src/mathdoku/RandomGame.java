@@ -83,7 +83,7 @@ public class RandomGame {
 	
 	private void fillGrid() {
 		Random rand = new Random();
-		for(int i=0; i < N*N*N; i++) {
+		for(int i = 0; i < N*N*N; i++) {
 			int first = rand.nextInt(N);
 			int second = rand.nextInt(N);
 			int choose = rand.nextInt(3);

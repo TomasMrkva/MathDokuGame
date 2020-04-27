@@ -322,7 +322,7 @@ public class GameEngine {
 		return isSolvable;
 	}
 	
-	public static boolean isModeCorrect(String mode) throws InvalidParameterException {
+	public static boolean isModeCorrect(String mode) {
 		if(mode.equals("random") || mode.equals("button") || mode.equals("single") || mode.equals("generator") || mode.equals("default")) 
 			return true;
 //		System.err.println("Debugging purposes: Wrong mode for solver: " + mode);

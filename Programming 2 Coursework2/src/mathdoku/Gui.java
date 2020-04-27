@@ -23,9 +23,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseButton;
@@ -40,6 +40,9 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 
 public class Gui {
+	
+	private static final int BUTTON_SIZE = 55;
+
 	private static GridConstructor grid;
 	protected static boolean mistakes;
 	protected static Button redo;
@@ -48,7 +51,7 @@ public class Gui {
 	protected static Button solve;
 	protected static Label label; 
 	protected static Slider slider;
-	
+		
 	public Gui(GridConstructor grid) {
 		Gui.grid = grid;
 		Gui.label = new Label("Grid has not been completed!");
@@ -85,70 +88,64 @@ public class Gui {
 		
 		Stage newWindow = new Stage();
 		newWindow.setTitle("Random game");
-		newWindow.setMinHeight(170);
-		newWindow.setMinWidth(400);
-		newWindow.setMaxHeight(170);
-		newWindow.setMaxWidth(400);
+//		newWindow.setMinHeight(170);
+//		newWindow.setMinWidth(400);
+//		newWindow.setMaxHeight(170);
+//		newWindow.setMaxWidth(400);
 		newWindow.initModality(Modality.APPLICATION_MODAL);
 		
 		VBox vBox = new VBox(10);
 		HBox hBox = new HBox(10);
 		hBox.setAlignment(Pos.CENTER);
 		vBox.setAlignment(Pos.CENTER);
-		
-		RadioButton unique = new RadioButton("Unique");
-		RadioButton checkSols = new RadioButton("Find all solutions");
-		VBox radioBox = new VBox(2);
-		radioBox.getChildren().addAll(unique, checkSols);
+		vBox.setPadding(new Insets(10));
 
 		ComboBox<String> gridSize = new ComboBox<String>();
 		gridSize.getItems().addAll("2x2", "3x3", "4x4", "5x5", "6x6", "7x7", "8x8");
 		gridSize.setValue("2x2");
-		gridSize.valueProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				if(newValue.equals("8x8") && unique.isSelected()) {
-					showErrorMessageUnique();
-					submit.setDisable(true);
-				} else if(newValue.equals("8x8") && checkSols.isSelected()) {
-					showErrorMessageCheckAllSols();
-				} else {
-					submit.setDisable(false);
-				}
-			}
-		});
-		unique.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				if (checkSols.isSelected() && newValue) {
-					checkSols.setSelected(false);
-				}
-				if (newValue && gridSize.getValue().equals("8x8")) {
-					showErrorMessageUnique();
-					submit.setDisable(true);
-				} else {
-					submit.setDisable(false);
-				}
-			}
-		});
-		checkSols.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				if (unique.isSelected() && newValue) {
-					unique.setSelected(false);
-				}
-				if(newValue && gridSize.getValue().equals("8x8")) {
-					showErrorMessageCheckAllSols();
-					submit.setDisable(true);
-				} else {
-					submit.setDisable(false);
-				}
-			}
-		});
-
+		gridSize.setTooltip(new Tooltip("Click and select the game size here."));
+		
 		ComboBox<String> gameDifficulty = new ComboBox<String>();
 		gameDifficulty.getItems().addAll("Easy", "Medium", "Hard");
 		gameDifficulty.setValue("Easy");
+		gameDifficulty.setTooltip(new Tooltip("Click and select the game difficulty here."));
+
+		
+		ComboBox<String> solutions = new ComboBox<String>();
+		solutions.getItems().addAll("No special criteria", "Find all solutions", "Game with unique solution");
+		solutions.setValue("No special criteria");
+		solutions.setTooltip(new Tooltip("Find all solutions: makes hint/solve"
+				+ "buttons personalized\nGame with unique solution: creates a single solution only game\n"
+				+ "No special criteria: generates a random game which could have multiple solution but only finds the first"
+				+ "possible solution"));
+		gridSize.valueProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				if(newValue.equals("8x8") && solutions.getValue().equals("Game with unique solution")) {
+					showErrorMessageUnique();
+					submit.setDisable(true);
+				} else if(newValue.equals("8x8") && solutions.getValue().equals("Find all solutions")) {
+					showErrorMessageCheckAllSols();
+//					submit.setDisable(true);
+				} else {
+					submit.setDisable(false);
+				}
+			}
+		});
+		solutions.valueProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				if(gridSize.getValue().equals("8x8") && newValue.equals("Find all solutions")){
+					showErrorMessageCheckAllSols();
+//					submit.setDisable(true);
+				} else if(gridSize.getValue().equals("8x8") && newValue.equals("Game with unique solution")){
+					showErrorMessageUnique();
+					submit.setDisable(true);
+				} else {
+					submit.setDisable(false);
+				}
+			}
+		});
 		
 		b.setOnAction(e -> {
 			newWindow.close();
@@ -156,10 +153,14 @@ public class Gui {
 				grid.requestFocus();
 			}
 		});
-		
 		submit.setOnAction(e -> {
+			if(solutions.getValue().equals("Game with unique solution"))
+				submitButtonAction(true, false, gridSize.getValue(), gameDifficulty.getValue());
+			else if(solutions.getValue().equals("Find all solutions"))
+				submitButtonAction(false, true, gridSize.getValue(), gameDifficulty.getValue());
+			else
+				submitButtonAction(false, false, gridSize.getValue(), gameDifficulty.getValue());
 			newWindow.close();
-			submitButtonAction(unique.isSelected(), checkSols.isSelected(), gridSize.getValue(), gameDifficulty.getValue());
 		});
 		
 		HBox subCancel = new HBox(10);
@@ -167,7 +168,7 @@ public class Gui {
 		subCancel.getChildren().addAll(submit, b);
 		subCancel.setPadding(new Insets(10, 10, 10, 10));
 		
-		hBox.getChildren().addAll(gridSize, gameDifficulty, radioBox);
+		hBox.getChildren().addAll(gridSize, gameDifficulty, solutions);
 		vBox.getChildren().addAll(label, hBox, subCancel); 
 		Scene scene = new Scene(vBox);
 		newWindow.setScene(scene);
@@ -247,15 +248,20 @@ public class Gui {
 		Alert alert = new Alert(AlertType.WARNING);
 		alert.setTitle("Warning");
 		alert.setHeaderText("Please change your selection");
-		alert.setContentText("Sorry, 8x8 grid is too big for a single solution game");
+		alert.setContentText("Sorry, 8x8 grid is too big for a single solution game\n"
+				+ "Select no special criteria if you want to generate 8x8 grid");
 		alert.showAndWait();
 	}
 	
 	public static void showErrorMessageCheckAllSols() {
 		Alert alert = new Alert(AlertType.WARNING);
 		alert.setTitle("Warning");
-		alert.setHeaderText("Please change your selection");
-		alert.setContentText("Sorry, 8x8 grid is too big for checking all solutions");
+//		alert.setHeaderText("Please change your selection");
+//		alert.setContentText("Sorry, 8x8 grid is too big for checking all solutions.\n"
+//				+ "Select no special criteria if you want to generate 8x8 grid");
+		alert.setHeaderText("This may take a while...");
+		alert.setContentText("Random 8x8  grids may have more than 200 solutions...");
+
 		alert.showAndWait();
 	}
 	
@@ -288,39 +294,46 @@ public class Gui {
 	
 	public VBox menu() {
 		Button clear = new Button("Clear");
+		clear.setTooltip(new Tooltip("Clears the whole grid."));
 		clear.setFocusTraversable(false);
 		this.clearClick(clear);
-		clear.setPrefWidth(50);
+		clear.setPrefWidth(BUTTON_SIZE);
 		
 		solve = new Button("Solve");
+		solve.setTooltip(new Tooltip("Briefly reveals a correct solution for current game."));
 		solve.setFocusTraversable(false);
-		solve.setPrefWidth(50);
+		solve.setPrefWidth(BUTTON_SIZE);
 		solve.setDisable(true);
 		this.solveClick(solve);
 		
 		hint = new Button("Hint");
+		hint.setTooltip(new Tooltip("Briefly reveals a correct solution for\n "
+				+ "one empty or wrong cell."));
 		hint.setFocusTraversable(false);
-		hint.setPrefWidth(50);
+		hint.setPrefWidth(BUTTON_SIZE);
 		hint.setDisable(true);
 		this.hintClick(hint);
 		
 		undo = new Button();
+		undo.setTooltip(new Tooltip("Undo typing.\nShortcut: CTRL+Z"));
 		undo.setText("<-");
-		undo.setPrefWidth(50);
+		undo.setPrefWidth(BUTTON_SIZE);
 		undo.setOnAction(e -> Gui.undoAction());
 		undo.setDisable(true);
 		undo.setFocusTraversable(false);
 		
 		redo = new Button();
+		redo.setTooltip(new Tooltip("Redo typing.\nShortcut: CTRL+Y"));
 		redo.setText("->");
-		redo.setPrefWidth(50);
+		redo.setPrefWidth(BUTTON_SIZE);
 		redo.setOnAction(e -> Gui.redoAction());
 		redo.setDisable(true);
 		redo.setFocusTraversable(false);
 		
 		Button config = new Button("Config");
-		redo.setPrefWidth(50);
+		config.setPrefWidth(BUTTON_SIZE);
 		config.setFocusTraversable(false);
+		config.setTooltip(new Tooltip("Displays and copies the configuration of a current game to the ClipBoard. "));
 		config.setOnAction(e -> configAction());
 		
 		VBox menu = new VBox(5);
@@ -356,11 +369,15 @@ public class Gui {
         slider.setMajorTickUnit(2);
 		slider.setPadding(new Insets(5, 10, 5, 10));
 		slider.setPrefWidth(100);
+		slider.setTooltip(new Tooltip("Changes the font size of the game to the specified number."));
 		this.fontMaker(slider);
 		Button loadFile = new Button();
+		loadFile.setTooltip(new Tooltip("Opens a menu for loading a new game from text/file\n"
+				+ "or generating a new one."));
 		loadFile.setText("Load a new game");
 		loadFile.setFocusTraversable(false);
 		CheckBox mistakes = new CheckBox("Show Mistakes");
+		mistakes.setTooltip(new Tooltip("Highlights the wrong rows/columns with pink and cages with red colour."));
 		mistakes.setFocusTraversable(false);
 		mistakerChooser(mistakes);
 		loadFile.setOnMouseClicked(new FileLoaderHandler());

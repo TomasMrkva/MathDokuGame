@@ -25,7 +25,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -45,46 +47,56 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 		
 		newWindow = new Stage();
 		area = new TextArea();
+		area.setTooltip(new Tooltip("The format of the text input is: \n"
+				+ "Result+Operation_(space)_cellID,cellID,...\n"
+				+ "\nExample: 15+ 1,2,3"
+				+ "\nNOTE: the cellID starts from 1."));
 		
 		BorderPane pane = new BorderPane();
 		pane.setPadding(new Insets(10));
 		
 		Button random = new Button("Random Game");
-		random.setPrefWidth(100);
+//		random.setPrefWidth(100);
+		random.setTooltip(new Tooltip("Opens a menu for creating a random MathDoku game."));
 		random.setOnAction(e -> {
 			newWindow.close();
 			Gui.randomGameMenu();
 		});
 		
 		Button choose = new Button("Choose File");
-		choose.setPrefWidth(85);
+		choose.setTooltip(new Tooltip("Opens a file exporer to find a .txt configuration file for a new MathDoku game"));
+//		choose.setPrefWidth(85);
 		choose.addEventHandler(ActionEvent.ANY, new chooseFileHandler());
 		
 		Button cancel = new Button("Cancel");
-		cancel.setPrefWidth(75);
+//		cancel.setPrefWidth(60);
 		cancel.setOnAction(e -> {
 			newWindow.close();
-			if(Gui.getGrid()!=null) 
+			if(Gui.getGrid()!= null) 
 				Gui.getGrid().requestFocus();
 		});
 		
 		Button submit = new Button("Submit");
 		submit.setDefaultButton(true);
-		submit.setPrefWidth(75);
+//		submit.setPrefWidth(60);
 		submit.addEventHandler(ActionEvent.ANY, new submitClickHandler());
 		
 		Label label = new Label("Specify your mathdoku here:");
 		label.setPadding(new Insets(0, 0, 10, 0));
 		
-		HBox buttonsLeft = new HBox(5);
+//		HBox buttonsLeft = new HBox(5);
+		FlowPane buttonsLeft = new FlowPane();
+		buttonsLeft.setHgap(5);
 		buttonsLeft.getChildren().addAll(choose, random);
 		buttonsLeft.setAlignment(Pos.BOTTOM_LEFT);
 		
-		HBox buttonsRight = new HBox(5);
+//		HBox buttonsRight = new HBox(5);
+		FlowPane buttonsRight = new FlowPane();
+		buttonsRight.setHgap(5);
 		buttonsRight.getChildren().addAll(submit, cancel);
-		buttonsLeft.setAlignment(Pos.BOTTOM_RIGHT);
+		buttonsRight.setAlignment(Pos.BOTTOM_RIGHT);
 		
-		HBox buttons = new HBox(30);
+		HBox buttons = new HBox();
 		buttons.setPadding(new Insets(10, 0, 10, 0));
 		buttons.setAlignment(Pos.CENTER);
 		buttons.getChildren().addAll(buttonsLeft, buttonsRight);
@@ -99,7 +111,7 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
         newWindow.setScene(secondScene);
         newWindow.initModality(Modality.APPLICATION_MODAL);
         newWindow.setMinHeight(270);
-        newWindow.setMinWidth(300);
+        newWindow.setMinWidth(400);
         newWindow.show();
 	}
 	

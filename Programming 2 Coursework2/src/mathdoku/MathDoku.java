@@ -16,6 +16,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
@@ -24,7 +25,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 /**
  * Mathdoku game main class
@@ -32,9 +32,11 @@ import javafx.stage.StageStyle;
  *
  */
 public class MathDoku extends Application {
+	
+	private static final int presetN = 6;
+	private static final int BUTTON_SIZE = 100;
 
 	private static ArrayList<Cage> cages = new ArrayList<Cage>();
-	private static final int presetN = 6;
 	public static double width = 80;
 	public static Stage pStage;
 	public static Scene pScene;
@@ -57,16 +59,20 @@ public class MathDoku extends Application {
 		label.setPadding(new Insets(0, 0, 15, 0));
 		
 		Button newGame = new Button("New Game");
-		newGame.setPrefSize(100, 30);
+		newGame.setTooltip(new Tooltip("Opens a menu for loading a new game from text/file\n"
+				+ "or generating a new one."));
+		newGame.setPrefSize(BUTTON_SIZE, 30);
 		newGame.setOnMouseClicked(new FileLoaderHandler());
-		Button preset = new Button("Play");
+		Button preset = new Button("Play example");
+		preset.setTooltip(new Tooltip("Creates a default, preset MathDoku game."));
 		preset.getStyleClass().add("green");
-		preset.setPrefSize(100, 30);
+		preset.setPrefSize(BUTTON_SIZE, 30);
 		preset.setDefaultButton(true);		
 		preset.setOnAction(e -> MathDoku.createPreset());
 		
 		Button randomGame = new Button("Random Game");
-		randomGame.setPrefSize(100, 30);
+		randomGame.setTooltip(new Tooltip("Opens a menu for creating a random MathDoku game."));
+		randomGame.setPrefSize(BUTTON_SIZE, 30);
 		randomGame.setOnAction(e -> Gui.randomGameMenu());
 		
 		VBox vbox = new VBox(10);
@@ -98,7 +104,7 @@ public class MathDoku extends Application {
 	 * @return true if the mode is correct
 	 * @throws InvalidParameterException if the mode is incorrect
 	 */
-	public static boolean isModeCorrect(String mode) throws InvalidParameterException {
+	public static boolean isModeCorrect(String mode) {
 		if(mode.equals("random") || mode.equals("single") || mode.equals("multiple"))
 			return true;
 		return false;
@@ -117,7 +123,11 @@ public class MathDoku extends Application {
 		grid.makeLabels();
 		grid.makeBorder(MathDoku.width, N, 2, Color.TOMATO);
 		Gui gui = new Gui(grid);
-		Group gameGrid = grid.getGrid();						
+		Group gameGrid = grid.getGrid();	
+//		Tooltip.install(gameGrid, new Tooltip("To win, complete the whole grid with the following criteria:\n"
+//				+ "- Each row and column must have only one of each number\n"
+//				+ "- Each cage represents an elementary mathematical equation."));
+		
         StackPane pane = new StackPane();
         pane.getChildren().add(gameGrid);
         pane.setPickOnBounds(false);
@@ -208,6 +218,11 @@ public class MathDoku extends Application {
         		} else if(GameEngine.noOfSolutions == 1 && !mode.equals("random") && !preset){
         			info.setTitle("Single solution!");
 	    			info.setHeaderText("This grid has a unique solution!");
+	    			info.showAndWait();
+        		} else if(!GameEngine.isSolvable()) {
+        			info.setTitle("Unsolvable!");
+        			info.setHeaderText("This grid has no solutions!");
+        			info.setContentText("Solve and hint buttons will be disabled.");
 	    			info.showAndWait();
         		} else if(preset)
         			preset = false;
