@@ -1,38 +1,27 @@
 package mathdoku;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.nio.file.Files;
-
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.FileChooser.ExtensionFilter;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.nio.file.Files;
+import java.util.*;
 
 public class FileLoaderHandler implements EventHandler<MouseEvent> {
 	
@@ -187,7 +176,7 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 						currValue = (Integer.valueOf(parts[i]));
 					} catch (NumberFormatException e) {
 						wrongNumber = true;
-						wrongPart = line.toString();
+						wrongPart = line;
 						break;
 					}
 					//Checks for the highest value
@@ -196,23 +185,23 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 					}
 					if(currValue == 0) {
 						wrongPosition = true;
-						wrongPart = line.toString();
+						wrongPart = line;
 						break;
 					}
 					//Checks for duplicate cells
-					if(uniqueCells.add(parts[i]) == false) {
+					if(!uniqueCells.add(parts[i])) {
 						duplicateCell = true;
-						wrongPart = line.toString();
+						wrongPart = line;
 						break;
 					}
 					if((parts[0].matches("^[0-9]*$")) && parts.length > 2) {
 						wrongFormat = true;
-						wrongPart = line.toString();
+						wrongPart = line;
 						break;
 					}
 					if(parts.length == 2 && (!parts[0].matches("^[0-9]*$"))) {
 						wrongFormat = true;
-						wrongPart = line.toString();
+						wrongPart = line;
 						break;
 					}
 					numberOfCells++;
@@ -268,9 +257,9 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 						newWindow.close();
 						grid.addCages(cages);
 						if(solutions.booleanValue())
-							MathDoku.createGame(grid, cages, N, "multiple");
+							MathDoku.createGame(grid, N, "multiple");
 						else
-							MathDoku.createGame(grid, cages, N, "single");						
+							MathDoku.createGame(grid, N, "single");
 					}
 				}
 			}
@@ -283,7 +272,7 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 			box.selectedProperty().addListener(new ChangeListener<Boolean>() {
 				@Override
 				public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-					if(newValue == true) {
+					if(newValue) {
 						alert.setContentText("The system will find all possible solutions, this might take a while");
 					} else {
 						alert.setContentText("The system will find only one solution");
@@ -381,7 +370,7 @@ public class FileLoaderHandler implements EventHandler<MouseEvent> {
 				hashSet.add(cellsArray[0].getCellId());
 			}
 			for(MyRectangle cell : cellsArray) {
-				if(hashSet.add(cell.getCellId()) == true) {
+				if(hashSet.add(cell.getCellId())) {
 					return false;
 				}
 			}

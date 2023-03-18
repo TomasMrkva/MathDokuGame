@@ -13,8 +13,8 @@ public class RandomGame {
 	protected int N;
 	private Random rand;
 	private ArrayList<Cage> cages;
-	private boolean unique;
-	private boolean checkAllSols;
+	private final boolean unique;
+	private final boolean checkAllSols;
 	public int slowFactor;
 
 	public RandomGame(int N, int difficulty, boolean unique, boolean checkAllSols) {
@@ -78,7 +78,7 @@ public class RandomGame {
 	}
 	
 	public void createGame() throws InvalidParameterException {
-			MathDoku.createGame(grid, cages, N, "random");
+			MathDoku.createGame(grid, N, "random");
 	}
 	
 	private void fillGrid() {
@@ -313,7 +313,7 @@ public class RandomGame {
 			for(MyRectangle cell : cells) {
 				total = total + cell.getSolution();
 			}
-			result = String.valueOf(total) + "+";
+			result = total + "+";
 			return result;
 		} else if (decision == 1 || decision == 2) {
 			total = 0;
@@ -331,7 +331,7 @@ public class RandomGame {
 				return createOperations(0, cells);
 			}
 			else {
-				result = String.valueOf(amountSub) + "-";	
+				result = amountSub + "-";
 				return result;
 			}
 		} else if (decision % 2 == 0) {
@@ -340,15 +340,15 @@ public class RandomGame {
 				total = total * Integer.valueOf(cell.getSolution());
 			}
 			if(total < 200 && difficulty == 4) {
-				result = String.valueOf(total) + "x";
+				result = total + "x";
 				return result;			
 			}
 			else if(total < 1000 && difficulty == 5) {
-				result = String.valueOf(total) + "x";
+				result = total + "x";
 				return result;			
 			}
 			else if(total < 5000 && difficulty >= 6) {
-				result = String.valueOf(total) + "x";
+				result = total + "x";
 				return result;					
 			} else {
 				return createOperations(rand.nextInt(3), cells);
@@ -366,7 +366,7 @@ public class RandomGame {
 			}
 			if(amountDiv % 1 == 0) {
 				int convertedDouble = (int) amountDiv;
-				result = String.valueOf(convertedDouble) + "÷";
+				result = convertedDouble + "÷";
 				return result;
 			} else {
 				return createOperations(4, cells);
@@ -390,7 +390,7 @@ public class RandomGame {
 				curr.setSolution(curr.getSolution()+1);
 			
 			while(curr.getSolution() <= limit) {
-				if(backtrack == true) break;
+				if(backtrack) break;
 				else if( GameEngine.isRowCorrect(cells, curr) && GameEngine.isColCorrect(cells, curr) ) {
 					position++;
 					backtrack = false;

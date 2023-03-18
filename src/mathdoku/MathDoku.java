@@ -1,22 +1,14 @@
 package mathdoku;
-import java.security.InvalidParameterException;
-import java.util.ArrayList;
+
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
@@ -25,6 +17,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
 
 /**
  * Mathdoku game main class
@@ -36,15 +31,15 @@ public class MathDoku extends Application {
 	private static final int presetN = 6;
 	private static final int BUTTON_SIZE = 100;
 
-	private static ArrayList<Cage> cages = new ArrayList<Cage>();
+	private static final ArrayList<Cage> cages = new ArrayList<>();
 	public static double width = 80;
 	public static Stage pStage;
 	public static Scene pScene;
 	public static StackPane pRoot;
 	private static boolean preset;
 	
-	public static void main(String[] args) {
-		launch(args);
+	public static void run(String[] args) {
+		Application.launch(args);
 	}
 
 	@Override
@@ -95,30 +90,28 @@ public class MathDoku extends Application {
 		GridConstructor grid = new GridConstructor(presetN, width);
 		makeCages(grid);
 		grid.addCages(cages);
-		createGame(grid, cages, presetN, "multiple");
+		createGame(grid, presetN, "multiple");
 	}
 	
 	/**
 	 * Checks if the String parameter is correct
-	 * @param String mode (can be only random/single/multiple)
+	 * @param mode (can be only random/single/multiple)
 	 * @return true if the mode is correct
 	 * @throws InvalidParameterException if the mode is incorrect
 	 */
 	public static boolean isModeCorrect(String mode) {
-		if(mode.equals("random") || mode.equals("single") || mode.equals("multiple"))
-			return true;
-		return false;
+		return !mode.equals("random") && !mode.equals("single") && !mode.equals("multiple");
 	}
 	
-	public static void createGame(GridConstructor grid, ArrayList<Cage> cages, int N, String mode) throws InvalidParameterException{
+	public static void createGame(GridConstructor grid, int N, String mode) throws InvalidParameterException{
 		// Removes winning animation if there was one
-		if(!isModeCorrect(mode)) throw new InvalidParameterException();
+		if(isModeCorrect(mode)) throw new InvalidParameterException();
 		if(MathDoku.pRoot.getChildren().size() > 1) {
-			for(int i=MathDoku.pRoot.getChildren().size()-1; i>=1 ;i--) {
-				MathDoku.pRoot.getChildren().remove(i);
+			if (MathDoku.pRoot.getChildren().size() > 1) {
+				MathDoku.pRoot.getChildren().subList(1, MathDoku.pRoot.getChildren().size()).clear();
 			}
 		}
-		if(!isModeCorrect(mode)) 
+		if(isModeCorrect(mode))
 			throw new InvalidParameterException("Debugging purposes: Wrong mode for createGame(): " + mode);
 		grid.makeLabels();
 		grid.makeBorder(MathDoku.width, N, 2, Color.TOMATO);
@@ -194,48 +187,39 @@ public class MathDoku extends Application {
 					return GameEngine.solve(grid.getCells(), mode);
 			}
 		};
-		task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-			@Override
-            public void handle(WorkerStateEvent event) {
-            	solveAlert.setResult(ButtonType.CANCEL);
-				solveAlert.close();
-            	if(task.getValue()){
-            		Gui.solve.setDisable(false);
-        			Gui.hint.setDisable(false);
-            	}
-//            	else {
-//					Gui.solve.setDisable(true);
-//					Gui.solve.setDisable(true);
-//				}
-            	Alert info = new Alert(AlertType.INFORMATION);
-        		if(GameEngine.noOfSolutions > 1) {
-	    			info.setTitle("Multiple solutions!");
-	    			info.setHeaderText("This grid has more than 1 solution!");
-	    			info.setContentText("The number of solutions is: "+ GameEngine.noOfSolutions);
-	    			info.showAndWait();
-        		} else if(GameEngine.noOfSolutions == 1 && mode.equals("single")) {
-        			info = null;
-        		} else if(GameEngine.noOfSolutions == 1 && !mode.equals("random") && !preset){
-        			info.setTitle("Single solution!");
-	    			info.setHeaderText("This grid has a unique solution!");
-	    			info.showAndWait();
-        		} else if(!GameEngine.isSolvable()) {
-        			info.setTitle("Unsolvable!");
-        			info.setHeaderText("This grid has no solutions!");
-        			info.setContentText("Solve and hint buttons will be disabled.");
-	    			info.showAndWait();
-        		} else if(preset)
-        			preset = false;
-        		grid.requestFocus();
-            }
-        });
+		task.setOnSucceeded(event -> {
+			solveAlert.setResult(ButtonType.CANCEL);
+			solveAlert.close();
+			if(task.getValue()){
+				Gui.solve.setDisable(false);
+				Gui.hint.setDisable(false);
+			}
+			Alert info = new Alert(AlertType.INFORMATION);
+			if(GameEngine.noOfSolutions > 1) {
+				info.setTitle("Multiple solutions!");
+				info.setHeaderText("This grid has more than 1 solution!");
+				info.setContentText("The number of solutions is: "+ GameEngine.noOfSolutions);
+				info.showAndWait();
+			} else if(GameEngine.noOfSolutions == 1 && !mode.equals("random") && !preset){
+				info.setTitle("Single solution!");
+				info.setHeaderText("This grid has a unique solution!");
+				info.showAndWait();
+			} else if(!GameEngine.isSolvable()) {
+				info.setTitle("Unsolvable!");
+				info.setHeaderText("This grid has no solutions!");
+				info.setContentText("Solve and hint buttons will be disabled.");
+				info.showAndWait();
+			} else if(preset)
+				preset = false;
+			grid.requestFocus();
+});
 		Thread th = new Thread(task);
 		th.start();
 	}
 	
 	/**
 	 * Creates a class for each cage and adds it to the ArrayList 
-	 * @param grid
+	 * @param grid the mathdoku grid
 	 */
 	public static void makeCages(GridConstructor grid) {
 		cages.add(new Cage("11+", grid.getCell(1), grid.getCell(7)));
